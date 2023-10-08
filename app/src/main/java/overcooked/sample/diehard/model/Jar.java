@@ -1,4 +1,4 @@
-package overcooked.sample.diehard;
+package overcooked.sample.diehard.model;
 
 import com.google.common.base.Preconditions;
 import lombok.*;
