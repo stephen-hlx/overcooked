@@ -49,11 +49,8 @@ class JarTest {
         int beforeToJarOccupancy,
         int afterFromJarOccupancy,
         int afterToJarOccupancy) {
-        Jar fromJar = new Jar(fromJarCapacity);
-        fromJar.setOccupancy(beforeFromJarOccupancy);
-
-        Jar toJar = new Jar(toJarCapacity);
-        toJar.setOccupancy(beforeToJarOccupancy);
+        Jar fromJar = new Jar(fromJarCapacity, beforeFromJarOccupancy);
+        Jar toJar = new Jar(toJarCapacity, beforeToJarOccupancy);
 
         fromJar.addTo(toJar);
         assertThat(fromJar.getOccupancy()).isEqualTo(afterFromJarOccupancy);

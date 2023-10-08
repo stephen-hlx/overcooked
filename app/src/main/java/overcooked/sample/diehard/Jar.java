@@ -1,12 +1,10 @@
 package overcooked.sample.diehard;
 
 import com.google.common.base.Preconditions;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @RequiredArgsConstructor
-@Setter
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
 @Getter
 public class Jar {
     private final int capacity;
@@ -29,8 +27,7 @@ public class Jar {
         this.occupancy = this.capacity;
     }
 
-
-    public int availableSpace() {
+    private int availableSpace() {
         return this.capacity - this.occupancy;
     }
 }
