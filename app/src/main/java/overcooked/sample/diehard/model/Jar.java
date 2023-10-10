@@ -3,10 +3,11 @@ package overcooked.sample.diehard.model;
 import com.google.common.base.Preconditions;
 import lombok.*;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @Getter
-public class Jar {
+@EqualsAndHashCode
+class Jar {
     private final int capacity;
     private int occupancy;
 

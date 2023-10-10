@@ -65,9 +65,4 @@ class JarTest {
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining("Cannot add to self");
     }
-
-    @Test
-    void having_same_data_does_not_mean_being_the_same_object() {
-        assertThat(new Jar(5).equals(new Jar(5))).isFalse();
-    }
 }

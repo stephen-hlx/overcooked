@@ -24,6 +24,8 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.assertj/assertj-core
     testImplementation("org.assertj:assertj-core:3.6.1")
+    // https://mvnrepository.com/artifact/org.mockito/mockito-core
+    testImplementation("org.mockito:mockito-core:2.1.0")
 
     // This dependency is used by the application.
     implementation("com.google.guava:guava:32.1.1-jre")
