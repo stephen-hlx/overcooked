@@ -2,11 +2,9 @@ package overcooked.sample.diehard.modelverifier;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import org.checkerframework.checker.units.qual.A;
 import overcooked.core.*;
 import overcooked.core.action.*;
 import overcooked.core.actor.ActorDefinition;
-import overcooked.core.actor.ActorFactory;
 import overcooked.core.actor.ActorStateTransformerConfig;
 import overcooked.sample.diehard.model.Jar3;
 import overcooked.sample.diehard.model.Jar5;
