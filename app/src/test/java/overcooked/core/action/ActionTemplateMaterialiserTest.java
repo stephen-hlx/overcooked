@@ -1,11 +1,10 @@
 package overcooked.core.action;
 
+import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Test;
 import overcooked.core.actor.ActorDefinition;
 import overcooked.sample.diehard.model.Jar3;
 import overcooked.sample.diehard.modelverifier.Jar3State;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -21,7 +20,7 @@ class ActionTemplateMaterialiserTest {
         ActionTemplate template = ActionTemplate.builder()
             .actionType(new TransitiveActionType(jarActor))
             .methodName("someMethod")
-            .parameters(List.of(
+            .parameters(ImmutableList.of(
                 new ParamTemplate<>(Jar3.class),
                 new ParamValue(Integer.class, 1)
             ))
@@ -31,7 +30,7 @@ class ActionTemplateMaterialiserTest {
             .isEqualTo(ActionDefinition.builder()
                 .actionType(new TransitiveActionType(jarActor))
                 .methodName("someMethod")
-                .parameters(List.of(
+                .parameters(ImmutableList.of(
                     new ParamValue(Jar3.class, jar3),
                     new ParamValue(Integer.class, 1)
                 ))
@@ -49,7 +48,7 @@ class ActionTemplateMaterialiserTest {
         ActionTemplate template = ActionTemplate.builder()
             .actionType(new TransitiveActionType(jarActor))
             .methodName("someMethod")
-            .parameters(List.of(
+            .parameters(ImmutableList.of(
                 new ParamValue(Integer.class, 1)
             ))
             .build();
@@ -58,7 +57,7 @@ class ActionTemplateMaterialiserTest {
             .isEqualTo(ActionDefinition.builder()
                 .actionType(new TransitiveActionType(jarActor))
                 .methodName("someMethod")
-                .parameters(List.of(
+                .parameters(ImmutableList.of(
                     new ParamValue(Integer.class, 1)
                 ))
                 .build());

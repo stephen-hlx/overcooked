@@ -1,5 +1,6 @@
 package overcooked.core.action;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.junit.jupiter.api.Test;
 import overcooked.core.actor.*;
@@ -7,8 +8,6 @@ import overcooked.sample.diehard.model.Jar3;
 import overcooked.sample.diehard.model.Jar5;
 import overcooked.sample.diehard.modelverifier.Jar3State;
 import overcooked.sample.diehard.modelverifier.Jar5State;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -55,7 +54,7 @@ class TransitiveActionTemplateExecutorTest {
         ActionTemplate actionTemplate = ActionTemplate.builder()
             .actionType(new TransitiveActionType(actionReceiverDefinition))
             .methodName("addTo - but doesn't really matter in this test")
-            .parameters(List.of(new ParamTemplate<>(Jar3.class)))
+            .parameters(ImmutableList.of(new ParamTemplate<>(Jar3.class)))
             .build();
 
         @SuppressWarnings("unchecked")

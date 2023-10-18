@@ -1,16 +1,16 @@
 package overcooked.sample.diehard.modelverifier;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import overcooked.core.*;
 import overcooked.core.action.*;
 import overcooked.core.actor.ActorDefinition;
 import overcooked.core.actor.ActorStateTransformerConfig;
-import overcooked.core.tracing.Tracer;
+import overcooked.core.tracing.GraphTracer;
 import overcooked.sample.diehard.model.Jar3;
 import overcooked.sample.diehard.model.Jar5;
 
-import java.util.List;
 import java.util.Set;
 
 public class ModelVerifier {
@@ -45,7 +45,7 @@ public class ModelVerifier {
                     .localStateType(Jar5State.class)
                     .build()))
                 .methodName("addTo")
-                .parameters(List.of(new ParamTemplate<>(Jar5.class)))
+                .parameters(ImmutableList.of(new ParamTemplate<>(Jar5.class)))
                 .build()
         );
 
@@ -65,7 +65,7 @@ public class ModelVerifier {
                     .localStateType(Jar3State.class)
                     .build()))
                 .methodName("addTo")
-                .parameters(List.of(new ParamTemplate<>(Jar3.class)))
+                .parameters(ImmutableList.of(new ParamTemplate<>(Jar3.class)))
                 .build()
         );
 
@@ -105,12 +105,12 @@ public class ModelVerifier {
                     .build())
                 .build())
             .build();
-        Tracer tracer = new Tracer();
+        GraphTracer graphTracer = new GraphTracer();
         StateMachine stateMachine = StateMachine.builder()
             .globalStateVerifier(new FourLiterVerifier())
             .stateMachineAdvancer(stateMachineAdvancer)
             .build();
 
-        stateMachine.run(globalState, actorActionConfig, tracer);
+        stateMachine.run(globalState, actorActionConfig, graphTracer);
     }
 }

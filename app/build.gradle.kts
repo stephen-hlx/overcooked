@@ -9,6 +9,7 @@ plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     application
     id("io.freefair.lombok") version "8.3"
+    id("com.github.spotbugs") version "6.0.0-rc.1"
 }
 
 repositories {

@@ -1,12 +1,11 @@
 package overcooked.core;
 
 import lombok.Builder;
-import overcooked.core.action.ActionTemplate;
 import overcooked.core.action.IntransitiveActionTemplateExecutor;
 import overcooked.core.action.TransitiveActionTemplateExecutor;
 import overcooked.core.actor.ActorDefinition;
 import overcooked.core.actor.LocalState;
-import overcooked.core.tracing.Tracer;
+import overcooked.core.tracing.GraphTracer;
 import overcooked.core.tracing.Transition;
 
 import java.util.Collections;
@@ -23,7 +22,7 @@ public class StateMachineAdvancer {
 
     public Set<GlobalState> computeNext(GlobalState globalState,
                                         ActorActionConfig actorActionConfig,
-                                        Tracer tracer) {
+                                        GraphTracer graphTracer) {
         Set<GlobalState> nextStates = new HashSet<>();
 
         globalState.getLocalStates().forEach((actorDefinition, localState) ->
@@ -52,7 +51,7 @@ public class StateMachineAdvancer {
                     }
                     GlobalState newGlobalState = stateMerger.merge(globalState, newLocalStates);
                     transitionBuilder.to(newGlobalState);
-                    tracer.capture(transitionBuilder.build());
+                    graphTracer.capture(transitionBuilder.build());
                     nextStates.add(newGlobalState);
                 }));
 

@@ -1,13 +1,12 @@
 package overcooked.core.action;
 
+import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import overcooked.core.actor.ActorDefinition;
 import overcooked.sample.diehard.model.Jar3;
 import overcooked.sample.diehard.model.Jar5;
 import overcooked.sample.diehard.modelverifier.Jar3State;
-
-import java.util.List;
 
 import static org.mockito.Mockito.*;
 
@@ -33,7 +32,7 @@ class TransitiveActionTakerTest {
 
         ActionDefinition someActionAgainstJar3 = ActionDefinition.builder()
             .methodName("someActionAgainstJar3")
-            .parameters(List.of(new ParamValue(Jar3.class, jar3)))
+            .parameters(ImmutableList.of(new ParamValue(Jar3.class, jar3)))
             .build();
 
         when(actionTemplateMaterialiser.materialise(actionTemplate, Jar3.class, jar3))

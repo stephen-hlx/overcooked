@@ -1,9 +1,7 @@
 package overcooked.core.action;
 
+import com.google.common.collect.ImmutableList;
 import lombok.*;
-
-import java.util.Collections;
-import java.util.List;
 
 @Builder
 @Getter(AccessLevel.PACKAGE)
@@ -15,5 +13,5 @@ public class ActionDefinition {
     String methodName;
 
     @Builder.Default
-    List<ParamValue> parameters = Collections.emptyList();
+    ImmutableList<ParamValue> parameters = ImmutableList.of();
 }

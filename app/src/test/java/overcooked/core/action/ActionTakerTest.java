@@ -1,11 +1,9 @@
 package overcooked.core.action;
 
+import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Test;
 import overcooked.sample.diehard.model.Jar3;
 import overcooked.sample.diehard.model.Jar5;
-
-import java.util.Collections;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -15,7 +13,7 @@ class ActionTakerTest {
     void can_perform_action_without_params() {
         ActionDefinition fillDefinition = ActionDefinition.builder()
             .methodName("fill")
-            .parameters(Collections.emptyList())
+            .parameters(ImmutableList.of())
             .build();
 
         Jar5 jar5 = new Jar5(0);
@@ -37,7 +35,7 @@ class ActionTakerTest {
 
         ActionDefinition addToJar3 = ActionDefinition.builder()
             .methodName("addTo")
-            .parameters(List.of(new ParamValue(Jar3.class, jar3)))
+            .parameters(ImmutableList.of(new ParamValue(Jar3.class, jar3)))
             .build();
 
         assertThat(jar5.getOccupancy()).isEqualTo(5);

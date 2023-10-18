@@ -1,6 +1,6 @@
 package overcooked.core.action;
 
-import java.util.stream.Collectors;
+import com.google.common.collect.ImmutableList;
 
 public class ActionTemplateMaterialiser {
     // TODO: it is not that obvious the materialisation is for only one param template
@@ -16,7 +16,7 @@ public class ActionTemplateMaterialiser {
                     param.isTemplate()
                     ? new ParamValue(clazz, value)
                     : (ParamValue) param)
-                .collect(Collectors.toList()))
+                .collect(ImmutableList.toImmutableList()))
             .build();
     }
 

@@ -9,6 +9,8 @@ import overcooked.core.actor.LocalState;
 
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 @Builder
 public class IntransitiveActionTemplateExecutor {
     private final ActorStateTransformerConfig config;
@@ -20,8 +22,8 @@ public class IntransitiveActionTemplateExecutor {
         Preconditions.checkArgument(!actionTemplate.getActionType().isTransitive(),
             "Expecting an intransitive action template but it was transitive {}", actionTemplate);
 
-        Object actor = config.getActorFactories()
-            .get(actorDefinition)
+        Object actor = checkNotNull(config.getActorFactories().get(actorDefinition),
+            "No ActorFactory found for actor {}", actorDefinition)
             .restoreFromLocalState(actorlocalState);
 
         intransitiveActionTaker.take(IntransitiveAction.builder()
@@ -31,6 +33,8 @@ public class IntransitiveActionTemplateExecutor {
 
         return ImmutableMap.of(
             actorDefinition,
-            config.getLocalStateExtractors().get(actorDefinition).extract(actor));
+            checkNotNull(config.getLocalStateExtractors().get(actorDefinition),
+                "No LocalStateExtractor found for actor {}", actorDefinition)
+                .extract(actor));
     }
 }

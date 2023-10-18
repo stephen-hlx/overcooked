@@ -10,7 +10,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Getter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-class Node<Type, Action> {
+class GraphNode<Type, Action> {
     @EqualsAndHashCode.Include
     private final Type id;
 

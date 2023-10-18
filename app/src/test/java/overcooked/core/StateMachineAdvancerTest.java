@@ -1,5 +1,6 @@
 package overcooked.core;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import lombok.Value;
@@ -7,10 +8,9 @@ import org.junit.jupiter.api.Test;
 import overcooked.core.action.*;
 import overcooked.core.actor.ActorDefinition;
 import overcooked.core.actor.LocalState;
-import overcooked.core.tracing.Tracer;
+import overcooked.core.tracing.GraphTracer;
 import overcooked.core.tracing.Transition;
 
-import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,7 +49,7 @@ class StateMachineAdvancerTest {
         ActionTemplate actor2ActionTemplate = ActionTemplate.builder()
             .actionType(new TransitiveActionType(actor3))
             .methodName(actor2Method)
-            .parameters(List.of(new ParamTemplate<>(Integer.class)))
+            .parameters(ImmutableList.of(new ParamTemplate<>(Integer.class)))
             .build();
         ActorActionConfig config = new ActorActionConfig(
             ImmutableMap.<ActorDefinition, Set<ActionTemplate>>builder()
@@ -81,9 +81,9 @@ class StateMachineAdvancerTest {
                 .put(actor4, actor4LocalState)
                 .build());
 
-        Tracer tracer = mock(Tracer.class);
+        GraphTracer graphTracer = mock(GraphTracer.class);
 
-        assertThat(stateMachineAdvancer.computeNext(globalState, config, tracer))
+        assertThat(stateMachineAdvancer.computeNext(globalState, config, graphTracer))
             .isEqualTo(ImmutableSet.of(
                 new GlobalState(ImmutableMap.<ActorDefinition, LocalState>builder()
                     .put(actor1, newActor1LocalState)
@@ -107,7 +107,7 @@ class StateMachineAdvancerTest {
             actor2, newActor2LocalState,
             actor3, newActor3LocalState
         ));
-        verify(tracer).capture(Transition.builder()
+        verify(graphTracer).capture(Transition.builder()
                 .from(globalState)
                 .actionPerformerId(actor1Id)
                 .methodName(actor1Method)
@@ -119,7 +119,7 @@ class StateMachineAdvancerTest {
                     .put(actor4, actor4LocalState)
                     .build()))
             .build());
-        verify(tracer).capture(Transition.builder()
+        verify(graphTracer).capture(Transition.builder()
             .from(globalState)
             .actionPerformerId(actor2Id)
             .methodName(actor2Method)
@@ -134,7 +134,7 @@ class StateMachineAdvancerTest {
         verifyNoMoreInteractions(intransitiveActionTemplateExecutor,
             transitiveActionTemplateExecutor,
             stateMerger,
-            tracer);
+            graphTracer);
     }
 
     @Value

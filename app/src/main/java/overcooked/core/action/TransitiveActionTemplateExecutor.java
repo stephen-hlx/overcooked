@@ -9,6 +9,8 @@ import overcooked.core.actor.LocalState;
 
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 @Builder
 public class TransitiveActionTemplateExecutor {
     private final ActorStateTransformerConfig config;
@@ -21,14 +23,16 @@ public class TransitiveActionTemplateExecutor {
         Preconditions.checkArgument(actionTemplate.getActionType().isTransitive(),
             "Expecting a transitive action template but it was intransitive {}", actionTemplate);
 
-        Object actionPerformer = config.getActorFactories()
-            .get(actionPerformerDefinition)
+        Object actionPerformer = checkNotNull(
+            config.getActorFactories().get(actionPerformerDefinition),
+            "No ActorFactory found for action performer {}", actionPerformerDefinition)
             .restoreFromLocalState(actionPerformerLocalState);
 
         ActorDefinition actionReceiverDefinition = actionTemplate.getActionType().getActionReceiverDefinition();
 
-        Object actionReceiver = config.getActorFactories()
-            .get(actionReceiverDefinition)
+        Object actionReceiver = checkNotNull(
+            config.getActorFactories().get(actionReceiverDefinition),
+            "No ActorFactory found for action receiver {}", actionReceiverDefinition)
             .restoreFromLocalState(actionReceiverLocalState);
 
         transitiveActionTaker.take(TransitiveAction.builder()
@@ -39,9 +43,15 @@ public class TransitiveActionTemplateExecutor {
 
         return ImmutableMap.<ActorDefinition, LocalState>builder()
             .put(actionPerformerDefinition,
-                config.getLocalStateExtractors().get(actionPerformerDefinition).extract(actionPerformer))
+                checkNotNull(
+                    config.getLocalStateExtractors().get(actionPerformerDefinition),
+                    "No LocalStateExtractor found for action performer {}", actionPerformerDefinition)
+                    .extract(actionPerformer))
             .put(actionReceiverDefinition,
-                config.getLocalStateExtractors().get(actionReceiverDefinition).extract(actionReceiver))
+                checkNotNull(
+                    config.getLocalStateExtractors().get(actionReceiverDefinition),
+                    "No LocalStateExtractor found for action receiver {}", actionReceiverDefinition)
+                    .extract(actionReceiver))
             .build();
     }
 }
