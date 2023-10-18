@@ -6,6 +6,7 @@ import overcooked.core.*;
 import overcooked.core.action.*;
 import overcooked.core.actor.ActorDefinition;
 import overcooked.core.actor.ActorStateTransformerConfig;
+import overcooked.core.tracing.Tracer;
 import overcooked.sample.diehard.model.Jar3;
 import overcooked.sample.diehard.model.Jar5;
 
@@ -104,11 +105,12 @@ public class ModelVerifier {
                     .build())
                 .build())
             .build();
+        Tracer tracer = new Tracer();
         StateMachine stateMachine = StateMachine.builder()
             .globalStateVerifier(new FourLiterVerifier())
             .stateMachineAdvancer(stateMachineAdvancer)
             .build();
 
-        stateMachine.run(globalState, actorActionConfig);
+        stateMachine.run(globalState, actorActionConfig, tracer);
     }
 }

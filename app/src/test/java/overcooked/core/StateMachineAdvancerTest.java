@@ -7,13 +7,14 @@ import org.junit.jupiter.api.Test;
 import overcooked.core.action.*;
 import overcooked.core.actor.ActorDefinition;
 import overcooked.core.actor.LocalState;
+import overcooked.core.tracing.Tracer;
+import overcooked.core.tracing.Transition;
 
 import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class StateMachineAdvancerTest {
     private final IntransitiveActionTemplateExecutor intransitiveActionTemplateExecutor =
@@ -21,26 +22,33 @@ class StateMachineAdvancerTest {
     private final TransitiveActionTemplateExecutor transitiveActionTemplateExecutor =
         mock(TransitiveActionTemplateExecutor.class);
 
+    private final StateMerger stateMerger = spy(new StateMerger());
     private final StateMachineAdvancer stateMachineAdvancer = StateMachineAdvancer.builder()
         .intransitiveActionTemplateExecutor(intransitiveActionTemplateExecutor)
         .transitiveActionTemplateExecutor(transitiveActionTemplateExecutor)
-        .stateMerger(new StateMerger())
+        .stateMerger(stateMerger)
         .build();
 
     @Test
     void works() {
-        ActorDefinition actor1 = ActorDefinition.builder().id("actor1").build();
-        ActorDefinition actor2 = ActorDefinition.builder().id("actor2").build();
-        ActorDefinition actor3 = ActorDefinition.builder().id("actor3").build();
-        ActorDefinition actor4 = ActorDefinition.builder().id("actor4").build();
+        String actor1Id = "actor1";
+        String actor2Id = "actor2";
+        String actor3Id = "actor3";
+        String actor4Id = "actor4";
+        String actor1Method = "actor1.method1";
+        String actor2Method = "actor2.method1";
+        ActorDefinition actor1 = ActorDefinition.builder().id(actor1Id).build();
+        ActorDefinition actor2 = ActorDefinition.builder().id(actor2Id).build();
+        ActorDefinition actor3 = ActorDefinition.builder().id(actor3Id).build();
+        ActorDefinition actor4 = ActorDefinition.builder().id(actor4Id).build();
 
         ActionTemplate actor1ActionTemplate = ActionTemplate.builder()
             .actionType(new IntransitiveActionType())
-            .methodName("actor1.method1")
+            .methodName(actor1Method)
             .build();
         ActionTemplate actor2ActionTemplate = ActionTemplate.builder()
             .actionType(new TransitiveActionType(actor3))
-            .methodName("actor2.method1")
+            .methodName(actor2Method)
             .parameters(List.of(new ParamTemplate<>(Integer.class)))
             .build();
         ActorActionConfig config = new ActorActionConfig(
@@ -73,7 +81,9 @@ class StateMachineAdvancerTest {
                 .put(actor4, actor4LocalState)
                 .build());
 
-        assertThat(stateMachineAdvancer.computeNext(globalState, config))
+        Tracer tracer = mock(Tracer.class);
+
+        assertThat(stateMachineAdvancer.computeNext(globalState, config, tracer))
             .isEqualTo(ImmutableSet.of(
                 new GlobalState(ImmutableMap.<ActorDefinition, LocalState>builder()
                     .put(actor1, newActor1LocalState)
@@ -88,6 +98,43 @@ class StateMachineAdvancerTest {
                     .put(actor4, actor4LocalState)
                     .build())
             ));
+
+        verify(intransitiveActionTemplateExecutor).execute(actor1LocalState, actor1, actor1ActionTemplate);
+        verify(transitiveActionTemplateExecutor)
+            .execute(actor2LocalState, actor2, actor3LocalState, actor2ActionTemplate);
+        verify(stateMerger).merge(globalState, ImmutableMap.of(actor1, newActor1LocalState));
+        verify(stateMerger).merge(globalState, ImmutableMap.of(
+            actor2, newActor2LocalState,
+            actor3, newActor3LocalState
+        ));
+        verify(tracer).capture(Transition.builder()
+                .from(globalState)
+                .actionPerformerId(actor1Id)
+                .methodName(actor1Method)
+                .actionReceiverId(null)
+                .to(new GlobalState(ImmutableMap.<ActorDefinition, LocalState>builder()
+                    .put(actor1, newActor1LocalState)
+                    .put(actor2, actor2LocalState)
+                    .put(actor3, actor3LocalState)
+                    .put(actor4, actor4LocalState)
+                    .build()))
+            .build());
+        verify(tracer).capture(Transition.builder()
+            .from(globalState)
+            .actionPerformerId(actor2Id)
+            .methodName(actor2Method)
+            .actionReceiverId(actor3Id)
+            .to(new GlobalState(ImmutableMap.<ActorDefinition, LocalState>builder()
+                .put(actor1, actor1LocalState)
+                .put(actor2, newActor2LocalState)
+                .put(actor3, newActor3LocalState)
+                .put(actor4, actor4LocalState)
+                .build()))
+            .build());
+        verifyNoMoreInteractions(intransitiveActionTemplateExecutor,
+            transitiveActionTemplateExecutor,
+            stateMerger,
+            tracer);
     }
 
     @Value
