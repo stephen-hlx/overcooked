@@ -8,6 +8,9 @@ import overcooked.core.action.*;
 import overcooked.core.actor.ActorDefinition;
 import overcooked.core.actor.ActorStateTransformerConfig;
 import overcooked.core.graph.GraphBuilder;
+import overcooked.core.visual.DotGraphBuilder;
+import overcooked.core.visual.GlobalStatePrinter;
+import overcooked.core.visual.TransitionPrinter;
 import overcooked.sample.diehard.model.Jar3;
 import overcooked.sample.diehard.model.Jar5;
 
@@ -112,5 +115,8 @@ public class ModelVerifier {
             .build();
 
         stateMachine.run(globalState, actorActionConfig, graphBuilder);
+
+        DotGraphBuilder dotGraphBuilder = new DotGraphBuilder(new TransitionPrinter(new GlobalStatePrinter()));
+        System.out.println(dotGraphBuilder.build(graphBuilder.getTransitions()));
     }
 }

@@ -28,4 +28,8 @@ public class GraphBuilder {
     public void capture(Transition transition) {
         this.transitions.add(transition);
     }
+
+    public Set<Transition> getTransitions() {
+        return ImmutableSet.copyOf(this.transitions);
+    }
 }

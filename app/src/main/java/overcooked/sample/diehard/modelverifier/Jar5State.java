@@ -10,4 +10,8 @@ import overcooked.core.actor.LocalState;
 @Value
 public class Jar5State implements LocalState {
     int occupancy;
+
+    public String toString() {
+        return "occupancy=" + occupancy;
+    }
 }
