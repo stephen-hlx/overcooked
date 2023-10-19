@@ -7,7 +7,7 @@ import overcooked.core.*;
 import overcooked.core.action.*;
 import overcooked.core.actor.ActorDefinition;
 import overcooked.core.actor.ActorStateTransformerConfig;
-import overcooked.core.tracing.GraphTracer;
+import overcooked.core.tracing.GraphBuilder;
 import overcooked.sample.diehard.model.Jar3;
 import overcooked.sample.diehard.model.Jar5;
 
@@ -105,12 +105,12 @@ public class ModelVerifier {
                     .build())
                 .build())
             .build();
-        GraphTracer graphTracer = new GraphTracer();
+        GraphBuilder graphBuilder = new GraphBuilder();
         StateMachine stateMachine = StateMachine.builder()
             .globalStateVerifier(new FourLiterVerifier())
             .stateMachineAdvancer(stateMachineAdvancer)
             .build();
 
-        stateMachine.run(globalState, actorActionConfig, graphTracer);
+        stateMachine.run(globalState, actorActionConfig, graphBuilder);
     }
 }

@@ -2,7 +2,7 @@ package overcooked.core;
 
 
 import lombok.Builder;
-import overcooked.core.tracing.GraphTracer;
+import overcooked.core.tracing.GraphBuilder;
 
 import java.util.*;
 
@@ -13,15 +13,15 @@ public class StateMachine {
 
     public void run(GlobalState initialState,
                     ActorActionConfig actorActionConfig,
-                    GraphTracer graphTracer) {
+                    GraphBuilder graphBuilder) {
         Set<GlobalState> visited = new HashSet<>();
-        doRun(initialState, actorActionConfig, visited, graphTracer);
+        doRun(initialState, actorActionConfig, visited, graphBuilder);
     }
 
     private void doRun(GlobalState initialState,
                        ActorActionConfig actorActionConfig,
                        Set<GlobalState> visited,
-                       GraphTracer graphTracer) {
+                       GraphBuilder graphBuilder) {
         Queue<GlobalState> queue = new ArrayDeque<>();
         queue.add(initialState);
         while (!queue.isEmpty()) {
@@ -30,7 +30,7 @@ public class StateMachine {
                 continue;
             }
             globalStateVerifier.verify(current);
-            queue.addAll(stateMachineAdvancer.computeNext(current, actorActionConfig, graphTracer).stream()
+            queue.addAll(stateMachineAdvancer.computeNext(current, actorActionConfig, graphBuilder).stream()
                 .filter(globalState -> !visited.contains(globalState))
                 .toList());
             visited.add(current);
