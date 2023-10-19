@@ -1,4 +1,4 @@
-package overcooked.core.tracing;
+package overcooked.core.graph;
 
 import com.google.common.collect.ImmutableSet;
 import overcooked.core.GlobalState;

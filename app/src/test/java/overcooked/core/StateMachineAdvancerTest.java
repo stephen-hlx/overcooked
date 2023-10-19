@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test;
 import overcooked.core.action.*;
 import overcooked.core.actor.ActorDefinition;
 import overcooked.core.actor.LocalState;
-import overcooked.core.tracing.GraphBuilder;
-import overcooked.core.tracing.Transition;
+import overcooked.core.graph.GraphBuilder;
+import overcooked.core.graph.Transition;
 
 import java.util.Set;
 

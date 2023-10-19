@@ -1,4 +1,4 @@
-package overcooked.core.tracing;
+package overcooked.core.graph;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -31,7 +31,7 @@ class GraphBuilderTest {
         LocalState actor2LocalState = new TestLocalState(2, 0);
         LocalState actor3LocalState = new TestLocalState(3, 0);
         LocalState actor4LocalState = new TestLocalState(4, 0);
-        LocalState newActor1LocalState = new TestLocalState(1, 0);
+        LocalState newActor1LocalState = new TestLocalState(1, 1);
         LocalState newActor2LocalState = new TestLocalState(2, 1);
         LocalState newActor3LocalState = new TestLocalState(3, 1);
 

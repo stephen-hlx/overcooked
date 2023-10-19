@@ -1,4 +1,4 @@
-package overcooked.core.tracing;
+package overcooked.core.graph;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

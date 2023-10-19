@@ -2,7 +2,7 @@ package overcooked.core;
 
 
 import lombok.Builder;
-import overcooked.core.tracing.GraphBuilder;
+import overcooked.core.graph.GraphBuilder;
 
 import java.util.*;
 
