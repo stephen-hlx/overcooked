@@ -2,7 +2,7 @@ package overcooked.core;
 
 
 import lombok.Builder;
-import overcooked.core.analysis.Analyser;
+import overcooked.analysis.Analyser;
 
 import java.util.*;
 

@@ -1,11 +1,11 @@
-package overcooked.core.visual;
+package overcooked.visual;
 
 import com.google.common.collect.ImmutableMap;
 import org.junit.jupiter.api.Test;
 import overcooked.core.GlobalState;
 import overcooked.core.actor.ActorDefinition;
 import overcooked.core.actor.LocalState;
-import overcooked.core.analysis.Transition;
+import overcooked.analysis.Transition;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

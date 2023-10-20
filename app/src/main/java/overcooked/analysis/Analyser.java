@@ -1,4 +1,4 @@
-package overcooked.core.analysis;
+package overcooked.analysis;
 
 import com.google.common.collect.ImmutableSet;
 import overcooked.core.GlobalState;

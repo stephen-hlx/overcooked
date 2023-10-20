@@ -8,10 +8,10 @@ import overcooked.core.*;
 import overcooked.core.action.*;
 import overcooked.core.actor.ActorDefinition;
 import overcooked.core.actor.ActorStateTransformerConfig;
-import overcooked.core.analysis.Analyser;
-import overcooked.core.visual.DotGraphBuilder;
-import overcooked.core.visual.GlobalStatePrinter;
-import overcooked.core.visual.TransitionPrinter;
+import overcooked.analysis.Analyser;
+import overcooked.visual.DotGraphBuilder;
+import overcooked.visual.GlobalStatePrinter;
+import overcooked.visual.TransitionPrinter;
 import overcooked.sample.diehard.model.Jar3;
 import overcooked.sample.diehard.model.Jar5;
 

@@ -5,8 +5,8 @@ import overcooked.core.action.IntransitiveActionTemplateExecutor;
 import overcooked.core.action.TransitiveActionTemplateExecutor;
 import overcooked.core.actor.ActorDefinition;
 import overcooked.core.actor.LocalState;
-import overcooked.core.analysis.Analyser;
-import overcooked.core.analysis.Transition;
+import overcooked.analysis.Analyser;
+import overcooked.analysis.Transition;
 
 import java.util.Collections;
 import java.util.HashSet;

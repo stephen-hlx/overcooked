@@ -1,7 +1,7 @@
-package overcooked.core.visual;
+package overcooked.visual;
 
 import lombok.RequiredArgsConstructor;
-import overcooked.core.analysis.Transition;
+import overcooked.analysis.Transition;
 
 import java.util.Set;
 import java.util.stream.Collectors;

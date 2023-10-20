@@ -1,8 +1,8 @@
-package overcooked.core.visual;
+package overcooked.visual;
 
 import com.google.common.base.Strings;
 import lombok.RequiredArgsConstructor;
-import overcooked.core.analysis.Transition;
+import overcooked.analysis.Transition;
 
 @RequiredArgsConstructor
 public class TransitionPrinter {

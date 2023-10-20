@@ -1,4 +1,4 @@
-package overcooked.core.visual;
+package overcooked.visual;
 
 import com.google.common.collect.ImmutableMap;
 import org.junit.jupiter.api.Test;

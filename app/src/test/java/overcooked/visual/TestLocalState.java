@@ -1,4 +1,4 @@
-package overcooked.core.visual;
+package overcooked.visual;
 
 import lombok.Value;
 import overcooked.core.actor.LocalState;

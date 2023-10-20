@@ -1,9 +1,13 @@
-package overcooked.core.analysis;
+package overcooked.analysis;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
+import overcooked.analysis.Analyser;
+import overcooked.analysis.Arc;
+import overcooked.analysis.GlobalStateNode;
+import overcooked.analysis.Transition;
 import overcooked.core.GlobalState;
 import overcooked.core.actor.ActorDefinition;
 import overcooked.core.actor.LocalState;

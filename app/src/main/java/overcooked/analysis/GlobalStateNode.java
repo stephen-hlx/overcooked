@@ -1,4 +1,4 @@
-package overcooked.core.analysis;
+package overcooked.analysis;
 
 import overcooked.core.GlobalState;
 

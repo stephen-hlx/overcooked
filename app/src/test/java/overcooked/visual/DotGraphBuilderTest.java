@@ -1,8 +1,10 @@
-package overcooked.core.visual;
+package overcooked.visual;
 
 import com.google.common.collect.ImmutableSet;
 import org.junit.jupiter.api.Test;
-import overcooked.core.analysis.Transition;
+import overcooked.analysis.Transition;
+import overcooked.visual.DotGraphBuilder;
+import overcooked.visual.TransitionPrinter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;

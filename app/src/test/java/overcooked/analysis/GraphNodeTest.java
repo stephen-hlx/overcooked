@@ -1,7 +1,8 @@
-package overcooked.core.analysis;
+package overcooked.analysis;
 
 import com.google.common.collect.ImmutableSet;
 import org.junit.jupiter.api.Test;
+import overcooked.analysis.GraphNode;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

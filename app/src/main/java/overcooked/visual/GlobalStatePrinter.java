@@ -1,4 +1,4 @@
-package overcooked.core.visual;
+package overcooked.visual;
 
 import overcooked.core.GlobalState;
 import overcooked.core.actor.ActorDefinition;
