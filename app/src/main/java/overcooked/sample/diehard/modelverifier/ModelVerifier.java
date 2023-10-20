@@ -3,6 +3,7 @@ package overcooked.sample.diehard.modelverifier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import lombok.extern.java.Log;
 import overcooked.core.*;
 import overcooked.core.action.*;
 import overcooked.core.actor.ActorDefinition;
@@ -16,6 +17,7 @@ import overcooked.sample.diehard.model.Jar5;
 
 import java.util.Set;
 
+@Log
 public class ModelVerifier {
     private static final ActorDefinition JAR3 = ActorDefinition.builder()
         .id("jar3")
@@ -117,8 +119,8 @@ public class ModelVerifier {
         stateMachine.run(globalState, actorActionConfig, analyser);
 
         DotGraphBuilder dotGraphBuilder = new DotGraphBuilder(new TransitionPrinter(new GlobalStatePrinter()));
-        System.out.println(dotGraphBuilder.build(analyser.getTransitions()));
-        System.out.println(analyser.getValidationFailingGlobalStates().size());
-        analyser.getValidationFailingGlobalStates().forEach(System.out::println);
+        log.info(dotGraphBuilder.build(analyser.getTransitions()));
+        log.info(String.valueOf(analyser.getValidationFailingGlobalStates().size()));
+        analyser.getValidationFailingGlobalStates().forEach(gs -> log.info(gs.toString()));
     }
 }
