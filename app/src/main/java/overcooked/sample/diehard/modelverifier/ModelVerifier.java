@@ -118,5 +118,7 @@ public class ModelVerifier {
 
         DotGraphBuilder dotGraphBuilder = new DotGraphBuilder(new TransitionPrinter(new GlobalStatePrinter()));
         System.out.println(dotGraphBuilder.build(analyser.getTransitions()));
+        System.out.println(analyser.getValidationFailingGlobalStates().size());
+        analyser.getValidationFailingGlobalStates().forEach(System.out::println);
     }
 }

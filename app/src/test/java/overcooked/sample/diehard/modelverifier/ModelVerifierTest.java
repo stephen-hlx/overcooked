@@ -1,14 +1,11 @@
 package overcooked.sample.diehard.modelverifier;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import overcooked.core.GlobalStateVerificationException;
 
 class ModelVerifierTest {
     @Test
-    void works() {
-        Assertions.assertThatThrownBy(() -> ModelVerifier.main(new String[]{""}))
-            .isInstanceOf(GlobalStateVerificationException.class);
+    void can_run_without_error() {
+        ModelVerifier.main(new String[]{});
     }
 
 }

@@ -1,18 +1,19 @@
 package overcooked.sample.diehard.modelverifier;
 
 import overcooked.core.GlobalState;
-import overcooked.core.GlobalStateVerificationException;
 import overcooked.core.GlobalStateVerifier;
+import overcooked.core.actor.LocalState;
 
 public class FourLiterVerifier implements GlobalStateVerifier {
     @Override
-    public void verify(GlobalState globalState) throws GlobalStateVerificationException {
-        globalState.getLocalStates().values().forEach(localState -> {
+    public boolean validate(GlobalState globalState) {
+        for (LocalState localState : globalState.getLocalStates().values()) {
             if (localState instanceof Jar5State) {
                 if (((Jar5State) localState).getOccupancy() == 4) {
-                    throw new GlobalStateVerificationException("Found it");
+                    return false;
                 }
             }
-        });
+        }
+        return true;
     }
 }

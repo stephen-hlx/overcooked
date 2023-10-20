@@ -10,6 +10,7 @@ import java.util.Set;
 
 public class Analyser {
     private final Set<Transition> transitions = new HashSet<>();
+    private final Set<GlobalState> validationFailingGlobalStates = new HashSet<>();
 
     Set<GlobalStateNode> getNodes() {
         Map<GlobalState, GlobalStateNode> nodes = new HashMap<>();
@@ -31,5 +32,13 @@ public class Analyser {
 
     public Set<Transition> getTransitions() {
         return ImmutableSet.copyOf(this.transitions);
+    }
+
+    public void addValidationFailingNode(GlobalState globalState) {
+        validationFailingGlobalStates.add(globalState);
+    }
+
+    public Set<GlobalState> getValidationFailingGlobalStates() {
+        return ImmutableSet.copyOf(validationFailingGlobalStates);
     }
 }

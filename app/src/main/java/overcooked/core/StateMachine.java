@@ -29,7 +29,11 @@ public class StateMachine {
             if (visited.contains(current)) {
                 continue;
             }
-            globalStateVerifier.verify(current);
+            if (!globalStateVerifier.validate(current)) {
+                analyser.addValidationFailingNode(current);
+                visited.add(current);
+                continue;
+            }
             queue.addAll(stateMachineAdvancer.computeNext(current, actorActionConfig, analyser).stream()
                 .filter(globalState -> !visited.contains(globalState))
                 .toList());
