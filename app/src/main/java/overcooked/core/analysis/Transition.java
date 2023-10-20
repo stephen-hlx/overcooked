@@ -1,4 +1,4 @@
-package overcooked.core.graph;
+package overcooked.core.analysis;
 
 import lombok.Builder;
 import lombok.Value;

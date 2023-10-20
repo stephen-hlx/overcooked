@@ -1,4 +1,4 @@
-package overcooked.core.graph;
+package overcooked.core.analysis;
 
 import com.google.common.collect.ImmutableSet;
 import org.junit.jupiter.api.Test;

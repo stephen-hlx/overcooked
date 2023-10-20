@@ -1,4 +1,4 @@
-package overcooked.core.graph;
+package overcooked.core.analysis;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -10,8 +10,8 @@ import overcooked.core.actor.LocalState;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class GraphBuilderTest {
-    private final GraphBuilder graphBuilder = new GraphBuilder();
+class AnalyserTest {
+    private final Analyser analyser = new Analyser();
 
     @Test
     void builds_graph_correctly() {
@@ -74,7 +74,7 @@ class GraphBuilderTest {
             .methodName(actor4Method)
             .build(), globalStateNode1);
 
-        graphBuilder.capture(Transition.builder()
+        analyser.capture(Transition.builder()
             .from(globalState)
             .actionPerformerId(actor1Id)
             .methodName(actor1Method)
@@ -86,7 +86,7 @@ class GraphBuilderTest {
                 .put(actor4, actor4LocalState)
                 .build()))
             .build());
-        graphBuilder.capture(Transition.builder()
+        analyser.capture(Transition.builder()
             .from(globalState)
             .actionPerformerId(actor2Id)
             .methodName(actor2Method)
@@ -98,7 +98,7 @@ class GraphBuilderTest {
                 .put(actor4, actor4LocalState)
                 .build()))
             .build());
-        graphBuilder.capture(Transition.builder()
+        analyser.capture(Transition.builder()
             .from(globalState)
             .actionPerformerId(actor4Id)
             .methodName(actor4Method)
@@ -113,7 +113,7 @@ class GraphBuilderTest {
 
         // the node may not take into account fields other than id
         // Comparing field by field is needed because
-        assertThat(graphBuilder.getNodes())
+        assertThat(analyser.getNodes())
             .usingFieldByFieldElementComparator()
             .isEqualTo(ImmutableSet.builder()
             .add(globalStateNode1)

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import overcooked.core.GlobalState;
 import overcooked.core.actor.ActorDefinition;
 import overcooked.core.actor.LocalState;
-import overcooked.core.graph.Transition;
+import overcooked.core.analysis.Transition;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

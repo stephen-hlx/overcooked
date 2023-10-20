@@ -5,8 +5,8 @@ import overcooked.core.action.IntransitiveActionTemplateExecutor;
 import overcooked.core.action.TransitiveActionTemplateExecutor;
 import overcooked.core.actor.ActorDefinition;
 import overcooked.core.actor.LocalState;
-import overcooked.core.graph.GraphBuilder;
-import overcooked.core.graph.Transition;
+import overcooked.core.analysis.Analyser;
+import overcooked.core.analysis.Transition;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -22,7 +22,7 @@ public class StateMachineAdvancer {
 
     public Set<GlobalState> computeNext(GlobalState globalState,
                                         ActorActionConfig actorActionConfig,
-                                        GraphBuilder graphBuilder) {
+                                        Analyser analyser) {
         Set<GlobalState> nextStates = new HashSet<>();
 
         globalState.getLocalStates().forEach((actorDefinition, localState) ->
@@ -51,7 +51,7 @@ public class StateMachineAdvancer {
                     }
                     GlobalState newGlobalState = stateMerger.merge(globalState, newLocalStates);
                     transitionBuilder.to(newGlobalState);
-                    graphBuilder.capture(transitionBuilder.build());
+                    analyser.capture(transitionBuilder.build());
                     nextStates.add(newGlobalState);
                 }));
 

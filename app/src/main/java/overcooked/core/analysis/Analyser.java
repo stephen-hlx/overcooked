@@ -1,4 +1,4 @@
-package overcooked.core.graph;
+package overcooked.core.analysis;
 
 import com.google.common.collect.ImmutableSet;
 import overcooked.core.GlobalState;
@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class GraphBuilder {
+public class Analyser {
     private final Set<Transition> transitions = new HashSet<>();
 
     Set<GlobalStateNode> getNodes() {

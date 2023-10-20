@@ -7,7 +7,7 @@ import overcooked.core.*;
 import overcooked.core.action.*;
 import overcooked.core.actor.ActorDefinition;
 import overcooked.core.actor.ActorStateTransformerConfig;
-import overcooked.core.graph.GraphBuilder;
+import overcooked.core.analysis.Analyser;
 import overcooked.core.visual.DotGraphBuilder;
 import overcooked.core.visual.GlobalStatePrinter;
 import overcooked.core.visual.TransitionPrinter;
@@ -108,15 +108,15 @@ public class ModelVerifier {
                     .build())
                 .build())
             .build();
-        GraphBuilder graphBuilder = new GraphBuilder();
+        Analyser analyser = new Analyser();
         StateMachine stateMachine = StateMachine.builder()
             .globalStateVerifier(new FourLiterVerifier())
             .stateMachineAdvancer(stateMachineAdvancer)
             .build();
 
-        stateMachine.run(globalState, actorActionConfig, graphBuilder);
+        stateMachine.run(globalState, actorActionConfig, analyser);
 
         DotGraphBuilder dotGraphBuilder = new DotGraphBuilder(new TransitionPrinter(new GlobalStatePrinter()));
-        System.out.println(dotGraphBuilder.build(graphBuilder.getTransitions()));
+        System.out.println(dotGraphBuilder.build(analyser.getTransitions()));
     }
 }

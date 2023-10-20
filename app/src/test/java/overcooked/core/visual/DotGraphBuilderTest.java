@@ -2,7 +2,7 @@ package overcooked.core.visual;
 
 import com.google.common.collect.ImmutableSet;
 import org.junit.jupiter.api.Test;
-import overcooked.core.graph.Transition;
+import overcooked.core.analysis.Transition;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;

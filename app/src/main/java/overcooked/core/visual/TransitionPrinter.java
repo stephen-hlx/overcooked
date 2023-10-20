@@ -2,7 +2,7 @@ package overcooked.core.visual;
 
 import com.google.common.base.Strings;
 import lombok.RequiredArgsConstructor;
-import overcooked.core.graph.Transition;
+import overcooked.core.analysis.Transition;
 
 @RequiredArgsConstructor
 public class TransitionPrinter {
