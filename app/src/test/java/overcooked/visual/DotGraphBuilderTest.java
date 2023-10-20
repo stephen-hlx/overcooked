@@ -3,11 +3,12 @@ package overcooked.visual;
 import com.google.common.collect.ImmutableSet;
 import org.junit.jupiter.api.Test;
 import overcooked.analysis.Transition;
-import overcooked.visual.DotGraphBuilder;
-import overcooked.visual.TransitionPrinter;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 class DotGraphBuilderTest {
     private final TransitionPrinter transitionPrinter = mock(TransitionPrinter.class);

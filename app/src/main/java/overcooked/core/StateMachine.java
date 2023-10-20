@@ -4,7 +4,10 @@ package overcooked.core;
 import lombok.Builder;
 import overcooked.analysis.Analyser;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.HashSet;
+import java.util.Queue;
+import java.util.Set;
 
 @Builder
 public class StateMachine {

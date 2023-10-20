@@ -1,6 +1,9 @@
 package overcooked.core.action;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Value;
 
 @RequiredArgsConstructor
 @Getter(AccessLevel.PACKAGE)

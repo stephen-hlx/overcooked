@@ -2,14 +2,21 @@ package overcooked.core.action;
 
 import com.google.common.collect.ImmutableMap;
 import org.junit.jupiter.api.Test;
-import overcooked.core.actor.*;
+import overcooked.core.actor.ActorDefinition;
+import overcooked.core.actor.ActorFactory;
+import overcooked.core.actor.ActorStateTransformerConfig;
+import overcooked.core.actor.LocalState;
+import overcooked.core.actor.LocalStateExtractor;
 import overcooked.sample.diehard.model.Jar5;
 import overcooked.sample.diehard.modelverifier.Jar3State;
 import overcooked.sample.diehard.modelverifier.Jar5State;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 class IntransitiveActionTemplateExecutorTest {
     private final IntransitiveActionTaker intransitiveActionTaker = mock(IntransitiveActionTaker.class);

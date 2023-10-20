@@ -5,16 +5,25 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
-import overcooked.core.action.*;
-import overcooked.core.actor.ActorDefinition;
-import overcooked.core.actor.LocalState;
 import overcooked.analysis.Analyser;
 import overcooked.analysis.Transition;
+import overcooked.core.action.ActionTemplate;
+import overcooked.core.action.IntransitiveActionTemplateExecutor;
+import overcooked.core.action.IntransitiveActionType;
+import overcooked.core.action.ParamTemplate;
+import overcooked.core.action.TransitiveActionTemplateExecutor;
+import overcooked.core.action.TransitiveActionType;
+import overcooked.core.actor.ActorDefinition;
+import overcooked.core.actor.LocalState;
 
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 class StateMachineAdvancerTest {
     private final IntransitiveActionTemplateExecutor intransitiveActionTemplateExecutor =

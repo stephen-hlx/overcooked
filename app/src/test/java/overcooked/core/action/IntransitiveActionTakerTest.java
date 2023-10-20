@@ -7,7 +7,12 @@ import overcooked.sample.diehard.model.Jar3;
 import overcooked.sample.diehard.model.Jar5;
 import overcooked.sample.diehard.modelverifier.Jar3State;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
 
 class IntransitiveActionTakerTest {
     private final ActionTemplateMaterialiser actionTemplateMaterialiser = mock(ActionTemplateMaterialiser.class);
