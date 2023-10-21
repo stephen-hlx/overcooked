@@ -13,7 +13,7 @@ import overcooked.analysis.GraphBuilder;
  */
 @Builder
 public class StateMachine {
-  private final StateMachineAdvancer stateMachineAdvancer;
+  private final StateMachineDriver stateMachineDriver;
   private final GlobalStateVerifier globalStateVerifier;
 
   public void run(GlobalState initialState,
@@ -40,7 +40,7 @@ public class StateMachine {
         continue;
       }
       queue.addAll(
-          stateMachineAdvancer.computeNext(current, actorActionConfig, graphBuilder).stream()
+          stateMachineDriver.computeNext(current, actorActionConfig, graphBuilder).stream()
               .filter(globalState -> !visited.contains(globalState))
               .toList());
       visited.add(current);

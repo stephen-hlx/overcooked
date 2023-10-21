@@ -9,7 +9,7 @@ import overcooked.analysis.GraphBuilder;
 import overcooked.core.ActorActionConfig;
 import overcooked.core.GlobalState;
 import overcooked.core.StateMachine;
-import overcooked.core.StateMachineAdvancer;
+import overcooked.core.StateMachineDriver;
 import overcooked.core.StateMerger;
 import overcooked.core.action.ActionTaker;
 import overcooked.core.action.ActionTemplate;
@@ -114,7 +114,7 @@ public class ModelVerifier {
     ActionTaker actionTaker = new ActionTaker();
     ActionTemplateMaterialiser materialiser = new ActionTemplateMaterialiser();
 
-    StateMachineAdvancer stateMachineAdvancer = StateMachineAdvancer.builder()
+    StateMachineDriver stateMachineDriver = StateMachineDriver.builder()
         .stateMerger(new StateMerger())
         .intransitiveActionTemplateExecutor(IntransitiveActionTemplateExecutor.builder()
             .config(actorStateTransformerConfig)
@@ -134,7 +134,7 @@ public class ModelVerifier {
     GraphBuilder graphBuilder = new GraphBuilder();
     StateMachine stateMachine = StateMachine.builder()
         .globalStateVerifier(new FourLiterVerifier())
-        .stateMachineAdvancer(stateMachineAdvancer)
+        .stateMachineDriver(stateMachineDriver)
         .build();
 
     stateMachine.run(globalState, actorActionConfig, graphBuilder);

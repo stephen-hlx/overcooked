@@ -24,14 +24,14 @@ import overcooked.core.action.TransitiveActionType;
 import overcooked.core.actor.ActorDefinition;
 import overcooked.core.actor.LocalState;
 
-class StateMachineAdvancerTest {
+class StateMachineDriverTest {
   private final IntransitiveActionTemplateExecutor intransitiveActionTemplateExecutor =
       mock(IntransitiveActionTemplateExecutor.class);
   private final TransitiveActionTemplateExecutor transitiveActionTemplateExecutor =
       mock(TransitiveActionTemplateExecutor.class);
 
   private final StateMerger stateMerger = spy(new StateMerger());
-  private final StateMachineAdvancer stateMachineAdvancer = StateMachineAdvancer.builder()
+  private final StateMachineDriver stateMachineDriver = StateMachineDriver.builder()
       .intransitiveActionTemplateExecutor(intransitiveActionTemplateExecutor)
       .transitiveActionTemplateExecutor(transitiveActionTemplateExecutor)
       .stateMerger(stateMerger)
@@ -92,7 +92,7 @@ class StateMachineAdvancerTest {
 
     GraphBuilder graphBuilder = mock(GraphBuilder.class);
 
-    assertThat(stateMachineAdvancer.computeNext(globalState, config, graphBuilder))
+    assertThat(stateMachineDriver.computeNext(globalState, config, graphBuilder))
         .isEqualTo(ImmutableSet.of(
             new GlobalState(ImmutableMap.<ActorDefinition, LocalState>builder()
                 .put(actor1, newActor1LocalState)
