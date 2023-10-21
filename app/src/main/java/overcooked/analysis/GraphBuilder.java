@@ -8,22 +8,32 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class Analyser {
+public class GraphBuilder {
     private final Set<Transition> transitions = new HashSet<>();
     private final Set<GlobalState> validationFailingGlobalStates = new HashSet<>();
 
     Set<GlobalStateNode> getNodes() {
         Map<GlobalState, GlobalStateNode> nodes = new HashMap<>();
         transitions.forEach(transition -> {
-            GlobalStateNode from = nodes.computeIfAbsent(transition.getFrom(), GlobalStateNode::new);
-            GlobalStateNode to = nodes.computeIfAbsent(transition.getTo(), GlobalStateNode::new);
+            GlobalStateNode from = getTo(nodes, transition.getFrom());
+            GlobalStateNode to = getTo(nodes, transition.getTo());
             from.addArc(Arc.builder()
                 .actionPerformerId(transition.getActionPerformerId())
                 .methodName(transition.getMethodName())
                 .actionReceiverId(transition.getActionReceiverId())
                 .build(), to);
+            to.addReverseArc(from);
         });
         return ImmutableSet.copyOf(nodes.values());
+    }
+
+    private GlobalStateNode getTo(Map<GlobalState, GlobalStateNode> nodes, GlobalState transition) {
+        return nodes.computeIfAbsent(transition,
+            globalState -> new GlobalStateNode(isFailureNode(globalState), globalState));
+    }
+
+    private boolean isFailureNode(GlobalState fromGlobalState) {
+        return validationFailingGlobalStates.contains(fromGlobalState);
     }
 
     public void capture(Transition transition) {

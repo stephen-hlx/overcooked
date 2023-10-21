@@ -2,20 +2,15 @@ package overcooked.analysis;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import lombok.Value;
 import org.junit.jupiter.api.Test;
-import overcooked.analysis.Analyser;
-import overcooked.analysis.Arc;
-import overcooked.analysis.GlobalStateNode;
-import overcooked.analysis.Transition;
 import overcooked.core.GlobalState;
 import overcooked.core.actor.ActorDefinition;
 import overcooked.core.actor.LocalState;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class AnalyserTest {
-    private final Analyser analyser = new Analyser();
+class GraphBuilderTest {
+    private final GraphBuilder graphBuilder = new GraphBuilder();
 
     @Test
     void builds_graph_correctly() {
@@ -47,8 +42,8 @@ class AnalyserTest {
                 .put(actor4, actor4LocalState)
                 .build());
 
-        GlobalStateNode globalStateNode1 = new GlobalStateNode(globalState);
-        GlobalStateNode globalStateNode2 = new GlobalStateNode(
+        GlobalStateNode globalStateNode1 = new GlobalStateNode(false, globalState);
+        GlobalStateNode globalStateNode2 = new GlobalStateNode(false,
             new GlobalState(ImmutableMap.<ActorDefinition, LocalState>builder()
                 .put(actor1, newActor1LocalState)
                 .put(actor2, actor2LocalState)
@@ -56,29 +51,37 @@ class AnalyserTest {
                 .put(actor4, actor4LocalState)
                 .build())
         );
+        GlobalState failureState = new GlobalState(ImmutableMap.<ActorDefinition, LocalState>builder()
+            .put(actor1, actor1LocalState)
+            .put(actor2, newActor2LocalState)
+            .put(actor3, newActor3LocalState)
+            .put(actor4, actor4LocalState)
+            .build());
         GlobalStateNode globalStateNode3 = new GlobalStateNode(
-            new GlobalState(ImmutableMap.<ActorDefinition, LocalState>builder()
-                .put(actor1, actor1LocalState)
-                .put(actor2, newActor2LocalState)
-                .put(actor3, newActor3LocalState)
-                .put(actor4, actor4LocalState)
-                .build())
+            true,
+            failureState
         );
+
         globalStateNode1.addArc(Arc.builder()
             .actionPerformerId(actor1Id)
             .methodName(actor1Method)
             .build(), globalStateNode2);
+        globalStateNode2.addReverseArc(globalStateNode1);
+
         globalStateNode1.addArc(Arc.builder()
             .actionPerformerId(actor2Id)
             .methodName(actor2Method)
             .actionReceiverId(actor3Id)
             .build(), globalStateNode3);
+        globalStateNode3.addReverseArc(globalStateNode1);
+
         globalStateNode1.addArc(Arc.builder()
             .actionPerformerId(actor4Id)
             .methodName(actor4Method)
             .build(), globalStateNode1);
+        globalStateNode1.addReverseArc(globalStateNode1);
 
-        analyser.capture(Transition.builder()
+        graphBuilder.capture(Transition.builder()
             .from(globalState)
             .actionPerformerId(actor1Id)
             .methodName(actor1Method)
@@ -90,19 +93,14 @@ class AnalyserTest {
                 .put(actor4, actor4LocalState)
                 .build()))
             .build());
-        analyser.capture(Transition.builder()
+        graphBuilder.capture(Transition.builder()
             .from(globalState)
             .actionPerformerId(actor2Id)
             .methodName(actor2Method)
             .actionReceiverId(actor3Id)
-            .to(new GlobalState(ImmutableMap.<ActorDefinition, LocalState>builder()
-                .put(actor1, actor1LocalState)
-                .put(actor2, newActor2LocalState)
-                .put(actor3, newActor3LocalState)
-                .put(actor4, actor4LocalState)
-                .build()))
+            .to(failureState)
             .build());
-        analyser.capture(Transition.builder()
+        graphBuilder.capture(Transition.builder()
             .from(globalState)
             .actionPerformerId(actor4Id)
             .methodName(actor4Method)
@@ -114,21 +112,16 @@ class AnalyserTest {
                 .put(actor4, actor4LocalState)
                 .build()))
             .build());
+        graphBuilder.addValidationFailingNode(failureState);
 
         // the node may not take into account fields other than id
         // Comparing field by field is needed because
-        assertThat(analyser.getNodes())
+        assertThat(graphBuilder.getNodes())
             .usingFieldByFieldElementComparator()
             .isEqualTo(ImmutableSet.builder()
-            .add(globalStateNode1)
-            .add(globalStateNode2)
-            .add(globalStateNode3)
-            .build());
-    }
-
-    @Value
-    private static class TestLocalState implements LocalState {
-        int a;
-        int b;
+                .add(globalStateNode1)
+                .add(globalStateNode2)
+                .add(globalStateNode3)
+                .build());
     }
 }

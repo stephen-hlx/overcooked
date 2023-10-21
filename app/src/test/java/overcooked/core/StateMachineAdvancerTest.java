@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
-import overcooked.analysis.Analyser;
+import overcooked.analysis.GraphBuilder;
 import overcooked.analysis.Transition;
 import overcooked.core.action.ActionTemplate;
 import overcooked.core.action.IntransitiveActionTemplateExecutor;
@@ -90,9 +90,9 @@ class StateMachineAdvancerTest {
                 .put(actor4, actor4LocalState)
                 .build());
 
-        Analyser analyser = mock(Analyser.class);
+        GraphBuilder graphBuilder = mock(GraphBuilder.class);
 
-        assertThat(stateMachineAdvancer.computeNext(globalState, config, analyser))
+        assertThat(stateMachineAdvancer.computeNext(globalState, config, graphBuilder))
             .isEqualTo(ImmutableSet.of(
                 new GlobalState(ImmutableMap.<ActorDefinition, LocalState>builder()
                     .put(actor1, newActor1LocalState)
@@ -116,7 +116,7 @@ class StateMachineAdvancerTest {
             actor2, newActor2LocalState,
             actor3, newActor3LocalState
         ));
-        verify(analyser).capture(Transition.builder()
+        verify(graphBuilder).capture(Transition.builder()
                 .from(globalState)
                 .actionPerformerId(actor1Id)
                 .methodName(actor1Method)
@@ -128,7 +128,7 @@ class StateMachineAdvancerTest {
                     .put(actor4, actor4LocalState)
                     .build()))
             .build());
-        verify(analyser).capture(Transition.builder()
+        verify(graphBuilder).capture(Transition.builder()
             .from(globalState)
             .actionPerformerId(actor2Id)
             .methodName(actor2Method)
@@ -143,7 +143,7 @@ class StateMachineAdvancerTest {
         verifyNoMoreInteractions(intransitiveActionTemplateExecutor,
             transitiveActionTemplateExecutor,
             stateMerger,
-            analyser);
+            graphBuilder);
     }
 
     @Value

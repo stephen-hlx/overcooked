@@ -21,7 +21,7 @@ import overcooked.core.action.TransitiveActionTemplateExecutor;
 import overcooked.core.action.TransitiveActionType;
 import overcooked.core.actor.ActorDefinition;
 import overcooked.core.actor.ActorStateTransformerConfig;
-import overcooked.analysis.Analyser;
+import overcooked.analysis.GraphBuilder;
 import overcooked.visual.DotGraphBuilder;
 import overcooked.visual.GlobalStatePrinter;
 import overcooked.visual.TransitionPrinter;
@@ -123,17 +123,17 @@ public class ModelVerifier {
                     .build())
                 .build())
             .build();
-        Analyser analyser = new Analyser();
+        GraphBuilder graphBuilder = new GraphBuilder();
         StateMachine stateMachine = StateMachine.builder()
             .globalStateVerifier(new FourLiterVerifier())
             .stateMachineAdvancer(stateMachineAdvancer)
             .build();
 
-        stateMachine.run(globalState, actorActionConfig, analyser);
+        stateMachine.run(globalState, actorActionConfig, graphBuilder);
 
         DotGraphBuilder dotGraphBuilder = new DotGraphBuilder(new TransitionPrinter(new GlobalStatePrinter()));
-        log.info(dotGraphBuilder.build(analyser.getTransitions()));
-        log.info(String.valueOf(analyser.getValidationFailingGlobalStates().size()));
-        analyser.getValidationFailingGlobalStates().forEach(gs -> log.info(gs.toString()));
+        log.info(dotGraphBuilder.build(graphBuilder.getTransitions()));
+        log.info(String.valueOf(graphBuilder.getValidationFailingGlobalStates().size()));
+        graphBuilder.getValidationFailingGlobalStates().forEach(gs -> log.info(gs.toString()));
     }
 }

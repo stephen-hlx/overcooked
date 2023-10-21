@@ -2,7 +2,7 @@ package overcooked.core;
 
 
 import lombok.Builder;
-import overcooked.analysis.Analyser;
+import overcooked.analysis.GraphBuilder;
 
 import java.util.ArrayDeque;
 import java.util.HashSet;
@@ -16,15 +16,15 @@ public class StateMachine {
 
     public void run(GlobalState initialState,
                     ActorActionConfig actorActionConfig,
-                    Analyser analyser) {
+                    GraphBuilder graphBuilder) {
         Set<GlobalState> visited = new HashSet<>();
-        doRun(initialState, actorActionConfig, visited, analyser);
+        doRun(initialState, actorActionConfig, visited, graphBuilder);
     }
 
     private void doRun(GlobalState initialState,
                        ActorActionConfig actorActionConfig,
                        Set<GlobalState> visited,
-                       Analyser analyser) {
+                       GraphBuilder graphBuilder) {
         Queue<GlobalState> queue = new ArrayDeque<>();
         queue.add(initialState);
         while (!queue.isEmpty()) {
@@ -33,11 +33,11 @@ public class StateMachine {
                 continue;
             }
             if (!globalStateVerifier.validate(current)) {
-                analyser.addValidationFailingNode(current);
+                graphBuilder.addValidationFailingNode(current);
                 visited.add(current);
                 continue;
             }
-            queue.addAll(stateMachineAdvancer.computeNext(current, actorActionConfig, analyser).stream()
+            queue.addAll(stateMachineAdvancer.computeNext(current, actorActionConfig, graphBuilder).stream()
                 .filter(globalState -> !visited.contains(globalState))
                 .toList());
             visited.add(current);
