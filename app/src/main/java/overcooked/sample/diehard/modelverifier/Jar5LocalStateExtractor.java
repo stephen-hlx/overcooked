@@ -2,7 +2,6 @@ package overcooked.sample.diehard.modelverifier;
 
 import overcooked.core.actor.LocalState;
 import overcooked.core.actor.LocalStateExtractor;
-import overcooked.sample.diehard.model.Jar3;
 import overcooked.sample.diehard.model.Jar5;
 
 /**
