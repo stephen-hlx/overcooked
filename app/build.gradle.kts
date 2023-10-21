@@ -10,6 +10,7 @@ plugins {
     application
     id("io.freefair.lombok") version "8.3"
     id("com.github.spotbugs") version "6.0.0-rc.1"
+    jacoco
 }
 
 repositories {
@@ -47,4 +48,11 @@ application {
 tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
+}
+tasks.jacocoTestReport {
+    dependsOn(tasks.test) // tests are required to run before generating the report
 }
