@@ -2,11 +2,14 @@ package overcooked.core.action;
 
 import lombok.Builder;
 import lombok.Value;
-import overcooked.core.action.ActionTemplate;
 
+/**
+ * A class that models an intransitive action that is to be performed by an actor in the system
+ * to be model verified.
+ */
 @Builder
 @Value
 public class IntransitiveAction {
-    Object actor;
-    ActionTemplate actionTemplate;
+  Object actor;
+  ActionTemplate actionTemplate;
 }

@@ -7,15 +7,18 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Value;
 
+/**
+ * Describes an action, with its type, the method name as well as the parameters.
+ */
 @Builder
 @Getter(AccessLevel.PACKAGE)
 @EqualsAndHashCode
 @Value
 public class ActionDefinition {
-    ActionType actionType;
+  ActionType actionType;
 
-    String methodName;
+  String methodName;
 
-    @Builder.Default
-    ImmutableList<ParamValue> parameters = ImmutableList.of();
+  @Builder.Default
+  ImmutableList<ParamValue> parameters = ImmutableList.of();
 }

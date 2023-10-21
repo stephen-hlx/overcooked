@@ -4,16 +4,19 @@ import overcooked.core.GlobalState;
 import overcooked.core.GlobalStateVerifier;
 import overcooked.core.actor.LocalState;
 
+/**
+ * (TODO) Might be made package private as well.
+ */
 public class FourLiterVerifier implements GlobalStateVerifier {
-    @Override
-    public boolean validate(GlobalState globalState) {
-        for (LocalState localState : globalState.getLocalStates().values()) {
-            if (localState instanceof Jar5State) {
-                if (((Jar5State) localState).getOccupancy() == 4) {
-                    return false;
-                }
-            }
+  @Override
+  public boolean validate(GlobalState globalState) {
+    for (LocalState localState : globalState.getLocalStates().values()) {
+      if (localState instanceof Jar5State) {
+        if (((Jar5State) localState).getOccupancy() == 4) {
+          return false;
         }
-        return true;
+      }
     }
+    return true;
+  }
 }

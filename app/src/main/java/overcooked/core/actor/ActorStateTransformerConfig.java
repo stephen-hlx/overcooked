@@ -4,11 +4,12 @@ import com.google.common.collect.ImmutableMap;
 import lombok.Builder;
 import lombok.Value;
 
-import java.util.Map;
-
+/**
+ * The transformers between actors and their {@link LocalState}.
+ */
 @Value
 @Builder
 public class ActorStateTransformerConfig {
-    ImmutableMap<ActorDefinition, ActorFactory<?>> actorFactories;
-    ImmutableMap<ActorDefinition, LocalStateExtractor> localStateExtractors;
+  ImmutableMap<ActorDefinition, ActorFactory<?>> actorFactories;
+  ImmutableMap<ActorDefinition, LocalStateExtractor> localStateExtractors;
 }

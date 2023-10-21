@@ -3,9 +3,9 @@ package overcooked.sample.diehard.modelverifier;
 import org.junit.jupiter.api.Test;
 
 class ModelVerifierTest {
-    @Test
-    void can_run_without_error() {
-        ModelVerifier.main(new String[]{});
-    }
+  @Test
+  void can_run_without_error() {
+    ModelVerifier.main(new String[] {});
+  }
 
 }

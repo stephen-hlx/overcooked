@@ -1,9 +1,9 @@
 package overcooked.core.action;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
+/**
+ * A parameter that can be either a template or a value.
+ * A value is one that is ready to use. But a template needs to be materialised.
+ */
 public interface Param {
-    boolean isTemplate();
+  boolean isTemplate();
 }

@@ -11,6 +11,7 @@ plugins {
     id("io.freefair.lombok") version "8.3"
     id("com.github.spotbugs") version "6.0.0-rc.1"
     jacoco
+    checkstyle
 }
 
 repositories {
@@ -55,4 +56,9 @@ tasks.test {
 }
 tasks.jacocoTestReport {
     dependsOn(tasks.test) // tests are required to run before generating the report
+}
+
+checkstyle {
+    toolVersion = "10.12.4"
+    maxWarnings = 0
 }
