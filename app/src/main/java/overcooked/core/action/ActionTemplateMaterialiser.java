@@ -13,10 +13,10 @@ public class ActionTemplateMaterialiser {
    * Materialises the {@link ActionTemplate} provided.
    *
    * @param actionTemplate the action template
-   * @param clazz the type of the value to be filled into the template
-   * @param value the value to be filled into the template
+   * @param clazz          the type of the value to be filled into the template
+   * @param value          the value to be filled into the template
    * @return an {@link ActionDefinition} object that is created based on the parameter data
-   *     provided
+   * provided
    */
   public ActionDefinition materialise(
       ActionTemplate actionTemplate,
@@ -41,7 +41,7 @@ public class ActionTemplateMaterialiser {
    *
    * @param actionTemplate the action template
    * @return an {@link ActionDefinition} object that is created based on the parameter data
-   *     provided
+   * provided
    */
   public ActionDefinition materialise(ActionTemplate actionTemplate) {
     return materialise(actionTemplate, null, null);

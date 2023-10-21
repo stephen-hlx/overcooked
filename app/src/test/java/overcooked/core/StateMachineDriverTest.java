@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
+import overcooked.analysis.Arc;
 import overcooked.analysis.GraphBuilder;
 import overcooked.analysis.Transition;
 import overcooked.core.action.ActionTemplate;
@@ -119,9 +120,11 @@ class StateMachineDriverTest {
     ));
     verify(graphBuilder).capture(Transition.builder()
         .from(globalState)
-        .actionPerformerId(actor1Id)
-        .methodName(actor1Method)
-        .actionReceiverId(null)
+        .arc(Arc.builder()
+            .actionPerformerId(actor1Id)
+            .methodName(actor1Method)
+            .actionReceiverId(null)
+            .build())
         .to(new GlobalState(ImmutableMap.<ActorDefinition, LocalState>builder()
             .put(actor1, newActor1LocalState)
             .put(actor2, actor2LocalState)
@@ -131,9 +134,11 @@ class StateMachineDriverTest {
         .build());
     verify(graphBuilder).capture(Transition.builder()
         .from(globalState)
-        .actionPerformerId(actor2Id)
-        .methodName(actor2Method)
-        .actionReceiverId(actor3Id)
+        .arc(Arc.builder()
+            .actionPerformerId(actor2Id)
+            .methodName(actor2Method)
+            .actionReceiverId(actor3Id)
+            .build())
         .to(new GlobalState(ImmutableMap.<ActorDefinition, LocalState>builder()
             .put(actor1, actor1LocalState)
             .put(actor2, newActor2LocalState)

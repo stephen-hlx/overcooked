@@ -25,9 +25,9 @@ public class IntransitiveActionTemplateExecutor {
    *
    * @param actorLocalState the local state of the actor which is going to perform the action
    * @param actorDefinition the definition of the actor
-   * @param actionTemplate the template of the action that is going to be performed
+   * @param actionTemplate  the template of the action that is going to be performed
    * @return a map of {@link ActorDefinition} and {@link LocalState} representing the new local
-   *     states of the affected actors
+   * states of the affected actors
    */
   public Map<ActorDefinition, LocalState> execute(LocalState actorLocalState,
                                                   ActorDefinition actorDefinition,

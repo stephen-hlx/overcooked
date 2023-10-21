@@ -20,11 +20,7 @@ public class GraphBuilder {
     transitions.forEach(transition -> {
       GlobalStateNode from = getTo(nodes, transition.getFrom());
       GlobalStateNode to = getTo(nodes, transition.getTo());
-      from.addArc(Arc.builder()
-          .actionPerformerId(transition.getActionPerformerId())
-          .methodName(transition.getMethodName())
-          .actionReceiverId(transition.getActionReceiverId())
-          .build(), to);
+      from.addArc(transition.getArc(), to);
       to.addReverseArc(from);
     });
     return ImmutableSet.copyOf(nodes.values());

@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import com.google.common.collect.ImmutableSet;
 import org.junit.jupiter.api.Test;
+import overcooked.analysis.Arc;
 import overcooked.analysis.Transition;
 
 class DotGraphBuilderTest {
@@ -16,10 +17,18 @@ class DotGraphBuilderTest {
 
   @Test
   void prints_dot_format_string() {
-    Transition transition1 = Transition.builder().methodName("transition1").build();
+    Transition transition1 = Transition.builder()
+        .arc(Arc.builder()
+            .methodName("transition1")
+            .build())
+        .build();
     when(transitionPrinter.print(transition1)).thenReturn("printedTransition1");
 
-    Transition transition2 = Transition.builder().methodName("transition2").build();
+    Transition transition2 = Transition.builder()
+        .arc(Arc.builder()
+            .methodName("transition2")
+            .build())
+        .build();
     when(transitionPrinter.print(transition2)).thenReturn("printedTransition2");
 
     assertThat(dotGraphBuilder.build(ImmutableSet.of(

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.common.collect.ImmutableMap;
 import org.junit.jupiter.api.Test;
+import overcooked.analysis.Arc;
 import overcooked.analysis.Transition;
 import overcooked.core.GlobalState;
 import overcooked.core.actor.ActorDefinition;
@@ -32,9 +33,11 @@ class TransitionPrinterTest {
                 .put(actor1, actor1LocalState)
                 .put(actor2, actor2LocalState)
                 .build()))
-        .actionPerformerId(actor1Id)
-        .methodName("transitiveMethod")
-        .actionReceiverId(actor2Id)
+        .arc(Arc.builder()
+            .actionPerformerId(actor1Id)
+            .methodName("transitiveMethod")
+            .actionReceiverId(actor2Id)
+            .build())
         .to(new GlobalState(
             ImmutableMap.<ActorDefinition, LocalState>builder()
                 .put(actor1, newActor1LocalState)
@@ -65,8 +68,10 @@ class TransitionPrinterTest {
                 .put(actor1, actor1LocalState)
                 .put(actor2, actor2LocalState)
                 .build()))
-        .actionPerformerId(actor1Id)
-        .methodName("intransitiveMethod")
+        .arc(Arc.builder()
+            .actionPerformerId(actor1Id)
+            .methodName("intransitiveMethod")
+            .build())
         .to(new GlobalState(
             ImmutableMap.<ActorDefinition, LocalState>builder()
                 .put(actor1, newActor1LocalState)

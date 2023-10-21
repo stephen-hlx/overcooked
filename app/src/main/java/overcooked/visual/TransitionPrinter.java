@@ -2,6 +2,7 @@ package overcooked.visual;
 
 import com.google.common.base.Strings;
 import lombok.RequiredArgsConstructor;
+import overcooked.analysis.Arc;
 import overcooked.analysis.Transition;
 
 /**
@@ -12,14 +13,15 @@ public class TransitionPrinter {
   private final GlobalStatePrinter globalStatePrinter;
 
   String print(Transition transition) {
+    Arc arc = transition.getArc();
     return String.format("%s -> %s [label=%s]",
         quoted(globalStatePrinter.print(transition.getFrom())),
         quoted(globalStatePrinter.print(transition.getTo())),
         quoted(String.format("%s.%s(%s)",
-            transition.getActionPerformerId(),
-            transition.getMethodName(),
-            Strings.isNullOrEmpty(transition.getActionReceiverId()) ? "" :
-                transition.getActionReceiverId())));
+            arc.getActionPerformerId(),
+            arc.getMethodName(),
+            Strings.isNullOrEmpty(arc.getActionReceiverId()) ? "" :
+                arc.getActionReceiverId())));
   }
 
   private static String quoted(String s) {

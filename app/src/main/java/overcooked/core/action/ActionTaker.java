@@ -11,7 +11,7 @@ public class ActionTaker {
   /**
    * Takes the action defined in the {@link ActionDefinition} object on behalf of the actor.
    *
-   * @param actor the actor
+   * @param actor            the actor
    * @param actionDefinition the action to be performed
    */
   public void take(Object actor,

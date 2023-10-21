@@ -12,8 +12,6 @@ import overcooked.core.GlobalState;
 @Value
 public class Transition {
   GlobalState from;
-  String actionPerformerId;
-  String methodName;
-  String actionReceiverId;
+  Arc arc;
   GlobalState to;
 }

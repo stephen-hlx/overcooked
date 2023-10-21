@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import lombok.Builder;
+import overcooked.analysis.Arc;
 import overcooked.analysis.GraphBuilder;
 import overcooked.analysis.Transition;
 import overcooked.core.action.IntransitiveActionTemplateExecutor;
@@ -27,11 +28,11 @@ public class StateMachineDriver {
   /**
    * Computes the next state.
    *
-   * @param globalState the current state of the state machine
+   * @param globalState       the current state of the state machine
    * @param actorActionConfig the actor and action configuration from which the driver can discover
    *                          all actors and their actions
-   * @param graphBuilder the object that constructs the graph that represents the execution of the
-   *                     entire state machine
+   * @param graphBuilder      the object that constructs the graph that represents the execution of the
+   *                          entire state machine
    * @return a set of {@link GlobalState} that is the result of the actions performed by the actors
    */
   public Set<GlobalState> computeNext(GlobalState globalState,
@@ -44,14 +45,15 @@ public class StateMachineDriver {
             .getOrDefault(actorDefinition, Collections.emptySet())
             .forEach(actionTemplate -> {
               Transition.TransitionBuilder transitionBuilder = Transition.builder()
-                  .from(globalState)
+                  .from(globalState);
+              Arc.ArcBuilder arcBuilder = Arc.builder()
                   .actionPerformerId(actorDefinition.getId())
                   .methodName(actionTemplate.getMethodName());
               Map<ActorDefinition, LocalState> newLocalStates;
               if (actionTemplate.getActionType().isTransitive()) {
                 ActorDefinition actionReceiverDefinition =
                     actionTemplate.getActionType().getActionReceiverDefinition();
-                transitionBuilder.actionReceiverId(actionReceiverDefinition.getId());
+                arcBuilder.actionReceiverId(actionReceiverDefinition.getId());
                 newLocalStates = transitiveActionTemplateExecutor.execute(
                     globalState.getLocalStates().get(actorDefinition),
                     actorDefinition,
@@ -65,8 +67,10 @@ public class StateMachineDriver {
                     actionTemplate);
               }
               GlobalState newGlobalState = stateMerger.merge(globalState, newLocalStates);
-              transitionBuilder.to(newGlobalState);
-              graphBuilder.capture(transitionBuilder.build());
+              graphBuilder.capture(transitionBuilder
+                  .arc(arcBuilder.build())
+                  .to(newGlobalState)
+                  .build());
               nextStates.add(newGlobalState);
             }));
 
