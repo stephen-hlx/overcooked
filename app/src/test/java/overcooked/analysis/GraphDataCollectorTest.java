@@ -9,8 +9,8 @@ import overcooked.core.GlobalState;
 import overcooked.core.actor.ActorDefinition;
 import overcooked.core.actor.LocalState;
 
-class GraphBuilderTest {
-  private final GraphBuilder graphBuilder = new GraphBuilder();
+class GraphDataCollectorTest {
+  private final GraphDataCollector graphDataCollector = new GraphDataCollector();
 
   @Test
   void builds_graph_correctly() {
@@ -81,48 +81,14 @@ class GraphBuilderTest {
         .build(), globalStateNode1);
     globalStateNode1.addReverseArc(globalStateNode1);
 
-    graphBuilder.capture(Transition.builder()
-        .from(globalState)
-        .arc(Arc.builder()
-            .actionPerformerId(actor1Id)
-            .methodName(actor1Method)
-            .actionReceiverId(null)
-            .build())
-        .to(new GlobalState(ImmutableMap.<ActorDefinition, LocalState>builder()
-            .put(actor1, newActor1LocalState)
-            .put(actor2, actor2LocalState)
-            .put(actor3, actor3LocalState)
-            .put(actor4, actor4LocalState)
-            .build()))
-        .build());
-    graphBuilder.capture(Transition.builder()
-        .from(globalState)
-        .arc(Arc.builder()
-            .actionPerformerId(actor2Id)
-            .methodName(actor2Method)
-            .actionReceiverId(actor3Id)
-            .build())
-        .to(failureState)
-        .build());
-    graphBuilder.capture(Transition.builder()
-        .from(globalState)
-        .arc(Arc.builder()
-            .actionPerformerId(actor4Id)
-            .methodName(actor4Method)
-            .actionReceiverId(null)
-            .build())
-        .to(new GlobalState(ImmutableMap.<ActorDefinition, LocalState>builder()
-            .put(actor1, actor1LocalState)
-            .put(actor2, actor2LocalState)
-            .put(actor3, actor3LocalState)
-            .put(actor4, actor4LocalState)
-            .build()))
-        .build());
-    graphBuilder.addValidationFailingNode(failureState);
+    graphDataCollector.capture(TestStateMachine.TRANSITION_0_1);
+    graphDataCollector.capture(TestStateMachine.TRANSITION_0_2);
+    graphDataCollector.capture(TestStateMachine.TRANSITION_0_0);
+    graphDataCollector.addValidationFailingNode(failureState);
 
     // the node may not take into account fields other than id
     // Comparing field by field is needed because
-    assertThat(graphBuilder.getNodes())
+    assertThat(graphDataCollector.getNodes())
         .usingFieldByFieldElementComparator()
         .isEqualTo(ImmutableSet.builder()
             .add(globalStateNode1)

@@ -28,7 +28,7 @@ public class TransitiveActionTemplateExecutor {
    * @param actionReceiverLocalState  the local state of the action receiver
    * @param actionTemplate            the template of the action that is going to be performed
    * @return a map of {@link ActorDefinition} and {@link LocalState} representing the new local
-   * states of the affected actors (performer and receiver)
+   *     states of the affected actors (performer and receiver)
    */
   public Map<ActorDefinition, LocalState> execute(LocalState actionPerformerLocalState,
                                                   ActorDefinition actionPerformerDefinition,

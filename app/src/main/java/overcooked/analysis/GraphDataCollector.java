@@ -8,10 +8,10 @@ import java.util.Set;
 import overcooked.core.GlobalState;
 
 /**
- * The builder of a graph.
- * It captures the transitions of a state machine.
+ * A graph data collector that  captures the data of a state machine,
+ * e.g. transitions, initial state.
  */
-public class GraphBuilder {
+public class GraphDataCollector {
   private final Set<Transition> transitions = new HashSet<>();
   private final Set<GlobalState> validationFailingGlobalStates = new HashSet<>();
 

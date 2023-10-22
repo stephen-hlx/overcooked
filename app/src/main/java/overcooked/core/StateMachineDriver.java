@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import lombok.Builder;
 import overcooked.analysis.Arc;
-import overcooked.analysis.GraphBuilder;
+import overcooked.analysis.GraphDataCollector;
 import overcooked.analysis.Transition;
 import overcooked.core.action.IntransitiveActionTemplateExecutor;
 import overcooked.core.action.TransitiveActionTemplateExecutor;
@@ -28,16 +28,16 @@ public class StateMachineDriver {
   /**
    * Computes the next state.
    *
-   * @param globalState       the current state of the state machine
-   * @param actorActionConfig the actor and action configuration from which the driver can discover
-   *                          all actors and their actions
-   * @param graphBuilder      the object that constructs the graph that represents the execution of the
-   *                          entire state machine
+   * @param globalState        the current state of the state machine
+   * @param actorActionConfig  the actor and action configuration from which the driver can discover
+   *                           all actors and their actions
+   * @param graphDataCollector the object that constructs the graph that represents the execution of
+   *                           the entire state machine
    * @return a set of {@link GlobalState} that is the result of the actions performed by the actors
    */
   public Set<GlobalState> computeNext(GlobalState globalState,
                                       ActorActionConfig actorActionConfig,
-                                      GraphBuilder graphBuilder) {
+                                      GraphDataCollector graphDataCollector) {
     Set<GlobalState> nextStates = new HashSet<>();
 
     globalState.getLocalStates().forEach((actorDefinition, localState) ->
@@ -67,7 +67,7 @@ public class StateMachineDriver {
                     actionTemplate);
               }
               GlobalState newGlobalState = stateMerger.merge(globalState, newLocalStates);
-              graphBuilder.capture(transitionBuilder
+              graphDataCollector.capture(transitionBuilder
                   .arc(arcBuilder.build())
                   .to(newGlobalState)
                   .build());
