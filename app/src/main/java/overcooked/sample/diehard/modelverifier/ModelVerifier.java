@@ -9,17 +9,10 @@ import overcooked.analysis.GraphDataCollector;
 import overcooked.core.ActorActionConfig;
 import overcooked.core.GlobalState;
 import overcooked.core.StateMachine;
-import overcooked.core.StateMachineDriver;
-import overcooked.core.StateMerger;
-import overcooked.core.action.ActionTaker;
+import overcooked.core.StateMachineFactory;
 import overcooked.core.action.ActionTemplate;
-import overcooked.core.action.ActionTemplateMaterialiser;
-import overcooked.core.action.IntransitiveActionTaker;
-import overcooked.core.action.IntransitiveActionTemplateExecutor;
 import overcooked.core.action.IntransitiveActionType;
 import overcooked.core.action.ParamTemplate;
-import overcooked.core.action.TransitiveActionTaker;
-import overcooked.core.action.TransitiveActionTemplateExecutor;
 import overcooked.core.action.TransitiveActionType;
 import overcooked.core.actor.ActorDefinition;
 import overcooked.core.actor.ActorStateTransformerConfig;
@@ -100,42 +93,18 @@ public class ModelVerifier {
         JAR5, jar5Templates
     ));
 
-    ActorStateTransformerConfig actorStateTransformerConfig = ActorStateTransformerConfig.builder()
-        .actorFactories(ImmutableMap.of(
-            JAR3, new Jar3Factory(),
-            JAR5, new Jar5Factory()
-        ))
-        .localStateExtractors(ImmutableMap.of(
-            JAR3, new Jar3LocalStateExtractor(),
-            JAR5, new Jar5LocalStateExtractor()
-        ))
-        .build();
-
-    ActionTaker actionTaker = new ActionTaker();
-    ActionTemplateMaterialiser materialiser = new ActionTemplateMaterialiser();
-
-    StateMachineDriver stateMachineDriver = StateMachineDriver.builder()
-        .stateMerger(new StateMerger())
-        .intransitiveActionTemplateExecutor(IntransitiveActionTemplateExecutor.builder()
-            .config(actorStateTransformerConfig)
-            .intransitiveActionTaker(IntransitiveActionTaker.builder()
-                .actionTaker(actionTaker)
-                .materialiser(materialiser)
-                .build())
-            .build())
-        .transitiveActionTemplateExecutor(TransitiveActionTemplateExecutor.builder()
-            .config(actorStateTransformerConfig)
-            .transitiveActionTaker(TransitiveActionTaker.builder()
-                .actionTaker(actionTaker)
-                .materialiser(materialiser)
-                .build())
-            .build())
-        .build();
     GraphDataCollector graphDataCollector = new GraphDataCollector(initialState);
-    StateMachine stateMachine = StateMachine.builder()
-        .globalStateVerifier(new FourLiterVerifier())
-        .stateMachineDriver(stateMachineDriver)
-        .build();
+    StateMachine stateMachine =
+        StateMachineFactory.create(new FourLiterVerifier(), ActorStateTransformerConfig.builder()
+            .actorFactories(ImmutableMap.of(
+                JAR3, new Jar3Factory(),
+                JAR5, new Jar5Factory()
+            ))
+            .localStateExtractors(ImmutableMap.of(
+                JAR3, new Jar3LocalStateExtractor(),
+                JAR5, new Jar5LocalStateExtractor()
+            ))
+            .build());
 
     stateMachine.run(initialState, actorActionConfig, graphDataCollector);
 
