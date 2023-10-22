@@ -7,7 +7,7 @@ import com.google.common.collect.ImmutableList;
  * materialised into an {@link ActionDefinition} before it can be performed.
  * TODO: it is not that obvious the materialisation is for only one param template
  */
-public class ActionTemplateMaterialiser {
+class ActionTemplateMaterialiser {
 
   /**
    * Materialises the {@link ActionTemplate} provided.

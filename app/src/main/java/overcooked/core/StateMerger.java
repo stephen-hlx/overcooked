@@ -12,7 +12,7 @@ import overcooked.core.actor.LocalState;
  * affects only part of the local states in it.
  * TODO: cloning the entire state is a must
  */
-public class StateMerger {
+class StateMerger {
   /**
    * Merges the local states into the global state.
    *

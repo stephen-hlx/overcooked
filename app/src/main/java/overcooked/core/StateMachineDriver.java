@@ -20,7 +20,7 @@ import overcooked.core.actor.LocalState;
  * state and the provided action.
  */
 @Builder
-public class StateMachineDriver {
+class StateMachineDriver {
   private final IntransitiveActionTemplateExecutor intransitiveActionTemplateExecutor;
   private final TransitiveActionTemplateExecutor transitiveActionTemplateExecutor;
   private final StateMerger stateMerger;

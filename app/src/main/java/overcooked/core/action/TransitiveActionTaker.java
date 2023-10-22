@@ -6,7 +6,7 @@ import lombok.Builder;
  * The object that is responsible for taking the transitive action provided.
  */
 @Builder
-public class TransitiveActionTaker {
+class TransitiveActionTaker {
   private final ActionTemplateMaterialiser materialiser;
   private final ActionTaker actionTaker;
 

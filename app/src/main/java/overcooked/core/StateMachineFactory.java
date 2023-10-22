@@ -1,11 +1,6 @@
 package overcooked.core;
 
-import overcooked.core.action.ActionTaker;
-import overcooked.core.action.ActionTemplateMaterialiser;
-import overcooked.core.action.IntransitiveActionTaker;
-import overcooked.core.action.IntransitiveActionTemplateExecutor;
-import overcooked.core.action.TransitiveActionTaker;
-import overcooked.core.action.TransitiveActionTemplateExecutor;
+import overcooked.core.action.ActionExecutorFactory;
 import overcooked.core.actor.ActorStateTransformerConfig;
 
 /**
@@ -22,25 +17,15 @@ public class StateMachineFactory {
    */
   public static StateMachine create(GlobalStateVerifier globalStateVerifier,
                                     ActorStateTransformerConfig actorStateTransformerConfig) {
-    ActionTaker actionTaker = new ActionTaker();
-    ActionTemplateMaterialiser materialiser = new ActionTemplateMaterialiser();
     return StateMachine.builder()
         .stateMachineDriver(StateMachineDriver.builder()
             .stateMerger(new StateMerger())
-            .intransitiveActionTemplateExecutor(IntransitiveActionTemplateExecutor.builder()
-                .intransitiveActionTaker(IntransitiveActionTaker.builder()
-                    .materialiser(materialiser)
-                    .actionTaker(actionTaker)
-                    .build())
-                .config(actorStateTransformerConfig)
-                .build())
-            .transitiveActionTemplateExecutor(TransitiveActionTemplateExecutor.builder()
-                .transitiveActionTaker(TransitiveActionTaker.builder()
-                    .materialiser(materialiser)
-                    .actionTaker(actionTaker)
-                    .build())
-                .config(actorStateTransformerConfig)
-                .build())
+            .intransitiveActionTemplateExecutor(
+                ActionExecutorFactory.createIntransitiveActionTemplateExecutor(
+                    actorStateTransformerConfig))
+            .transitiveActionTemplateExecutor(
+                ActionExecutorFactory.createTransitiveActionTemplateExecutor(
+                    actorStateTransformerConfig))
             .build())
         .globalStateVerifier(globalStateVerifier)
         .build();

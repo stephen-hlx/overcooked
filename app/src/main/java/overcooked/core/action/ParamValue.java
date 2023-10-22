@@ -11,7 +11,7 @@ import lombok.Value;
 @RequiredArgsConstructor
 @Getter(AccessLevel.PACKAGE)
 @Value
-public class ParamValue implements Param {
+class ParamValue implements Param {
   Class<?> clazz;
   Object value;
 

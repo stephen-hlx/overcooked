@@ -8,7 +8,7 @@ import lombok.Value;
  */
 @Builder
 @Value
-public class TransitiveAction {
+class TransitiveAction {
   Object actionPerformer;
   Class<?> actionReceiverType;
   Object actionReceiver;

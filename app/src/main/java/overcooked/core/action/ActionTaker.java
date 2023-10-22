@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * The object that is responsible for taking an action for an actor.
  */
-public class ActionTaker {
+class ActionTaker {
   /**
    * Takes the action defined in the {@link ActionDefinition} object on behalf of the actor.
    *

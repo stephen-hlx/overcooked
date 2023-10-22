@@ -6,7 +6,7 @@ import lombok.Builder;
  * The object that is responsible for taking the intransitive action.
  */
 @Builder
-public class IntransitiveActionTaker {
+class IntransitiveActionTaker {
   private final ActionTemplateMaterialiser materialiser;
   private final ActionTaker actionTaker;
 

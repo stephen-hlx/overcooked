@@ -9,7 +9,7 @@ import lombok.Value;
  */
 @Builder
 @Value
-public class IntransitiveAction {
+class IntransitiveAction {
   Object actor;
   ActionTemplate actionTemplate;
 }
