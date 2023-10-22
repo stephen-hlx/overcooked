@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 import lombok.extern.java.Log;
-import overcooked.analysis.GraphDataCollector;
+import overcooked.analysis.StateMachineExecutionDataCollector;
 import overcooked.core.ActorActionConfig;
 import overcooked.core.GlobalState;
 import overcooked.core.StateMachine;
@@ -93,7 +93,8 @@ public class ModelVerifier {
         JAR5, jar5Templates
     ));
 
-    GraphDataCollector graphDataCollector = new GraphDataCollector(initialState);
+    StateMachineExecutionDataCollector
+        stateMachineExecutionDataCollector = new StateMachineExecutionDataCollector(initialState);
     StateMachine stateMachine =
         StateMachineFactory.create(new FourLiterVerifier(), ActorStateTransformerConfig.builder()
             .actorFactories(ImmutableMap.of(
@@ -106,12 +107,12 @@ public class ModelVerifier {
             ))
             .build());
 
-    stateMachine.run(initialState, actorActionConfig, graphDataCollector);
+    stateMachine.run(initialState, actorActionConfig, stateMachineExecutionDataCollector);
 
     DotGraphBuilder dotGraphBuilder =
         new DotGraphBuilder(new TransitionPrinter(new GlobalStatePrinter()));
-    log.info(dotGraphBuilder.build(graphDataCollector.getTransitions()));
-    log.info(String.valueOf(graphDataCollector.getValidationFailingGlobalStates().size()));
-    graphDataCollector.getValidationFailingGlobalStates().forEach(gs -> log.info(gs.toString()));
+    log.info(dotGraphBuilder.build(stateMachineExecutionDataCollector.getTransitions()));
+    stateMachineExecutionDataCollector.getValidationFailingGlobalStates()
+        .forEach(gs -> log.info(gs.toString()));
   }
 }

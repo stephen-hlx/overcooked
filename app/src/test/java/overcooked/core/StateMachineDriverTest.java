@@ -14,7 +14,7 @@ import java.util.Set;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
 import overcooked.analysis.Arc;
-import overcooked.analysis.GraphDataCollector;
+import overcooked.analysis.StateMachineExecutionDataCollector;
 import overcooked.analysis.Transition;
 import overcooked.core.action.ActionTemplate;
 import overcooked.core.action.IntransitiveActionTemplateExecutor;
@@ -91,9 +91,11 @@ class StateMachineDriverTest {
             .put(actor4, actor4LocalState)
             .build());
 
-    GraphDataCollector graphDataCollector = mock(GraphDataCollector.class);
+    StateMachineExecutionDataCollector
+        stateMachineExecutionDataCollector = mock(StateMachineExecutionDataCollector.class);
 
-    assertThat(stateMachineDriver.computeNext(globalState, config, graphDataCollector))
+    assertThat(stateMachineDriver.computeNext(globalState, config,
+        stateMachineExecutionDataCollector))
         .isEqualTo(ImmutableSet.of(
             new GlobalState(ImmutableMap.<ActorDefinition, LocalState>builder()
                 .put(actor1, newActor1LocalState)
@@ -118,7 +120,7 @@ class StateMachineDriverTest {
         actor2, newActor2LocalState,
         actor3, newActor3LocalState
     ));
-    verify(graphDataCollector).capture(Transition.builder()
+    verify(stateMachineExecutionDataCollector).capture(Transition.builder()
         .from(globalState)
         .arc(Arc.builder()
             .actionPerformerId(actor1Id)
@@ -132,7 +134,7 @@ class StateMachineDriverTest {
             .put(actor4, actor4LocalState)
             .build()))
         .build());
-    verify(graphDataCollector).capture(Transition.builder()
+    verify(stateMachineExecutionDataCollector).capture(Transition.builder()
         .from(globalState)
         .arc(Arc.builder()
             .actionPerformerId(actor2Id)
@@ -149,7 +151,7 @@ class StateMachineDriverTest {
     verifyNoMoreInteractions(intransitiveActionTemplateExecutor,
         transitiveActionTemplateExecutor,
         stateMerger,
-        graphDataCollector);
+        stateMachineExecutionDataCollector);
   }
 
   @Value

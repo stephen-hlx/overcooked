@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Queue;
 import java.util.Set;
 import lombok.Builder;
-import overcooked.analysis.GraphDataCollector;
+import overcooked.analysis.StateMachineExecutionDataCollector;
 
 /**
  * The state machine of the model verification.
@@ -18,15 +18,15 @@ public class StateMachine {
 
   public void run(GlobalState initialState,
                   ActorActionConfig actorActionConfig,
-                  GraphDataCollector graphDataCollector) {
+                  StateMachineExecutionDataCollector stateMachineExecutionDataCollector) {
     Set<GlobalState> visited = new HashSet<>();
-    doRun(initialState, actorActionConfig, visited, graphDataCollector);
+    doRun(initialState, actorActionConfig, visited, stateMachineExecutionDataCollector);
   }
 
   private void doRun(GlobalState initialState,
                      ActorActionConfig actorActionConfig,
                      Set<GlobalState> visited,
-                     GraphDataCollector graphDataCollector) {
+                     StateMachineExecutionDataCollector stateMachineExecutionDataCollector) {
     Queue<GlobalState> queue = new ArrayDeque<>();
     queue.add(initialState);
     while (!queue.isEmpty()) {
@@ -35,12 +35,13 @@ public class StateMachine {
         continue;
       }
       if (!globalStateVerifier.validate(current)) {
-        graphDataCollector.addValidationFailingNode(current);
+        stateMachineExecutionDataCollector.addValidationFailingNode(current);
         visited.add(current);
         continue;
       }
       queue.addAll(
-          stateMachineDriver.computeNext(current, actorActionConfig, graphDataCollector).stream()
+          stateMachineDriver.computeNext(current, actorActionConfig,
+                  stateMachineExecutionDataCollector).stream()
               .filter(globalState -> !visited.contains(globalState))
               .toList());
       visited.add(current);

@@ -7,17 +7,17 @@ import lombok.Getter;
 import overcooked.core.GlobalState;
 
 /**
- * A graph data collector that  captures the data of a state machine,
+ * A class that captures the data of a state machine execution,
  * e.g. transitions, initial state.
  */
-public class GraphDataCollector {
+public class StateMachineExecutionDataCollector {
   private final Set<Transition> transitions = new HashSet<>();
   private final Set<GlobalState> validationFailingGlobalStates = new HashSet<>();
 
   @Getter
   private final GlobalState initialState;
 
-  public GraphDataCollector(GlobalState globalState) {
+  public StateMachineExecutionDataCollector(GlobalState globalState) {
     initialState = globalState;
   }
 
@@ -35,5 +35,18 @@ public class GraphDataCollector {
 
   public Set<GlobalState> getValidationFailingGlobalStates() {
     return ImmutableSet.copyOf(validationFailingGlobalStates);
+  }
+
+  /**
+   * Returns the {@link StateMachineExecutionData} collected.
+   *
+   * @return the {@link StateMachineExecutionData} collected
+   */
+  public StateMachineExecutionData getData() {
+    return StateMachineExecutionData.builder()
+        .initialState(initialState)
+        .transitions(transitions)
+        .validationFailingGlobalStates(validationFailingGlobalStates)
+        .build();
   }
 }

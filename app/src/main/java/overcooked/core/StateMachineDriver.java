@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import lombok.Builder;
 import overcooked.analysis.Arc;
-import overcooked.analysis.GraphDataCollector;
+import overcooked.analysis.StateMachineExecutionDataCollector;
 import overcooked.analysis.Transition;
 import overcooked.core.action.IntransitiveActionTemplateExecutor;
 import overcooked.core.action.TransitiveActionTemplateExecutor;
@@ -31,13 +31,14 @@ class StateMachineDriver {
    * @param globalState        the current state of the state machine
    * @param actorActionConfig  the actor and action configuration from which the driver can discover
    *                           all actors and their actions
-   * @param graphDataCollector the object that constructs the graph that represents the execution of
-   *                           the entire state machine
+   * @param stateMachineExecutionDataCollector the object that collects the data of the state
+   *                                           machine execution
    * @return a set of {@link GlobalState} that is the result of the actions performed by the actors
    */
-  public Set<GlobalState> computeNext(GlobalState globalState,
-                                      ActorActionConfig actorActionConfig,
-                                      GraphDataCollector graphDataCollector) {
+  public Set<GlobalState> computeNext(
+      GlobalState globalState,
+      ActorActionConfig actorActionConfig,
+      StateMachineExecutionDataCollector stateMachineExecutionDataCollector) {
     Set<GlobalState> nextStates = new HashSet<>();
 
     globalState.getLocalStates().forEach((actorDefinition, localState) ->
@@ -67,7 +68,7 @@ class StateMachineDriver {
                     actionTemplate);
               }
               GlobalState newGlobalState = stateMerger.merge(globalState, newLocalStates);
-              graphDataCollector.capture(transitionBuilder
+              stateMachineExecutionDataCollector.capture(transitionBuilder
                   .arc(arcBuilder.build())
                   .to(newGlobalState)
                   .build());
