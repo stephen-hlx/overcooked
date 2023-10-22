@@ -51,7 +51,7 @@ public class ModelVerifier {
    * @param args args of main function
    */
   public static void main(String[] args) {
-    GlobalState globalState = new GlobalState(ImmutableMap.of(
+    GlobalState initialState = new GlobalState(ImmutableMap.of(
         JAR3, new Jar3State(0),
         JAR5, new Jar5State(0)));
 
@@ -131,13 +131,13 @@ public class ModelVerifier {
                 .build())
             .build())
         .build();
-    GraphDataCollector graphDataCollector = new GraphDataCollector();
+    GraphDataCollector graphDataCollector = new GraphDataCollector(initialState);
     StateMachine stateMachine = StateMachine.builder()
         .globalStateVerifier(new FourLiterVerifier())
         .stateMachineDriver(stateMachineDriver)
         .build();
 
-    stateMachine.run(globalState, actorActionConfig, graphDataCollector);
+    stateMachine.run(initialState, actorActionConfig, graphDataCollector);
 
     DotGraphBuilder dotGraphBuilder =
         new DotGraphBuilder(new TransitionPrinter(new GlobalStatePrinter()));
