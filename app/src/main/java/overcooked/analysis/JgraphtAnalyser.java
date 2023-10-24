@@ -1,6 +1,6 @@
 package overcooked.analysis;
 
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ShortestPathAlgorithm;
@@ -13,9 +13,9 @@ import overcooked.core.GlobalState;
  */
 public class JgraphtAnalyser implements Analyser {
   @Override
-  public Set<Transition> findShortestPathToFailureState(GlobalState initialState,
-                                                        GlobalState failureState,
-                                                        Set<Transition> transitions) {
+  public List<Transition> findShortestPathToFailureState(GlobalState initialState,
+                                                         GlobalState failureState,
+                                                         Set<Transition> transitions) {
     Graph<GlobalState, Transition> graph = new DefaultDirectedGraph<>(Transition.class);
     transitions.forEach(transition -> {
       GlobalState from = transition.getFrom();
@@ -29,6 +29,6 @@ public class JgraphtAnalyser implements Analyser {
         new DijkstraShortestPath<>(graph);
     ShortestPathAlgorithm.SingleSourcePaths<GlobalState, Transition> paths =
         dijkstraAlg.getPaths(initialState);
-    return new HashSet<>(paths.getPath(failureState).getEdgeList());
+    return paths.getPath(failureState).getEdgeList();
   }
 }

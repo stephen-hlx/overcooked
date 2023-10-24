@@ -10,6 +10,7 @@ import static overcooked.analysis.StateMachineTestSetup.TRANSITION_0_3;
 import static overcooked.analysis.StateMachineTestSetup.TRANSITION_2_3;
 import static overcooked.analysis.StateMachineTestSetup.TRANSITION_3_4;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +29,7 @@ class JgraphtAnalyserTest {
             TRANSITION_2_3,
             TRANSITION_3_4
         )))
-        .isEqualTo(ImmutableSet.of(
+        .isEqualTo(ImmutableList.of(
             TRANSITION_0_3,
             TRANSITION_3_4
         ));
