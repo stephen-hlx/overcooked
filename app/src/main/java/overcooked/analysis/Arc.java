@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Value;
 
 /**
- * An object representing an arc from one {@link GlobalStateNode} to another.
+ * An object representing an arc from one {@link overcooked.core.GlobalState} to another.
  */
 @Builder
 @Value
