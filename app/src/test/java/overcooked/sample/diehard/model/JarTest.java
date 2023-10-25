@@ -30,13 +30,13 @@ class JarTest {
     return new Object[][] {
         // fromJar   toJar     beforeFromJar beforeToJar afterFromJar afterToJar
         // capacity, capacity, occupancy,    occupancy,  occupancy,   occupancy
-        {3, 5, 0, 0, 0, 0},
-        {3, 5, 0, 1, 0, 1},
-        {3, 5, 0, 5, 0, 5},
-        {3, 5, 1, 1, 0, 2},
-        {3, 5, 1, 4, 0, 5},
-        {3, 5, 2, 4, 1, 5},
-        {3, 5, 1, 5, 1, 5},
+        {  3,        5,        0,            0,          0,           0         },
+        {  3,        5,        0,            1,          0,           1         },
+        {  3,        5,        0,            5,          0,           5         },
+        {  3,        5,        1,            1,          0,           2         },
+        {  3,        5,        1,            4,          0,           5         },
+        {  3,        5,        2,            4,          1,           5         },
+        {  3,        5,        1,            5,          1,           5         },
     };
   }
 
