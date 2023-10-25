@@ -49,6 +49,7 @@
   </module>
 
   <module name="TreeWalker">
+    <module name="CyclomaticComplexity"/>
     <module name="RedundantImport"/>
     <module name="UnusedImports"/>
     <module name="UnusedLocalVariable"/>
