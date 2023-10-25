@@ -6,8 +6,8 @@
  */
 
 plugins {
-    // Apply the application plugin to add support for building a CLI application in Java.
-    application
+    // Apply the java-library plugin for API and implementation separation.
+    `java-library`
     id("io.freefair.lombok") version "8.3"
     id("com.github.spotbugs") version "6.0.0-rc.1"
     jacoco
@@ -42,11 +42,6 @@ java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(17))
     }
-}
-
-application {
-    // Define the main class for the application.
-    mainClass.set("overcooked.App")
 }
 
 tasks.named<Test>("test") {
