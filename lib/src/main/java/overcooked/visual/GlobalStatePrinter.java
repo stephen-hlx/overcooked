@@ -9,9 +9,8 @@ import overcooked.core.actor.LocalState;
 
 /**
  * This class can be made package private.
- * TODO package private
  */
-public class GlobalStatePrinter {
+class GlobalStatePrinter {
   private static final Comparator<Map.Entry<ActorDefinition, LocalState>> ACTOR_COMPARATOR =
       Comparator.<Map.Entry<ActorDefinition, LocalState>, String>
               comparing(o1 -> o1.getKey().getType().getSimpleName())
