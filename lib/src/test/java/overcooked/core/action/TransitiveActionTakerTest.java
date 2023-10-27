@@ -12,7 +12,6 @@ import org.mockito.InOrder;
 import overcooked.core.actor.ActorDefinition;
 import overcooked.sample.diehard.model.Jar3;
 import overcooked.sample.diehard.model.Jar5;
-import overcooked.sample.diehard.modelverifier.Jar3State;
 
 
 class TransitiveActionTakerTest {
@@ -29,7 +28,6 @@ class TransitiveActionTakerTest {
         .actionType(new TransitiveActionType(ActorDefinition.builder()
             .id("doesn't matter in this case")
             .type(Jar3.class)
-            .localStateType(Jar3State.class)
             .build()))
         .build();
 

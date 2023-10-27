@@ -46,7 +46,6 @@ class TransitiveActionTemplateExecutorTest {
     ActorDefinition actionPerformerDefinition = ActorDefinition.builder()
         .id("jar5")
         .type(Jar5.class)
-        .localStateType(Jar3State.class)
         .build();
 
     Jar3 actionReceiver = new Jar3(0);
@@ -55,7 +54,6 @@ class TransitiveActionTemplateExecutorTest {
     ActorDefinition actionReceiverDefinition = ActorDefinition.builder()
         .id("jar3")
         .type(Jar3.class)
-        .localStateType(Jar3State.class)
         .build();
 
     ActionTemplate actionTemplate = ActionTemplate.builder()

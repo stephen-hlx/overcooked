@@ -16,7 +16,6 @@ import overcooked.core.actor.LocalState;
 import overcooked.core.actor.LocalStateExtractor;
 import overcooked.sample.diehard.model.Jar5;
 import overcooked.sample.diehard.modelverifier.Jar3State;
-import overcooked.sample.diehard.modelverifier.Jar5State;
 
 class IntransitiveActionTemplateExecutorTest {
   private final IntransitiveActionTaker intransitiveActionTaker =
@@ -45,7 +44,6 @@ class IntransitiveActionTemplateExecutorTest {
     ActorDefinition actorDefinition = ActorDefinition.builder()
         .id("jar5")
         .type(Jar5.class)
-        .localStateType(Jar5State.class)
         .build();
 
     ActionTemplate actionTemplate = ActionTemplate.builder()

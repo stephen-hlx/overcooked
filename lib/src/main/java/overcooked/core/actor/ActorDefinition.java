@@ -13,6 +13,4 @@ import lombok.Value;
 public class ActorDefinition {
   String id;
   Class<?> type;
-  // TODO: is this really needed?
-  Class<?> localStateType;
 }

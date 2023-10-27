@@ -32,12 +32,10 @@ public class ModelVerifier {
   private static final ActorDefinition JAR3 = ActorDefinition.builder()
       .id("jar3")
       .type(Jar3.class)
-      .localStateType(Jar3State.class)
       .build();
   private static final ActorDefinition JAR5 = ActorDefinition.builder()
       .id("jar5")
       .type(Jar5.class)
-      .localStateType(Jar5State.class)
       .build();
 
   /**
@@ -63,7 +61,6 @@ public class ModelVerifier {
             .actionType(new TransitiveActionType(ActorDefinition.builder()
                 .id("jar5")
                 .type(Jar5.class)
-                .localStateType(Jar5State.class)
                 .build()))
             .methodName("addTo")
             .parameters(ImmutableList.of(new ParamTemplate<>(Jar5.class)))
@@ -83,7 +80,6 @@ public class ModelVerifier {
             .actionType(new TransitiveActionType(ActorDefinition.builder()
                 .id("jar3")
                 .type(Jar3.class)
-                .localStateType(Jar3State.class)
                 .build()))
             .methodName("addTo")
             .parameters(ImmutableList.of(new ParamTemplate<>(Jar3.class)))

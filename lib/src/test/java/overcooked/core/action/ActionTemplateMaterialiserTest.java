@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Test;
 import overcooked.core.actor.ActorDefinition;
 import overcooked.sample.diehard.model.Jar3;
-import overcooked.sample.diehard.modelverifier.Jar3State;
 
 class ActionTemplateMaterialiserTest {
   @Test
@@ -15,7 +14,6 @@ class ActionTemplateMaterialiserTest {
     ActorDefinition jarActor = ActorDefinition.builder()
         .id("someId")
         .type(Jar3.class)
-        .localStateType(Jar3State.class)
         .build();
     ActionTemplate template = ActionTemplate.builder()
         .actionType(new TransitiveActionType(jarActor))
@@ -43,7 +41,6 @@ class ActionTemplateMaterialiserTest {
     ActorDefinition jarActor = ActorDefinition.builder()
         .id("someId")
         .type(Jar3.class)
-        .localStateType(Jar3State.class)
         .build();
     ActionTemplate template = ActionTemplate.builder()
         .actionType(new TransitiveActionType(jarActor))
