@@ -21,9 +21,8 @@ import overcooked.core.actor.ActorDefinition;
 import overcooked.core.actor.ActorStateTransformerConfig;
 import overcooked.sample.diehard.model.Jar3;
 import overcooked.sample.diehard.model.Jar5;
-import overcooked.visual.DotGraphBuilder;
-import overcooked.visual.GlobalStatePrinter;
-import overcooked.visual.TransitionPrinter;
+import overcooked.visual.DotGraphExporter;
+import overcooked.visual.DotGraphExporterFactory;
 
 /**
  * The ModelVerifier of example diehard.
@@ -114,12 +113,11 @@ public class ModelVerifier {
 
     StateMachineExecutionData executionData = stateMachineExecutionDataCollector.getData();
 
-    DotGraphBuilder dotGraphBuilder =
-        new DotGraphBuilder(new TransitionPrinter(new GlobalStatePrinter()));
+    DotGraphExporter dotGraphExporter = DotGraphExporterFactory.create();
 
     Analyser analyser = new JgraphtAnalyser();
     executionData.getValidationFailingGlobalStates().forEach(failingState -> {
-      log.info(dotGraphBuilder.build(
+      log.info(dotGraphExporter.export(
           ImmutableSet.copyOf(
               analyser.findShortestPathToFailureState(initialState,
                   failingState,

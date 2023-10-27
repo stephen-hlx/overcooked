@@ -26,6 +26,9 @@ dependencies {
     // https://mvnrepository.com/artifact/org.jgrapht/jgrapht-core
     implementation("org.jgrapht:jgrapht-core:1.5.2")
 
+    // https://mvnrepository.com/artifact/org.jgrapht/jgrapht-io
+    implementation("org.jgrapht:jgrapht-io:1.5.2")
+
     // Use JUnit Jupiter for testing.
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
 

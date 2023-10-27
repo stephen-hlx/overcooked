@@ -16,7 +16,7 @@ import overcooked.core.actor.LocalState;
  *           │               │
  *           └───────────────┘
  */
-class StateMachineTestSetup {
+public class StateMachineTestSetup {
   public static final String ACTOR_1_ID = "actor1";
   public static final String ACTOR_2_ID = "actor2";
   public static final String ACTOR_3_ID = "actor3";
@@ -26,10 +26,22 @@ class StateMachineTestSetup {
   public static final String ACTOR_2_METHOD_2 = "actor2.method2";
   public static final String ACTOR_3_METHOD = "actor3.method1";
   public static final String ACTOR_4_METHOD = "actor4.method1";
-  public static final ActorDefinition ACTOR_1 = ActorDefinition.builder().id(ACTOR_1_ID).build();
-  public static final ActorDefinition ACTOR_2 = ActorDefinition.builder().id(ACTOR_2_ID).build();
-  public static final ActorDefinition ACTOR_3 = ActorDefinition.builder().id(ACTOR_3_ID).build();
-  public static final ActorDefinition ACTOR_4 = ActorDefinition.builder().id(ACTOR_4_ID).build();
+  public static final ActorDefinition ACTOR_1 = ActorDefinition.builder()
+      .type(Integer.class)
+      .id(ACTOR_1_ID)
+      .build();
+  public static final ActorDefinition ACTOR_2 = ActorDefinition.builder()
+      .type(Integer.class)
+      .id(ACTOR_2_ID)
+      .build();
+  public static final ActorDefinition ACTOR_3 = ActorDefinition.builder()
+      .type(Integer.class)
+      .id(ACTOR_3_ID)
+      .build();
+  public static final ActorDefinition ACTOR_4 = ActorDefinition.builder()
+      .type(Integer.class)
+      .id(ACTOR_4_ID)
+      .build();
   public static final LocalState ACTOR_1_LOCAL_STATE = new TestLocalState(1, 0);
   public static final LocalState ACTOR_2_LOCAL_STATE = new TestLocalState(2, 0);
   public static final LocalState ACTOR_3_LOCAL_STATE = new TestLocalState(3, 0);
