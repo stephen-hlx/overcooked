@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 class ModelVerifierTest {
   @Test
   void can_run_without_error() {
-    ModelVerifier.main(new String[] {});
+    new ModelVerifier().verify();
   }
 
 }

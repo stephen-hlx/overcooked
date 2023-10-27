@@ -38,12 +38,7 @@ public class ModelVerifier {
       .type(Jar5.class)
       .build();
 
-  /**
-   * Main function of the model viewer.
-   *
-   * @param args args of main function
-   */
-  public static void main(String[] args) {
+  void verify() {
     GlobalState initialState = new GlobalState(ImmutableMap.of(
         JAR3, new Jar3State(0),
         JAR5, new Jar5State(0)));
