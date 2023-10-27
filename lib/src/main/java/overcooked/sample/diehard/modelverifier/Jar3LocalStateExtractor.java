@@ -7,7 +7,7 @@ import overcooked.sample.diehard.model.Jar3;
 /**
  * A {@link LocalStateExtractor} implementation for {@link Jar3}.
  */
-public class Jar3LocalStateExtractor implements LocalStateExtractor {
+class Jar3LocalStateExtractor implements LocalStateExtractor {
   @Override
   public LocalState extract(Object actor) {
     Jar3 jar3 = (Jar3) actor;

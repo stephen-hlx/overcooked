@@ -28,7 +28,7 @@ import overcooked.visual.DotGraphExporterFactory;
  * The ModelVerifier of example diehard.
  */
 @Log
-public class ModelVerifier {
+class ModelVerifier {
   private static final ActorDefinition JAR3 = ActorDefinition.builder()
       .id("jar3")
       .type(Jar3.class)
