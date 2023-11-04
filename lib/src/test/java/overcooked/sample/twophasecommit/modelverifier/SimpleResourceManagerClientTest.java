@@ -1,43 +1,31 @@
-package overcooked.sample.twophasecommit.model;
+package overcooked.sample.twophasecommit.modelverifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static overcooked.sample.twophasecommit.model.ResourceManagerState.ABORTED;
 import static overcooked.sample.twophasecommit.model.ResourceManagerState.COMMITTED;
 import static overcooked.sample.twophasecommit.model.ResourceManagerState.PREPARED;
 import static overcooked.sample.twophasecommit.model.ResourceManagerState.WORKING;
-import static overcooked.sample.twophasecommit.model.SimpleTransactionManagerClientTest.Action.ABORT;
-import static overcooked.sample.twophasecommit.model.SimpleTransactionManagerClientTest.Action.COMMIT;
-import static overcooked.sample.twophasecommit.model.SimpleTransactionManagerClientTest.Action.PREPARE;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import overcooked.sample.twophasecommit.model.SimpleTransactionManagerClientTest.Action;
+import overcooked.sample.twophasecommit.model.ResourceManagerState;
 
 class SimpleResourceManagerClientTest {
-  private static final int RESOURCE_MANAGER_ID = 0;
-
-  private final SimpleTransactionManagerClient
-      simpleTransactionManagerClient = mock(SimpleTransactionManagerClient.class);
+  private static final String RESOURCE_MANAGER_ID = "0";
 
   static Object[][] test_cases() {
     return new Object[][] {
         // current,   action,        success, expected
-        {WORKING, PREPARE, true, PREPARED},
-        {WORKING, COMMIT, false, WORKING},
-        {WORKING, ABORT, false, WORKING},
-        {PREPARED, ABORT, true, ABORTED},
-        {PREPARED, PREPARE, true, PREPARED},
-        {PREPARED, COMMIT, true, COMMITTED},
-        {COMMITTED, PREPARE, false, COMMITTED},
-        {COMMITTED, COMMIT, true, COMMITTED},
-        {COMMITTED, ABORT, false, COMMITTED},
-        {ABORTED, PREPARE, false, ABORTED},
-        {ABORTED, COMMIT, false, ABORTED},
-        {ABORTED, ABORT, true, ABORTED},
+        {  WORKING,   Action.COMMIT, false,   WORKING  },
+        {  WORKING,   Action.ABORT,  false,   WORKING  },
+        {  PREPARED,  Action.ABORT,  true,    ABORTED  },
+        {  PREPARED,  Action.COMMIT, true,    COMMITTED},
+        {  COMMITTED, Action.COMMIT, true,    COMMITTED},
+        {  COMMITTED, Action.ABORT,  false,   COMMITTED},
+        {  ABORTED,   Action.COMMIT, false,   ABORTED  },
+        {  ABORTED,   Action.ABORT,  true,    ABORTED  },
     };
   }
 
@@ -49,7 +37,6 @@ class SimpleResourceManagerClientTest {
                                                 ResourceManagerState expectedState) {
     SimpleResourceManagerClient resourceManagerClient =
         new SimpleResourceManagerClient(RESOURCE_MANAGER_ID,
-            simpleTransactionManagerClient,
             currentState);
 
     if (success) {
@@ -59,18 +46,20 @@ class SimpleResourceManagerClientTest {
           .isInstanceOf(IllegalStateException.class);
     }
     assertThat(resourceManagerClient.getState()).isEqualTo(expectedState);
-    verifyNoMoreInteractions(simpleTransactionManagerClient);
   }
 
   private void doAction(SimpleResourceManagerClient simpleResourceManagerClient, Action action) {
     switch (action) {
-      case PREPARE -> {
-        simpleResourceManagerClient.prepare();
-        verify(simpleTransactionManagerClient).prepare(simpleResourceManagerClient);
-      }
       case COMMIT -> simpleResourceManagerClient.commit();
       case ABORT -> simpleResourceManagerClient.abort();
       default -> throw new RuntimeException("Unexpected new state: {}" + action);
     }
+  }
+
+  @SuppressFBWarnings(value = "PI_DO_NOT_REUSE_PUBLIC_IDENTIFIERS_CLASS_NAMES",
+      justification = "this is just a sample")
+  private enum Action {
+    COMMIT,
+    ABORT,
   }
 }

@@ -1,23 +1,30 @@
 package overcooked.sample.twophasecommit.model;
 
-import java.util.Set;
+import static overcooked.sample.twophasecommit.model.ResourceManagerState.ABORTED;
+import static overcooked.sample.twophasecommit.model.ResourceManagerState.COMMITTED;
+import static overcooked.sample.twophasecommit.model.ResourceManagerState.PREPARED;
+import static overcooked.sample.twophasecommit.model.ResourceManagerState.WORKING;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * A resource manager that can be in several states defined by {@link ResourceManagerState},
  * representing a real entity that can coordinate in a two phase commit scenario.
  */
-interface ResourceManagerClient {
+public interface ResourceManagerClient {
+  ImmutableSet<ResourceManagerState> STATES_ALLOWED_FOR_PREPARE =
+      ImmutableSet.of(WORKING, PREPARED);
+  ImmutableSet<ResourceManagerState> STATES_ALLOWED_FOR_COMMIT =
+      ImmutableSet.of(PREPARED, COMMITTED);
+  ImmutableSet<ResourceManagerState> STATES_ALLOWED_FOR_ABORT =
+      ImmutableSet.of(PREPARED, ABORTED);
+
   /**
    * Returns the ID of the resource manager client.
    *
    * @return the ID of the resource manager client
    */
-  int getId();
-
-  /**
-   * Prepares for committing the transaction.
-   */
-  void prepare();
+  String getId();
 
   /**
    * Commits the transaction.
@@ -28,23 +35,4 @@ interface ResourceManagerClient {
    * Aborts the transaction.
    */
   void abort();
-
-  /**
-   * Aborts the transaction.
-   */
-  void selfAbort();
-
-  static void validateCurrentStateIsAllowedToMoveToNewState(
-      ResourceManagerState currentState,
-      ResourceManagerState newState,
-      Set<ResourceManagerState> allowedSet) {
-    if (!allowedSet.contains(currentState)) {
-      throw new IllegalStateException(
-          String.format(
-              "Moving to state %s is only possible from state(s) %s but it was %s",
-              newState,
-              allowedSet,
-              currentState));
-    }
-  }
 }
