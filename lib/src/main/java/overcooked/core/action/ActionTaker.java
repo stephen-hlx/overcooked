@@ -3,10 +3,12 @@ package overcooked.core.action;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
+import lombok.extern.java.Log;
 
 /**
  * The object that is responsible for taking an action for an actor.
  */
+@Log
 class ActionTaker {
   /**
    * Takes the action defined in the {@link ActionDefinition} object on behalf of the actor.
@@ -29,8 +31,13 @@ class ActionTaker {
         .toArray(Object[]::new);
     try {
       method.invoke(actor, parameters);
-    } catch (IllegalAccessException | InvocationTargetException e) {
+    } catch (IllegalAccessException e) {
       throw new RuntimeException(e);
+    } catch (InvocationTargetException e) {
+      // TODO: no testing
+      log.info(String.format("When %s.%s is called against %s Exception %s was thrown for cause %s",
+          actor.getClass().getSimpleName(), method.getName(), params,
+          e, e.getCause()));
     }
   }
 
