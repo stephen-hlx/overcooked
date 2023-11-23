@@ -39,7 +39,7 @@ class StateMergerTest {
     )));
 
     // change the old global state
-    ((Actor1LocalState) (oldGlobalState.getLocalStates().get(ACTOR_1))).getData()
+    ((Actor1LocalState) (oldGlobalState.getCopyOfLocalStates().get(ACTOR_1))).getData()
         .put("actor1", "state1");
 
     assertThat(newGlobalState)

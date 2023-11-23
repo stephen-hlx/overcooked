@@ -17,7 +17,7 @@ class GlobalStatePrinter {
           .thenComparing(o -> o.getKey().getId());
 
   static String print(GlobalState globalState) {
-    return globalState.getLocalStates().entrySet().stream()
+    return globalState.getCopyOfLocalStates().entrySet().stream()
         .sorted(ACTOR_COMPARATOR)
         .map(GlobalStatePrinter::printEntry)
         .collect(Collectors.joining(", "));

@@ -7,7 +7,7 @@ import overcooked.core.actor.LocalState;
 class FourLiterVerifier implements GlobalStateVerifier {
   @Override
   public boolean validate(GlobalState globalState) {
-    for (LocalState localState : globalState.getLocalStates().values()) {
+    for (LocalState localState : globalState.getCopyOfLocalStates().values()) {
       if (localState instanceof Jar5State) {
         if (((Jar5State) localState).getOccupancy() == 4) {
           return false;

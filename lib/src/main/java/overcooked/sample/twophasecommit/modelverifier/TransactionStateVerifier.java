@@ -20,7 +20,7 @@ class TransactionStateVerifier implements GlobalStateVerifier {
 
   private Collection<ResourceManagerState> getResourceManagerStatesFromTransactionManager(
       GlobalState globalState) {
-    return ((TransactionManagerLocalState) (globalState.getLocalStates().entrySet().stream()
+    return ((TransactionManagerLocalState) (globalState.getCopyOfLocalStates().entrySet().stream()
         .filter(entry -> entry.getKey().getId().equals(transactionManagerId))
         .findFirst()
         .orElseThrow(() -> new RuntimeException("Could not find TransactionManagerLocalState"))
@@ -29,7 +29,7 @@ class TransactionStateVerifier implements GlobalStateVerifier {
 
   private Collection<ResourceManagerState> getResourceManagerStatesFromResourceManagers(
       GlobalState globalState) {
-    return globalState.getLocalStates().entrySet().stream()
+    return globalState.getCopyOfLocalStates().entrySet().stream()
         .filter(entry -> !entry.getKey().getId().equals(transactionManagerId))
         .map(Map.Entry::getValue)
         .map(o -> ((ResourceManagerLocalState) o).getState())

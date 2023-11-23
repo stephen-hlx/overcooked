@@ -41,7 +41,7 @@ class StateMachineDriver {
       StateMachineExecutionDataCollector stateMachineExecutionDataCollector) {
     Set<GlobalState> nextStates = new HashSet<>();
 
-    globalState.getLocalStates().forEach((actorDefinition, localState) ->
+    globalState.getActorDefinitions().forEach(actorDefinition ->
         actorActionConfig.getActionDefinitionTemplates()
             .getOrDefault(actorDefinition, Collections.emptySet())
             .forEach(actionTemplate -> {
@@ -56,14 +56,13 @@ class StateMachineDriver {
                     actionTemplate.getActionType().getActionReceiverDefinition();
                 arcBuilder.actionReceiverId(actionReceiverDefinition.getId());
                 newLocalStates = transitiveActionTemplateExecutor.execute(
-                    globalState.getLocalStates().get(actorDefinition),
+                    globalState.getCopyOfLocalState(actorDefinition),
                     actorDefinition,
-                    globalState.getLocalStates()
-                        .get(actionReceiverDefinition),
+                    globalState.getCopyOfLocalState(actionReceiverDefinition),
                     actionTemplate);
               } else {
                 newLocalStates = intransitiveActionTemplateExecutor.execute(
-                    globalState.getLocalStates().get(actorDefinition),
+                    globalState.getCopyOfLocalState(actorDefinition),
                     actorDefinition,
                     actionTemplate);
               }

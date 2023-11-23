@@ -1,7 +1,9 @@
 package overcooked.core;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import lombok.EqualsAndHashCode;
@@ -12,11 +14,12 @@ import overcooked.core.actor.LocalState;
 /**
  * Represents a state of the global state machine.
  */
-@Getter
 @EqualsAndHashCode(exclude = {"id"})
 public class GlobalState {
   private static final AtomicLong SEED = new AtomicLong(0);
+  @Getter
   private final long id;
+
   // <actor, localState>
   private final ImmutableMap<ActorDefinition, LocalState> localStates;
 
@@ -25,16 +28,17 @@ public class GlobalState {
     this.id = SEED.getAndIncrement();
   }
 
-  @Override
-  public String toString() {
-    return String.format("GlobalState(%s)", printLocalStates());
+  public Set<ActorDefinition> getActorDefinitions() {
+    return localStates.keySet();
   }
 
-  private String printLocalStates() {
-    return localStates.entrySet().stream()
-        .map(entry -> String.format("%s(%s)",
-            entry.getKey().getId(),
-            entry.getValue().toString()))
-        .collect(Collectors.joining(","));
+  public LocalState getCopyOfLocalState(ActorDefinition actorDefinition) {
+    return Preconditions.checkNotNull(localStates.get(actorDefinition)).deepCopy();
   }
+
+  public Map<ActorDefinition, LocalState> getCopyOfLocalStates() {
+    return localStates.entrySet().stream()
+        .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().deepCopy()));
+  }
+
 }

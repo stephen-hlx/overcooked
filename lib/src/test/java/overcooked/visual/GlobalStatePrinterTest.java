@@ -3,6 +3,7 @@ package overcooked.visual;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.common.collect.ImmutableMap;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
 import overcooked.core.GlobalState;
@@ -30,6 +31,7 @@ class GlobalStatePrinterTest {
   }
 
   @Value
+  @EqualsAndHashCode(callSuper = false)
   static class TestLocalState extends LocalState {
     int f1;
     int f2;
