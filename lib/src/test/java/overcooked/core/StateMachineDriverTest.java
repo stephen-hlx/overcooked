@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.Set;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
 import overcooked.analysis.Arc;
@@ -155,7 +156,8 @@ class StateMachineDriverTest {
   }
 
   @Value
-  private static class TestLocalState implements LocalState {
+  @EqualsAndHashCode(callSuper = false)
+  private static class TestLocalState extends LocalState {
     int f1;
     int f2;
 

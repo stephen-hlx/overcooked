@@ -30,7 +30,7 @@ class GlobalStatePrinterTest {
   }
 
   @Value
-  static class TestLocalState implements LocalState {
+  static class TestLocalState extends LocalState {
     int f1;
     int f2;
 

@@ -11,7 +11,7 @@ import overcooked.core.actor.LocalState;
 @RequiredArgsConstructor
 @Getter
 @Value
-public class Jar5State implements LocalState {
+public class Jar5State extends LocalState {
   int occupancy;
 
   public String toString() {

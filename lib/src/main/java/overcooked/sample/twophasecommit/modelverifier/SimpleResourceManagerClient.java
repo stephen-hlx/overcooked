@@ -26,14 +26,14 @@ public class SimpleResourceManagerClient implements ResourceManagerClient {
   @Override
   public void commit() {
     Preconditions.checkState(STATES_ALLOWED_FOR_COMMIT.contains(this.state),
-        "Action commit is not allowed for current state {}", this.state);
+        "Action commit is not allowed for current state %s", this.state);
     this.state = ResourceManagerState.COMMITTED;
   }
 
   @Override
   public void abort() {
     Preconditions.checkState(STATES_ALLOWED_FOR_ABORT.contains(this.state),
-        "Action abort is not allowed for current state {}", this.state);
+        "Action abort is not allowed for current state %s", this.state);
     this.state = ABORTED;
   }
 

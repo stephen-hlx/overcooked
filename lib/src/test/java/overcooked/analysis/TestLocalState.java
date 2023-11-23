@@ -1,10 +1,12 @@
 package overcooked.analysis;
 
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 import overcooked.core.actor.LocalState;
 
 @Value
-class TestLocalState implements LocalState {
+@EqualsAndHashCode(callSuper = false)
+class TestLocalState extends LocalState {
   int f1;
   int f2;
 

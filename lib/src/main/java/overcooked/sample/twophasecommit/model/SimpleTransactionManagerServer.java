@@ -27,7 +27,7 @@ public class SimpleTransactionManagerServer implements TransactionManagerServer 
     String id = resourceManager.getId();
     ResourceManagerState currentState = Preconditions.checkNotNull(resourceManagerStates.get(id));
     Preconditions.checkState(STATES_ALLOWED_FOR_ABORT.contains(currentState),
-        "Current state {} is not allowed for the action", currentState);
+        "Current state %s is not allowed for the action", currentState);
 
     resourceManager.abort();
 
@@ -39,7 +39,7 @@ public class SimpleTransactionManagerServer implements TransactionManagerServer 
     String id = resourceManager.getId();
     ResourceManagerState currentState = Preconditions.checkNotNull(resourceManagerStates.get(id));
     Preconditions.checkState(STATES_ALLOWED_FOR_COMMIT.contains(currentState),
-        "Current state {} is not allowed for the action", currentState);
+        "Current state %s is not allowed for the action", currentState);
 
     resourceManager.commit();
 

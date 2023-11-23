@@ -32,8 +32,8 @@ class SimpleTransactionManagerClient implements TransactionManagerClient {
   private void validateResourceManager(String id, Set<ResourceManagerState> allowedState) {
     ResourceManagerState state = resourceManagerStates.get(id);
     Preconditions.checkState(state != null,
-        "Could not find state for ResourceManager Id({})", id);
+        "Could not find state for ResourceManager Id(%s)", id);
     Preconditions.checkState(allowedState.contains(state),
-        "Current state {} is not allowed for the action", state);
+        "Current state %s is not allowed for the action", state);
   }
 }
