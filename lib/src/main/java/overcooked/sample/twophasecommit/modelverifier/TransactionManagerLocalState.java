@@ -12,4 +12,9 @@ import overcooked.sample.twophasecommit.model.ResourceManagerState;
 class TransactionManagerLocalState extends LocalState {
   @Getter
   Map<String, ResourceManagerState> resourceManagerStates;
+
+  @Override
+  public String toString() {
+    return resourceManagerStates.toString();
+  }
 }

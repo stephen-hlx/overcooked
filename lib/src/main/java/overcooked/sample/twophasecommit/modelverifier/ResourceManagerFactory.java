@@ -9,7 +9,6 @@ class ResourceManagerFactory implements ActorFactory<ResourceManager> {
   public ResourceManager restoreFromLocalState(LocalState localState) {
     ResourceManagerLocalState state = (ResourceManagerLocalState) localState;
     return ResourceManager.builder()
-        .resourceManagerClient(new SimpleResourceManagerClient(state.getId(), state.getState()))
         .resourceManagerServer(new SimpleResourceManagerServer(state.getId(), state.getState()))
         .build();
   }

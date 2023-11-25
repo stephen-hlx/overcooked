@@ -16,7 +16,7 @@ import overcooked.core.GlobalState;
 @RequiredArgsConstructor
 @SuppressFBWarnings(value = { "EI_EXPOSE_REP" },
     justification = "this is just for internal use, making it immutable is over engineering")
-public class JgraphtDotGraphExporter implements DotGraphExporter {
+class JgraphtDotGraphExporter implements DotGraphExporter {
   private final JgraphtGraphBuilder jgraphtGraphBuilder;
   private final DOTExporter<GlobalState, Transition> dotExporter;
 

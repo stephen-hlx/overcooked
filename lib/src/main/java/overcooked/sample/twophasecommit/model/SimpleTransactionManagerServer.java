@@ -2,10 +2,12 @@ package overcooked.sample.twophasecommit.model;
 
 import static overcooked.sample.twophasecommit.model.ResourceManagerState.ABORTED;
 import static overcooked.sample.twophasecommit.model.ResourceManagerState.COMMITTED;
+import static overcooked.sample.twophasecommit.model.ResourceManagerState.PREPARED;
 
 import com.google.common.base.Preconditions;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Map;
+import java.util.Set;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -23,26 +25,40 @@ public class SimpleTransactionManagerServer implements TransactionManagerServer 
   private final Map<String, ResourceManagerState> resourceManagerStates;
 
   @Override
-  public void abort(ResourceManagerClient resourceManager) {
-    String id = resourceManager.getId();
-    ResourceManagerState currentState = Preconditions.checkNotNull(resourceManagerStates.get(id));
-    Preconditions.checkState(STATES_ALLOWED_FOR_ABORT.contains(currentState),
-        "Current state %s is not allowed for the action", currentState);
+  public void abort(String resourceManagerId) {
+    validateCurrentState(STATES_ALLOWED_FOR_ABORT, resourceManagerId);
+    resourceManagerStates.put(resourceManagerId, ABORTED);
+  }
 
-    resourceManager.abort();
+  @Override
+  public void abort(ResourceManagerClient resourceManagerClient) {
+    String id = resourceManagerClient.getId();
+    validateCurrentState(STATES_ALLOWED_FOR_ABORT, id);
 
+    resourceManagerClient.abort();
     resourceManagerStates.put(id, ABORTED);
   }
 
   @Override
   public void commit(ResourceManagerClient resourceManager) {
     String id = resourceManager.getId();
-    ResourceManagerState currentState = Preconditions.checkNotNull(resourceManagerStates.get(id));
-    Preconditions.checkState(STATES_ALLOWED_FOR_COMMIT.contains(currentState),
-        "Current state %s is not allowed for the action", currentState);
+    validateCurrentState(STATES_ALLOWED_FOR_COMMIT, id);
 
     resourceManager.commit();
-
     resourceManagerStates.put(id, COMMITTED);
+  }
+
+  @Override
+  public void prepare(String resourceManagerId) {
+    validateCurrentState(STATES_ALLOWED_FOR_PREPARE, resourceManagerId);
+    resourceManagerStates.put(resourceManagerId, PREPARED);
+  }
+
+  private void validateCurrentState(Set<ResourceManagerState> validStates,
+                                    String resourceManagerId) {
+    ResourceManagerState currentState =
+        Preconditions.checkNotNull(resourceManagerStates.get(resourceManagerId));
+    Preconditions.checkState(validStates.contains(currentState),
+        "Current state %s is not allowed for the action", currentState);
   }
 }

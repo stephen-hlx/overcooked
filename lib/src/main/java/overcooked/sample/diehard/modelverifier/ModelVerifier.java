@@ -104,6 +104,7 @@ class ModelVerifier {
     DotGraphExporter dotGraphExporter = DotGraphExporterFactory.create();
 
     Analyser analyser = new JgraphtAnalyser();
+    log.info(dotGraphExporter.export(executionData.getTransitions()));
     executionData.getValidationFailingGlobalStates().forEach(failingState -> {
       log.info(dotGraphExporter.export(
           ImmutableSet.copyOf(

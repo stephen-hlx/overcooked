@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import overcooked.sample.twophasecommit.model.ResourceManagerClient;
 import overcooked.sample.twophasecommit.model.ResourceManagerServer;
+import overcooked.sample.twophasecommit.model.TransactionManagerClient;
 
 /**
  * The actor that represents both {@link ResourceManagerClient} and {@link ResourceManagerServer}
@@ -13,24 +14,32 @@ import overcooked.sample.twophasecommit.model.ResourceManagerServer;
 @Builder
 @SuppressFBWarnings(value = "PI_DO_NOT_REUSE_PUBLIC_IDENTIFIERS_CLASS_NAMES",
     justification = "this is just a sample")
-public class ResourceManager {
-  private final ResourceManagerClient resourceManagerClient;
+public class ResourceManager implements ResourceManagerClient, ResourceManagerServer {
   @Getter
   private final ResourceManagerServer resourceManagerServer;
 
+  @Override
+  public String getId() {
+    return resourceManagerServer.getId();
+  }
+
+  @Override
   public void commit() {
-    resourceManagerClient.commit();
+    resourceManagerServer.commit();
   }
 
+  @Override
   public void abort() {
-    resourceManagerClient.abort();
+    resourceManagerServer.abort();
   }
 
-  public void abort(TransactionManager transactionManager) {
-    transactionManager.abort(resourceManagerClient.getId());
+  @Override
+  public void abort(TransactionManagerClient transactionManagerClient) {
+    resourceManagerServer.abort(transactionManagerClient);
   }
 
-  public void prepare(TransactionManager transactionManager) {
-    transactionManager.prepare(resourceManagerClient.getId());
+  @Override
+  public void prepare(TransactionManagerClient transactionManagerClient) {
+    resourceManagerServer.prepare(transactionManagerClient);
   }
 }

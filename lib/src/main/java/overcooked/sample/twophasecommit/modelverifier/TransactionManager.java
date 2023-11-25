@@ -3,6 +3,7 @@ package overcooked.sample.twophasecommit.modelverifier;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import overcooked.sample.twophasecommit.model.ResourceManagerClient;
 import overcooked.sample.twophasecommit.model.TransactionManagerClient;
 import overcooked.sample.twophasecommit.model.TransactionManagerServer;
 
@@ -11,24 +12,27 @@ import overcooked.sample.twophasecommit.model.TransactionManagerServer;
  * {@link TransactionManagerServer} for model checking.
  */
 @Builder
-public class TransactionManager {
-  private final TransactionManagerClient transactionManagerClient;
+public class TransactionManager implements TransactionManagerClient, TransactionManagerServer {
   @Getter(AccessLevel.PACKAGE)
   private final TransactionManagerServer transactionManagerServer;
 
+  @Override
   public void prepare(String resourceManagerId) {
-    transactionManagerClient.prepare(resourceManagerId);
+    transactionManagerServer.prepare(resourceManagerId);
   }
 
+  @Override
   public void abort(String resourceManagerId) {
-    transactionManagerClient.abort(resourceManagerId);
+    transactionManagerServer.abort(resourceManagerId);
   }
 
-  public void abort(ResourceManager resourceManager) {
-    resourceManager.abort();
+  @Override
+  public void abort(ResourceManagerClient resourceManagerClient) {
+    transactionManagerServer.abort(resourceManagerClient);
   }
 
-  public void commit(ResourceManager resourceManager) {
-    resourceManager.commit();
+  @Override
+  public void commit(ResourceManagerClient resourceManagerClient) {
+    transactionManagerServer.commit(resourceManagerClient);
   }
 }

@@ -12,7 +12,7 @@ import com.google.common.collect.ImmutableSet;
  * - the real implementation used in production
  * - an in-memory implementation used in the model checking
  */
-public interface TransactionManagerServer {
+public interface TransactionManagerServer extends TransactionManagerClient {
   ImmutableSet<ResourceManagerState> STATES_ALLOWED_FOR_ABORT =
       ImmutableSet.of(PREPARED, ABORTED);
   ImmutableSet<ResourceManagerState> STATES_ALLOWED_FOR_COMMIT =

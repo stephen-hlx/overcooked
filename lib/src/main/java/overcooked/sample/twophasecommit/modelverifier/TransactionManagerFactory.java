@@ -9,8 +9,6 @@ class TransactionManagerFactory implements ActorFactory<TransactionManager> {
   public TransactionManager restoreFromLocalState(LocalState localState) {
     TransactionManagerLocalState state = (TransactionManagerLocalState) localState;
     return TransactionManager.builder()
-        .transactionManagerClient(
-            new SimpleTransactionManagerClient(state.getResourceManagerStates()))
         .transactionManagerServer(
             new SimpleTransactionManagerServer(state.getResourceManagerStates()))
         .build();

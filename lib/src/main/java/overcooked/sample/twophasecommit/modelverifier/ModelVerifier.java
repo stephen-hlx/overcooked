@@ -23,7 +23,9 @@ import overcooked.core.action.ParamTemplate;
 import overcooked.core.action.TransitiveActionType;
 import overcooked.core.actor.Actor;
 import overcooked.core.actor.ActorStateTransformerConfig;
+import overcooked.sample.twophasecommit.model.ResourceManagerClient;
 import overcooked.sample.twophasecommit.model.ResourceManagerState;
+import overcooked.sample.twophasecommit.model.TransactionManagerClient;
 import overcooked.visual.DotGraphExporter;
 import overcooked.visual.DotGraphExporterFactory;
 
@@ -73,6 +75,7 @@ class ModelVerifier {
     DotGraphExporter dotGraphExporter = DotGraphExporterFactory.create();
 
     Analyser analyser = new JgraphtAnalyser();
+    log.info(dotGraphExporter.export(executionData.getTransitions()));
     executionData.getValidationFailingGlobalStates().forEach(failingState ->
         log.info(dotGraphExporter.export(
             ImmutableSet.copyOf(
@@ -131,42 +134,42 @@ class ModelVerifier {
                 .id(RM_ID_0)
                 .build()))
             .methodName("abort")
-            .parameters(ImmutableList.of(new ParamTemplate<>(ResourceManager.class)))
+            .parameters(ImmutableList.of(new ParamTemplate<>(ResourceManagerClient.class)))
             .build(),
         ActionTemplate.builder()
             .actionType(new TransitiveActionType(Actor.builder()
                 .id(RM_ID_0)
                 .build()))
             .methodName("commit")
-            .parameters(ImmutableList.of(new ParamTemplate<>(ResourceManager.class)))
+            .parameters(ImmutableList.of(new ParamTemplate<>(ResourceManagerClient.class)))
             .build(),
         ActionTemplate.builder()
             .actionType(new TransitiveActionType(Actor.builder()
                 .id(RM_ID_1)
                 .build()))
             .methodName("abort")
-            .parameters(ImmutableList.of(new ParamTemplate<>(ResourceManager.class)))
+            .parameters(ImmutableList.of(new ParamTemplate<>(ResourceManagerClient.class)))
             .build(),
         ActionTemplate.builder()
             .actionType(new TransitiveActionType(Actor.builder()
                 .id(RM_ID_1)
                 .build()))
             .methodName("commit")
-            .parameters(ImmutableList.of(new ParamTemplate<>(ResourceManager.class)))
+            .parameters(ImmutableList.of(new ParamTemplate<>(ResourceManagerClient.class)))
             .build(),
         ActionTemplate.builder()
             .actionType(new TransitiveActionType(Actor.builder()
                 .id(RM_ID_2)
                 .build()))
             .methodName("abort")
-            .parameters(ImmutableList.of(new ParamTemplate<>(ResourceManager.class)))
+            .parameters(ImmutableList.of(new ParamTemplate<>(ResourceManagerClient.class)))
             .build(),
         ActionTemplate.builder()
             .actionType(new TransitiveActionType(Actor.builder()
                 .id(RM_ID_2)
                 .build()))
             .methodName("commit")
-            .parameters(ImmutableList.of(new ParamTemplate<>(ResourceManager.class)))
+            .parameters(ImmutableList.of(new ParamTemplate<>(ResourceManagerClient.class)))
             .build()
     );
   }
@@ -186,14 +189,14 @@ class ModelVerifier {
                 .id(TM_ID)
                 .build()))
             .methodName("abort")
-            .parameters(ImmutableList.of(new ParamTemplate<>(TransactionManager.class)))
+            .parameters(ImmutableList.of(new ParamTemplate<>(TransactionManagerClient.class)))
             .build(),
         ActionTemplate.builder()
             .actionType(new TransitiveActionType(Actor.builder()
                 .id(TM_ID)
                 .build()))
             .methodName("prepare")
-            .parameters(ImmutableList.of(new ParamTemplate<>(TransactionManager.class)))
+            .parameters(ImmutableList.of(new ParamTemplate<>(TransactionManagerClient.class)))
             .build()
     );
   }

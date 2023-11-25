@@ -20,9 +20,9 @@ public interface ResourceManagerClient {
       ImmutableSet.of(PREPARED, ABORTED);
 
   /**
-   * Returns the ID of the resource manager client.
+   * Returns the ID of the resource manager.
    *
-   * @return the ID of the resource manager client
+   * @return the ID of the resource manager
    */
   String getId();
 
