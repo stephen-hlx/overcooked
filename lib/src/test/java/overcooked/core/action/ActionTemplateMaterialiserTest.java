@@ -24,7 +24,7 @@ class ActionTemplateMaterialiserTest {
         ))
         .build();
 
-    assertThat(new ActionTemplateMaterialiser().materialise(template, Jar3.class, jar3))
+    assertThat(new ActionTemplateMaterialiser().materialise(template, jar3))
         .isEqualTo(ActionDefinition.builder()
             .actionType(new TransitiveActionType(jarActor))
             .methodName("someMethod")
@@ -50,7 +50,7 @@ class ActionTemplateMaterialiserTest {
         ))
         .build();
 
-    assertThat(new ActionTemplateMaterialiser().materialise(template, Jar3.class, jar3))
+    assertThat(new ActionTemplateMaterialiser().materialise(template, jar3))
         .isEqualTo(ActionDefinition.builder()
             .actionType(new TransitiveActionType(jarActor))
             .methodName("someMethod")

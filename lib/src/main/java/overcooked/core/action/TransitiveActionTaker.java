@@ -17,11 +17,9 @@ class TransitiveActionTaker {
    */
   public void take(TransitiveAction transitiveAction) {
     ActionDefinition materialised = materialiser.materialise(transitiveAction.getActionTemplate(),
-        transitiveAction.getActionReceiver().getClass(),
         transitiveAction.getActionReceiver());
 
     actionTaker.take(transitiveAction.getActionPerformer(),
         materialised);
   }
-
 }

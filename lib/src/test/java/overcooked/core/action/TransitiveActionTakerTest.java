@@ -29,6 +29,7 @@ class TransitiveActionTakerTest {
             .id("doesn't matter in this case")
             .type(Jar3.class)
             .build()))
+        .parameters(ImmutableList.of(new ParamTemplate<>(Jar3.class)))
         .build();
 
     Jar5 jar5 = new Jar5(0);
@@ -39,7 +40,7 @@ class TransitiveActionTakerTest {
         .parameters(ImmutableList.of(new ParamValue(Jar3.class, jar3)))
         .build();
 
-    when(actionTemplateMaterialiser.materialise(actionTemplate, Jar3.class, jar3))
+    when(actionTemplateMaterialiser.materialise(actionTemplate, jar3))
         .thenReturn(someActionAgainstJar3);
 
     transitiveActionTaker.take(TransitiveAction.builder()
@@ -50,7 +51,7 @@ class TransitiveActionTakerTest {
         .build());
 
     inOrder.verify(actionTemplateMaterialiser, times(1))
-        .materialise(actionTemplate, Jar3.class, jar3);
+        .materialise(actionTemplate, jar3);
     inOrder.verify(actionTaker, times(1)).take(jar5, someActionAgainstJar3);
     verifyNoMoreInteractions(actionTemplateMaterialiser, actionTaker);
   }

@@ -44,7 +44,7 @@ class ActionTaker {
   private <ActorT> Method getMethod(Class<ActorT> actorClass,
                                     ActionDefinition actionDefinition) {
     Class<?>[] parameterTypes = actionDefinition.getParameters().stream()
-        .map(ParamValue::getClazz)
+        .map(ParamValue::getType)
         .toArray(Class<?>[]::new);
     try {
       return actorClass.getMethod(actionDefinition.getMethodName(), parameterTypes);

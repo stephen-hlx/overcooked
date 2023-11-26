@@ -1,6 +1,5 @@
 package overcooked.core.action;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
@@ -9,10 +8,10 @@ import lombok.Value;
  * Represents a value, including the type and the value itself.
  */
 @RequiredArgsConstructor
-@Getter(AccessLevel.PACKAGE)
+@Getter
 @Value
 class ParamValue implements Param {
-  Class<?> clazz;
+  Class<?> type;
   Object value;
 
   @Override

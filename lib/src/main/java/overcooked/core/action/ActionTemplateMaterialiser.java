@@ -13,14 +13,12 @@ class ActionTemplateMaterialiser {
    * Materialises the {@link ActionTemplate} provided.
    *
    * @param actionTemplate the action template
-   * @param clazz          the type of the value to be filled into the template
    * @param value          the value to be filled into the template
    * @return an {@link ActionDefinition} object that is created based on the parameter data
    *     provided
    */
   public ActionDefinition materialise(
       ActionTemplate actionTemplate,
-      Class<?> clazz,
       Object value) {
     return ActionDefinition.builder()
         .actionType(actionTemplate.getActionType())
@@ -28,7 +26,7 @@ class ActionTemplateMaterialiser {
         .parameters(actionTemplate.getParameters().stream()
             .map(param ->
                 param.isTemplate()
-                    ? new ParamValue(clazz, value)
+                    ? new ParamValue(param.getType(), value)
                     : (ParamValue) param)
             .collect(ImmutableList.toImmutableList()))
         .build();
@@ -44,6 +42,6 @@ class ActionTemplateMaterialiser {
    *     provided
    */
   public ActionDefinition materialise(ActionTemplate actionTemplate) {
-    return materialise(actionTemplate, null, null);
+    return materialise(actionTemplate, null);
   }
 }

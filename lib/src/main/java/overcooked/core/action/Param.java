@@ -6,4 +6,6 @@ package overcooked.core.action;
  */
 interface Param {
   boolean isTemplate();
+
+  Class<?> getType();
 }
