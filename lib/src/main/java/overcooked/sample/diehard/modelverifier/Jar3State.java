@@ -1,5 +1,6 @@
 package overcooked.sample.diehard.modelverifier;
 
+import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import overcooked.core.actor.LocalState;
@@ -9,6 +10,7 @@ import overcooked.core.actor.LocalState;
  */
 @RequiredArgsConstructor
 @Value
+@EqualsAndHashCode(callSuper = false)
 public class Jar3State extends LocalState {
   int occupancy;
 

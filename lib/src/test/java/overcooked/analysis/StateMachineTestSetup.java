@@ -2,7 +2,7 @@ package overcooked.analysis;
 
 import com.google.common.collect.ImmutableMap;
 import overcooked.core.GlobalState;
-import overcooked.core.actor.ActorDefinition;
+import overcooked.core.actor.Actor;
 import overcooked.core.actor.LocalState;
 
 /**
@@ -26,20 +26,16 @@ public class StateMachineTestSetup {
   public static final String ACTOR_2_METHOD_2 = "actor2.method2";
   public static final String ACTOR_3_METHOD = "actor3.method1";
   public static final String ACTOR_4_METHOD = "actor4.method1";
-  public static final ActorDefinition ACTOR_1 = ActorDefinition.builder()
-      .type(Integer.class)
+  public static final Actor ACTOR_1 = Actor.builder()
       .id(ACTOR_1_ID)
       .build();
-  public static final ActorDefinition ACTOR_2 = ActorDefinition.builder()
-      .type(Integer.class)
+  public static final Actor ACTOR_2 = Actor.builder()
       .id(ACTOR_2_ID)
       .build();
-  public static final ActorDefinition ACTOR_3 = ActorDefinition.builder()
-      .type(Integer.class)
+  public static final Actor ACTOR_3 = Actor.builder()
       .id(ACTOR_3_ID)
       .build();
-  public static final ActorDefinition ACTOR_4 = ActorDefinition.builder()
-      .type(Integer.class)
+  public static final Actor ACTOR_4 = Actor.builder()
       .id(ACTOR_4_ID)
       .build();
   public static final LocalState ACTOR_1_LOCAL_STATE = new TestLocalState(1, 0);
@@ -51,7 +47,7 @@ public class StateMachineTestSetup {
   public static final LocalState NEW_ACTOR_3_LOCAL_STATE = new TestLocalState(3, 1);
 
   public static final GlobalState GLOBAL_STATE_0 = new GlobalState(
-      ImmutableMap.<ActorDefinition, LocalState>builder()
+      ImmutableMap.<Actor, LocalState>builder()
           .put(ACTOR_1, ACTOR_1_LOCAL_STATE)
           .put(ACTOR_2, ACTOR_2_LOCAL_STATE)
           .put(ACTOR_3, ACTOR_3_LOCAL_STATE)
@@ -59,7 +55,7 @@ public class StateMachineTestSetup {
           .build());
 
   public static final GlobalState GLOBAL_STATE_1 = new GlobalState(
-      ImmutableMap.<ActorDefinition, LocalState>builder()
+      ImmutableMap.<Actor, LocalState>builder()
           .put(ACTOR_1, NEW_ACTOR_1_LOCAL_STATE)
           .put(ACTOR_2, ACTOR_2_LOCAL_STATE)
           .put(ACTOR_3, ACTOR_3_LOCAL_STATE)
@@ -67,7 +63,7 @@ public class StateMachineTestSetup {
           .build());
 
   public static final GlobalState GLOBAL_STATE_2 = new GlobalState(
-      ImmutableMap.<ActorDefinition, LocalState>builder()
+      ImmutableMap.<Actor, LocalState>builder()
           .put(ACTOR_1, ACTOR_1_LOCAL_STATE)
           .put(ACTOR_2, NEW_ACTOR_2_LOCAL_STATE)
           .put(ACTOR_3, NEW_ACTOR_3_LOCAL_STATE)
@@ -75,7 +71,7 @@ public class StateMachineTestSetup {
           .build());
 
   public static final GlobalState GLOBAL_STATE_3 = new GlobalState(
-      ImmutableMap.<ActorDefinition, LocalState>builder()
+      ImmutableMap.<Actor, LocalState>builder()
           .put(ACTOR_1, ACTOR_1_LOCAL_STATE)
           .put(ACTOR_2, NEW_ACTOR_2_LOCAL_STATE)
           .put(ACTOR_3, ACTOR_3_LOCAL_STATE)
@@ -83,7 +79,7 @@ public class StateMachineTestSetup {
           .build());
 
   public static final GlobalState GLOBAL_STATE_4 = new GlobalState(
-      ImmutableMap.<ActorDefinition, LocalState>builder()
+      ImmutableMap.<Actor, LocalState>builder()
           .put(ACTOR_1, NEW_ACTOR_1_LOCAL_STATE)
           .put(ACTOR_2, NEW_ACTOR_2_LOCAL_STATE)
           .put(ACTOR_3, ACTOR_3_LOCAL_STATE)

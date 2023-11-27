@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
-import overcooked.core.actor.ActorDefinition;
+import overcooked.core.actor.Actor;
 import overcooked.sample.diehard.model.Jar3;
 import overcooked.sample.diehard.model.Jar5;
 
@@ -25,9 +25,8 @@ class TransitiveActionTakerTest {
   @Test
   void materialises_the_template_before_calling_action_taker() {
     ActionTemplate actionTemplate = ActionTemplate.builder()
-        .actionType(new TransitiveActionType(ActorDefinition.builder()
+        .actionType(new TransitiveActionType(Actor.builder()
             .id("doesn't matter in this case")
-            .type(Jar3.class)
             .build()))
         .parameters(ImmutableList.of(new ParamTemplate<>(Jar3.class)))
         .build();

@@ -6,7 +6,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import lombok.Builder;
-import overcooked.core.actor.ActorDefinition;
+import overcooked.core.actor.Actor;
 import overcooked.core.actor.ActorStateTransformerConfig;
 import overcooked.core.actor.LocalState;
 
@@ -20,18 +20,18 @@ public class IntransitiveActionTemplateExecutor {
 
   /**
    * Executes the action defined in the {@link ActionTemplate} object on behalf of the actor that
-   * is defined in the {@link ActorDefinition} object. The actor will be initialised from the
+   * is defined in the {@link Actor} object. The actor will be initialised from the
    * {@link LocalState} object.
    *
    * @param actorLocalState the local state of the actor which is going to perform the action
    * @param actorDefinition the definition of the actor
    * @param actionTemplate  the template of the action that is going to be performed
-   * @return a map of {@link ActorDefinition} and {@link LocalState} representing the new local
+   * @return a map of {@link Actor} and {@link LocalState} representing the new local
    *     states of the affected actors
    */
-  public Map<ActorDefinition, LocalState> execute(LocalState actorLocalState,
-                                                  ActorDefinition actorDefinition,
-                                                  ActionTemplate actionTemplate) {
+  public Map<Actor, LocalState> execute(LocalState actorLocalState,
+                                        Actor actorDefinition,
+                                        ActionTemplate actionTemplate) {
     Preconditions.checkArgument(!actionTemplate.getActionType().isTransitive(),
         "Expecting an intransitive action template but it was transitive {}", actionTemplate);
 

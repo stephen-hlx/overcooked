@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 
 import com.google.common.collect.ImmutableMap;
 import org.junit.jupiter.api.Test;
-import overcooked.core.actor.ActorDefinition;
+import overcooked.core.actor.Actor;
 import overcooked.core.actor.ActorFactory;
 import overcooked.core.actor.ActorStateTransformerConfig;
 import overcooked.core.actor.LocalState;
@@ -41,9 +41,8 @@ class IntransitiveActionTemplateExecutorTest {
     Jar5 actor = new Jar5(0);
     LocalState actorLocalState = new Jar3State(0);
     LocalState newActorLocalState = new Jar3State(1);
-    ActorDefinition actorDefinition = ActorDefinition.builder()
+    Actor actorDefinition = Actor.builder()
         .id("jar5")
-        .type(Jar5.class)
         .build();
 
     ActionTemplate actionTemplate = ActionTemplate.builder()

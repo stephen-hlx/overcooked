@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
 import overcooked.core.GlobalState;
-import overcooked.core.actor.ActorDefinition;
+import overcooked.core.actor.Actor;
 import overcooked.core.actor.LocalState;
 
 class GlobalStatePrinterTest {
@@ -16,18 +16,18 @@ class GlobalStatePrinterTest {
     String actor1Id = "actor1";
     String actor2Id = "actor2";
 
-    ActorDefinition actor1 = ActorDefinition.builder().id(actor1Id).type(Integer.class).build();
-    ActorDefinition actor2 = ActorDefinition.builder().id(actor2Id).type(Boolean.class).build();
+    Actor actor1 = Actor.builder().id(actor1Id).build();
+    Actor actor2 = Actor.builder().id(actor2Id).build();
 
     LocalState actor1LocalState = new TestLocalState(1, 0);
     LocalState actor2LocalState = new TestLocalState(2, 0);
 
     assertThat(GlobalStatePrinter.print(new GlobalState(
-        ImmutableMap.<ActorDefinition, LocalState>builder()
+        ImmutableMap.<Actor, LocalState>builder()
             .put(actor1, actor1LocalState)
             .put(actor2, actor2LocalState)
             .build())))
-        .isEqualTo("actor2(f1=2,f2=0), actor1(f1=1,f2=0)");
+        .isEqualTo("actor1(f1=1,f2=0), actor2(f1=2,f2=0)");
   }
 
   @Value

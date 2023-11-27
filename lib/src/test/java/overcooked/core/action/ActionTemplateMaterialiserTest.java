@@ -4,16 +4,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Test;
-import overcooked.core.actor.ActorDefinition;
+import overcooked.core.actor.Actor;
 import overcooked.sample.diehard.model.Jar3;
 
 class ActionTemplateMaterialiserTest {
   @Test
   void call_with_filling_value_works() {
     Jar3 jar3 = new Jar3(0);
-    ActorDefinition jarActor = ActorDefinition.builder()
+    Actor jarActor = Actor.builder()
         .id("someId")
-        .type(Jar3.class)
         .build();
     ActionTemplate template = ActionTemplate.builder()
         .actionType(new TransitiveActionType(jarActor))
@@ -38,9 +37,8 @@ class ActionTemplateMaterialiserTest {
   @Test
   void call_without_filling_value_works() {
     Jar3 jar3 = new Jar3(0);
-    ActorDefinition jarActor = ActorDefinition.builder()
+    Actor jarActor = Actor.builder()
         .id("someId")
-        .type(Jar3.class)
         .build();
     ActionTemplate template = ActionTemplate.builder()
         .actionType(new TransitiveActionType(jarActor))

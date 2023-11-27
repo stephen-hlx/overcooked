@@ -9,12 +9,12 @@ import java.util.Map;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
-import overcooked.core.actor.ActorDefinition;
+import overcooked.core.actor.Actor;
 import overcooked.core.actor.LocalState;
 
 class StateMergerTest {
-  private static final ActorDefinition ACTOR_0 = ActorDefinition.builder().id("0").build();
-  private static final ActorDefinition ACTOR_1 = ActorDefinition.builder().id("1").build();
+  private static final Actor ACTOR_0 = Actor.builder().id("0").build();
+  private static final Actor ACTOR_1 = Actor.builder().id("1").build();
 
   @Test
   @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH")

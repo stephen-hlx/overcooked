@@ -6,11 +6,9 @@ import lombok.Value;
 
 /**
  * Definition of an actor of the system to be model verified.
- * TODO equals should use id only
  */
 @Value
 @Builder
-public class ActorDefinition {
+public class Actor {
   String id;
-  Class<?> type;
 }

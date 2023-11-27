@@ -3,7 +3,7 @@ package overcooked.core.action;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import overcooked.core.actor.ActorDefinition;
+import overcooked.core.actor.Actor;
 
 /**
  * An {@link ActionType} that is transitive.
@@ -12,7 +12,7 @@ import overcooked.core.actor.ActorDefinition;
 @Getter
 @EqualsAndHashCode
 public class TransitiveActionType implements ActionType {
-  private final ActorDefinition actionReceiverDefinition;
+  private final Actor actionReceiverDefinition;
 
   @Override
   public boolean isTransitive() {

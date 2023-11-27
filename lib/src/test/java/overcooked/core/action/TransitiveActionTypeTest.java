@@ -3,20 +3,18 @@ package overcooked.core.action;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
-import overcooked.core.actor.ActorDefinition;
-import overcooked.sample.diehard.model.Jar3;
+import overcooked.core.actor.Actor;
 
 class TransitiveActionTypeTest {
   @Test
   void works() {
-    ActorDefinition actorDefinition = ActorDefinition.builder()
+    Actor actor = Actor.builder()
         .id("doesn't matter")
-        .type(Jar3.class)
         .build();
-    ActionType someType = new TransitiveActionType(actorDefinition);
+    ActionType someType = new TransitiveActionType(actor);
     assertThat(someType.isTransitive()).isTrue();
     assertThat(someType.getActionReceiverDefinition())
-        .isEqualTo(actorDefinition);
+        .isEqualTo(actor);
   }
 
 }

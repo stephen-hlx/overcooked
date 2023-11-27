@@ -23,7 +23,7 @@ import overcooked.core.action.IntransitiveActionType;
 import overcooked.core.action.ParamTemplate;
 import overcooked.core.action.TransitiveActionTemplateExecutor;
 import overcooked.core.action.TransitiveActionType;
-import overcooked.core.actor.ActorDefinition;
+import overcooked.core.actor.Actor;
 import overcooked.core.actor.LocalState;
 
 class StateMachineDriverTest {
@@ -47,10 +47,10 @@ class StateMachineDriverTest {
     String actor4Id = "actor4";
     String actor1Method = "actor1.method1";
     String actor2Method = "actor2.method1";
-    ActorDefinition actor1 = ActorDefinition.builder().id(actor1Id).build();
-    ActorDefinition actor2 = ActorDefinition.builder().id(actor2Id).build();
-    ActorDefinition actor3 = ActorDefinition.builder().id(actor3Id).build();
-    ActorDefinition actor4 = ActorDefinition.builder().id(actor4Id).build();
+    Actor actor1 = Actor.builder().id(actor1Id).build();
+    Actor actor2 = Actor.builder().id(actor2Id).build();
+    Actor actor3 = Actor.builder().id(actor3Id).build();
+    Actor actor4 = Actor.builder().id(actor4Id).build();
 
     ActionTemplate actor1ActionTemplate = ActionTemplate.builder()
         .actionType(new IntransitiveActionType())
@@ -62,7 +62,7 @@ class StateMachineDriverTest {
         .parameters(ImmutableList.of(new ParamTemplate<>(Integer.class)))
         .build();
     ActorActionConfig config = new ActorActionConfig(
-        ImmutableMap.<ActorDefinition, Set<ActionTemplate>>builder()
+        ImmutableMap.<Actor, Set<ActionTemplate>>builder()
             .put(actor1, ImmutableSet.of(actor1ActionTemplate))
             .put(actor2, ImmutableSet.of(actor2ActionTemplate))
             .build());
@@ -85,7 +85,7 @@ class StateMachineDriverTest {
         ));
 
     GlobalState globalState = new GlobalState(
-        ImmutableMap.<ActorDefinition, LocalState>builder()
+        ImmutableMap.<Actor, LocalState>builder()
             .put(actor1, actor1LocalState)
             .put(actor2, actor2LocalState)
             .put(actor3, actor3LocalState)
@@ -98,13 +98,13 @@ class StateMachineDriverTest {
     assertThat(stateMachineDriver.computeNext(globalState, config,
         stateMachineExecutionDataCollector))
         .isEqualTo(ImmutableSet.of(
-            new GlobalState(ImmutableMap.<ActorDefinition, LocalState>builder()
+            new GlobalState(ImmutableMap.<Actor, LocalState>builder()
                 .put(actor1, newActor1LocalState)
                 .put(actor2, actor2LocalState)
                 .put(actor3, actor3LocalState)
                 .put(actor4, actor4LocalState)
                 .build()),
-            new GlobalState(ImmutableMap.<ActorDefinition, LocalState>builder()
+            new GlobalState(ImmutableMap.<Actor, LocalState>builder()
                 .put(actor1, actor1LocalState)
                 .put(actor2, newActor2LocalState)
                 .put(actor3, newActor3LocalState)
@@ -128,7 +128,7 @@ class StateMachineDriverTest {
             .methodName(actor1Method)
             .actionReceiverId(null)
             .build())
-        .to(new GlobalState(ImmutableMap.<ActorDefinition, LocalState>builder()
+        .to(new GlobalState(ImmutableMap.<Actor, LocalState>builder()
             .put(actor1, newActor1LocalState)
             .put(actor2, actor2LocalState)
             .put(actor3, actor3LocalState)
@@ -142,7 +142,7 @@ class StateMachineDriverTest {
             .methodName(actor2Method)
             .actionReceiverId(actor3Id)
             .build())
-        .to(new GlobalState(ImmutableMap.<ActorDefinition, LocalState>builder()
+        .to(new GlobalState(ImmutableMap.<Actor, LocalState>builder()
             .put(actor1, actor1LocalState)
             .put(actor2, newActor2LocalState)
             .put(actor3, newActor3LocalState)

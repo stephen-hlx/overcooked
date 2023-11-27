@@ -10,7 +10,7 @@ import overcooked.analysis.StateMachineExecutionDataCollector;
 import overcooked.analysis.Transition;
 import overcooked.core.action.IntransitiveActionTemplateExecutor;
 import overcooked.core.action.TransitiveActionTemplateExecutor;
-import overcooked.core.actor.ActorDefinition;
+import overcooked.core.actor.Actor;
 import overcooked.core.actor.LocalState;
 
 
@@ -50,9 +50,9 @@ class StateMachineDriver {
               Arc.ArcBuilder arcBuilder = Arc.builder()
                   .actionPerformerId(actorDefinition.getId())
                   .methodName(actionTemplate.getMethodName());
-              Map<ActorDefinition, LocalState> newLocalStates;
+              Map<Actor, LocalState> newLocalStates;
               if (actionTemplate.getActionType().isTransitive()) {
-                ActorDefinition actionReceiverDefinition =
+                Actor actionReceiverDefinition =
                     actionTemplate.getActionType().getActionReceiverDefinition();
                 arcBuilder.actionReceiverId(actionReceiverDefinition.getId());
                 newLocalStates = transitiveActionTemplateExecutor.execute(

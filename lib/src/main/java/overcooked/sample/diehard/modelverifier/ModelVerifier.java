@@ -17,7 +17,7 @@ import overcooked.core.action.ActionTemplate;
 import overcooked.core.action.IntransitiveActionType;
 import overcooked.core.action.ParamTemplate;
 import overcooked.core.action.TransitiveActionType;
-import overcooked.core.actor.ActorDefinition;
+import overcooked.core.actor.Actor;
 import overcooked.core.actor.ActorStateTransformerConfig;
 import overcooked.sample.diehard.model.Jar3;
 import overcooked.sample.diehard.model.Jar5;
@@ -29,13 +29,11 @@ import overcooked.visual.DotGraphExporterFactory;
  */
 @Log
 class ModelVerifier {
-  private static final ActorDefinition JAR3 = ActorDefinition.builder()
+  private static final Actor JAR3 = Actor.builder()
       .id("jar3")
-      .type(Jar3.class)
       .build();
-  private static final ActorDefinition JAR5 = ActorDefinition.builder()
+  private static final Actor JAR5 = Actor.builder()
       .id("jar5")
-      .type(Jar5.class)
       .build();
 
   void verify() {
@@ -53,9 +51,9 @@ class ModelVerifier {
             .methodName("fill")
             .build(),
         ActionTemplate.builder()
-            .actionType(new TransitiveActionType(ActorDefinition.builder()
+            // TODO ???
+            .actionType(new TransitiveActionType(Actor.builder()
                 .id("jar5")
-                .type(Jar5.class)
                 .build()))
             .methodName("addTo")
             .parameters(ImmutableList.of(new ParamTemplate<>(Jar5.class)))
@@ -72,9 +70,8 @@ class ModelVerifier {
             .methodName("fill")
             .build(),
         ActionTemplate.builder()
-            .actionType(new TransitiveActionType(ActorDefinition.builder()
+            .actionType(new TransitiveActionType(Actor.builder()
                 .id("jar3")
-                .type(Jar3.class)
                 .build()))
             .methodName("addTo")
             .parameters(ImmutableList.of(new ParamTemplate<>(Jar3.class)))

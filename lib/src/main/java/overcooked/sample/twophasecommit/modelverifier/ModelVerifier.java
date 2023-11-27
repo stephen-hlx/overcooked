@@ -21,7 +21,7 @@ import overcooked.core.action.ActionTemplate;
 import overcooked.core.action.IntransitiveActionType;
 import overcooked.core.action.ParamTemplate;
 import overcooked.core.action.TransitiveActionType;
-import overcooked.core.actor.ActorDefinition;
+import overcooked.core.actor.Actor;
 import overcooked.core.actor.ActorStateTransformerConfig;
 import overcooked.sample.twophasecommit.model.ResourceManagerState;
 import overcooked.visual.DotGraphExporter;
@@ -30,27 +30,23 @@ import overcooked.visual.DotGraphExporterFactory;
 @Log
 class ModelVerifier {
   private static final String TM_ID = "TM";
-  private static final ActorDefinition TM = ActorDefinition.builder()
+  private static final Actor TM = Actor.builder()
       .id(TM_ID)
-      .type(TransactionManager.class)
       .build();
 
   private static final String RM_ID_0 = "0";
   private static final String RM_ID_1 = "1";
   private static final String RM_ID_2 = "2";
-  private static final ActorDefinition RM_0 = ActorDefinition.builder()
+  private static final Actor RM_0 = Actor.builder()
       .id(RM_ID_0)
-      .type(ResourceManager.class)
       .build();
 
-  private static final ActorDefinition RM_1 = ActorDefinition.builder()
+  private static final Actor RM_1 = Actor.builder()
       .id(RM_ID_1)
-      .type(ResourceManager.class)
       .build();
 
-  private static final ActorDefinition RM_2 = ActorDefinition.builder()
+  private static final Actor RM_2 = Actor.builder()
       .id(RM_ID_2)
-      .type(ResourceManager.class)
       .build();
 
   private final GlobalState initialGlobalState;
@@ -131,48 +127,42 @@ class ModelVerifier {
   private static ImmutableSet<ActionTemplate> transactionManagerActionTemplates() {
     return ImmutableSet.of(
         ActionTemplate.builder()
-            .actionType(new TransitiveActionType(ActorDefinition.builder()
-                .type(ResourceManager.class)
+            .actionType(new TransitiveActionType(Actor.builder()
                 .id(RM_ID_0)
                 .build()))
             .methodName("abort")
             .parameters(ImmutableList.of(new ParamTemplate<>(ResourceManager.class)))
             .build(),
         ActionTemplate.builder()
-            .actionType(new TransitiveActionType(ActorDefinition.builder()
-                .type(ResourceManager.class)
+            .actionType(new TransitiveActionType(Actor.builder()
                 .id(RM_ID_0)
                 .build()))
             .methodName("commit")
             .parameters(ImmutableList.of(new ParamTemplate<>(ResourceManager.class)))
             .build(),
         ActionTemplate.builder()
-            .actionType(new TransitiveActionType(ActorDefinition.builder()
-                .type(ResourceManager.class)
+            .actionType(new TransitiveActionType(Actor.builder()
                 .id(RM_ID_1)
                 .build()))
             .methodName("abort")
             .parameters(ImmutableList.of(new ParamTemplate<>(ResourceManager.class)))
             .build(),
         ActionTemplate.builder()
-            .actionType(new TransitiveActionType(ActorDefinition.builder()
-                .type(ResourceManager.class)
+            .actionType(new TransitiveActionType(Actor.builder()
                 .id(RM_ID_1)
                 .build()))
             .methodName("commit")
             .parameters(ImmutableList.of(new ParamTemplate<>(ResourceManager.class)))
             .build(),
         ActionTemplate.builder()
-            .actionType(new TransitiveActionType(ActorDefinition.builder()
-                .type(ResourceManager.class)
+            .actionType(new TransitiveActionType(Actor.builder()
                 .id(RM_ID_2)
                 .build()))
             .methodName("abort")
             .parameters(ImmutableList.of(new ParamTemplate<>(ResourceManager.class)))
             .build(),
         ActionTemplate.builder()
-            .actionType(new TransitiveActionType(ActorDefinition.builder()
-                .type(ResourceManager.class)
+            .actionType(new TransitiveActionType(Actor.builder()
                 .id(RM_ID_2)
                 .build()))
             .methodName("commit")
@@ -192,16 +182,14 @@ class ModelVerifier {
             .methodName("commit")
             .build(),
         ActionTemplate.builder()
-            .actionType(new TransitiveActionType(ActorDefinition.builder()
-                .type(TransactionManager.class)
+            .actionType(new TransitiveActionType(Actor.builder()
                 .id(TM_ID)
                 .build()))
             .methodName("abort")
             .parameters(ImmutableList.of(new ParamTemplate<>(TransactionManager.class)))
             .build(),
         ActionTemplate.builder()
-            .actionType(new TransitiveActionType(ActorDefinition.builder()
-                .type(TransactionManager.class)
+            .actionType(new TransitiveActionType(Actor.builder()
                 .id(TM_ID)
                 .build()))
             .methodName("prepare")

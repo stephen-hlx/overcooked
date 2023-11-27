@@ -3,7 +3,7 @@ package overcooked.core;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import overcooked.core.actor.ActorDefinition;
+import overcooked.core.actor.Actor;
 import overcooked.core.actor.LocalState;
 
 
@@ -20,8 +20,8 @@ class StateMerger {
    * @param localStates the {@link LocalState}s to be merged into the {@link GlobalState}
    * @return a new {@link GlobalState}
    */
-  GlobalState merge(GlobalState globalState, Map<ActorDefinition, LocalState> localStates) {
-    Map<ActorDefinition, LocalState> deepCopy =
+  GlobalState merge(GlobalState globalState, Map<Actor, LocalState> localStates) {
+    Map<Actor, LocalState> deepCopy =
         globalState.getActorDefinitions().stream()
             // The LocalStates are going to overwrite whatever the GlobalState has at the moment.
             // Filtering them out is an optimisation to reduce the number of objects getting created
