@@ -16,8 +16,8 @@ import com.google.common.collect.ImmutableSet;
 public interface TransactionManagerClient {
   ImmutableSet<ResourceManagerState> STATES_ALLOWED_FOR_PREPARE =
       ImmutableSet.of(WORKING, PREPARED);
-  ImmutableSet<ResourceManagerState> STATES_ALLOWED_FOR_ABORT =
-      ImmutableSet.of(PREPARED, ABORTED);
+  ImmutableSet<ResourceManagerState> STATES_ALLOWED_FOR_SELF_ABORT =
+      ImmutableSet.of(WORKING, ABORTED);
 
   void prepare(String resourceManagerId);
 

@@ -3,6 +3,7 @@ package overcooked.sample.twophasecommit.model;
 import static overcooked.sample.twophasecommit.model.ResourceManagerState.ABORTED;
 import static overcooked.sample.twophasecommit.model.ResourceManagerState.COMMITTED;
 import static overcooked.sample.twophasecommit.model.ResourceManagerState.PREPARED;
+import static overcooked.sample.twophasecommit.model.ResourceManagerState.WORKING;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -14,7 +15,7 @@ import com.google.common.collect.ImmutableSet;
  */
 public interface TransactionManagerServer extends TransactionManagerClient {
   ImmutableSet<ResourceManagerState> STATES_ALLOWED_FOR_ABORT =
-      ImmutableSet.of(PREPARED, ABORTED);
+      ImmutableSet.of(WORKING, PREPARED, ABORTED);
   ImmutableSet<ResourceManagerState> STATES_ALLOWED_FOR_COMMIT =
       ImmutableSet.of(PREPARED, COMMITTED);
 

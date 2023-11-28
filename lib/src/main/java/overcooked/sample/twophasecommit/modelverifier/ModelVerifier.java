@@ -177,14 +177,6 @@ class ModelVerifier {
   private static ImmutableSet<ActionTemplate> resourceManagerActionTemplates() {
     return ImmutableSet.of(
         ActionTemplate.builder()
-            .actionType(new IntransitiveActionType())
-            .methodName("abort")
-            .build(),
-        ActionTemplate.builder()
-            .actionType(new IntransitiveActionType())
-            .methodName("commit")
-            .build(),
-        ActionTemplate.builder()
             .actionType(new TransitiveActionType(Actor.builder()
                 .id(TM_ID)
                 .build()))

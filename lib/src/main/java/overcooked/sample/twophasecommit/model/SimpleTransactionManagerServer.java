@@ -25,33 +25,44 @@ public class SimpleTransactionManagerServer implements TransactionManagerServer 
   private final Map<String, ResourceManagerState> resourceManagerStates;
 
   @Override
+  public void prepare(String resourceManagerId) {
+    // TODO: this is not 100% correct as the state could have been corrupted
+    if (resourceManagerStates.entrySet().stream()
+        .filter(entry -> !entry.getKey().equals(resourceManagerId))
+        .anyMatch(entry -> entry.getValue().equals(COMMITTED))
+        && !resourceManagerStates.get(resourceManagerId).equals(PREPARED)) {
+      throw new IllegalStateException(
+          "Commit has started, action PREPARE is no allowed at this stage");
+    }
+    validateCurrentState(STATES_ALLOWED_FOR_PREPARE, resourceManagerId);
+    resourceManagerStates.put(resourceManagerId, PREPARED);
+  }
+
+  @Override
   public void abort(String resourceManagerId) {
-    validateCurrentState(STATES_ALLOWED_FOR_ABORT, resourceManagerId);
+    if (resourceManagerStates.containsValue(COMMITTED)) {
+      throw new IllegalStateException("Abort is not allowed when commit has started");
+    }
+    validateCurrentState(STATES_ALLOWED_FOR_SELF_ABORT, resourceManagerId);
     resourceManagerStates.put(resourceManagerId, ABORTED);
   }
 
   @Override
   public void abort(ResourceManagerClient resourceManagerClient) {
-    String id = resourceManagerClient.getId();
-    validateCurrentState(STATES_ALLOWED_FOR_ABORT, id);
+    resourceManagerStates.keySet()
+        .forEach(key -> validateCurrentState(STATES_ALLOWED_FOR_ABORT, key));
 
     resourceManagerClient.abort();
-    resourceManagerStates.put(id, ABORTED);
+    resourceManagerStates.put(resourceManagerClient.getId(), ABORTED);
   }
 
   @Override
   public void commit(ResourceManagerClient resourceManager) {
-    String id = resourceManager.getId();
-    validateCurrentState(STATES_ALLOWED_FOR_COMMIT, id);
+    resourceManagerStates.keySet()
+        .forEach(key -> validateCurrentState(STATES_ALLOWED_FOR_COMMIT, key));
 
     resourceManager.commit();
-    resourceManagerStates.put(id, COMMITTED);
-  }
-
-  @Override
-  public void prepare(String resourceManagerId) {
-    validateCurrentState(STATES_ALLOWED_FOR_PREPARE, resourceManagerId);
-    resourceManagerStates.put(resourceManagerId, PREPARED);
+    resourceManagerStates.put(resourceManager.getId(), COMMITTED);
   }
 
   private void validateCurrentState(Set<ResourceManagerState> validStates,
@@ -59,6 +70,11 @@ public class SimpleTransactionManagerServer implements TransactionManagerServer 
     ResourceManagerState currentState =
         Preconditions.checkNotNull(resourceManagerStates.get(resourceManagerId));
     Preconditions.checkState(validStates.contains(currentState),
-        "Current state %s is not allowed for the action", currentState);
+        "Current state %s of ResourceManager(%s) is not allowed for the action",
+        currentState, resourceManagerId);
+  }
+
+  private boolean contains(ResourceManagerState state) {
+    return resourceManagerStates.containsValue(state);
   }
 }

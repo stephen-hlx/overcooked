@@ -7,5 +7,4 @@ class ModelVerifierTest {
   void can_run_without_error() {
     new ModelVerifier().verify();
   }
-
 }
