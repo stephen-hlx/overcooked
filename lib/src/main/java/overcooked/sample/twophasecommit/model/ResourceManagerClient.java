@@ -17,7 +17,9 @@ public interface ResourceManagerClient {
   ImmutableSet<ResourceManagerState> STATES_ALLOWED_FOR_COMMIT =
       ImmutableSet.of(PREPARED, COMMITTED);
   ImmutableSet<ResourceManagerState> STATES_ALLOWED_FOR_ABORT =
-      ImmutableSet.of(PREPARED, ABORTED);
+      ImmutableSet.of(WORKING, PREPARED, ABORTED);
+  ImmutableSet<ResourceManagerState> STATES_ALLOWED_FOR_SELF_ABORT =
+      ImmutableSet.of(WORKING);
 
   /**
    * Returns the ID of the resource manager.

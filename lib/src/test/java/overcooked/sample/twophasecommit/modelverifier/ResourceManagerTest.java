@@ -18,11 +18,10 @@ import overcooked.sample.twophasecommit.model.SimpleResourceManagerServer;
 class ResourceManagerTest {
   private static final String RESOURCE_MANAGER_ID = "0";
 
-
   static Object[][] passive_action_cases() {
     return new Object[][] {
         // current,   action,        success, expected
-        {  WORKING,   Action.ABORT,  false,   WORKING  },
+        {  WORKING,   Action.ABORT,  true,    ABORTED  },
         {  WORKING,   Action.COMMIT, false,   WORKING  },
         {  PREPARED,  Action.ABORT,  true,    ABORTED  },
         {  PREPARED,  Action.COMMIT, true,    COMMITTED},
@@ -57,13 +56,13 @@ class ResourceManagerTest {
   static Object[][] proactive_action_cases() {
     return new Object[][] {
         // current,   action,         success, expected
-        {  WORKING,   Action.ABORT,   false,   WORKING  },
+        {  WORKING,   Action.ABORT,   true,    ABORTED  },
         {  WORKING,   Action.PREPARE, true,    PREPARED },
-        {  PREPARED,  Action.ABORT,   true,    ABORTED  },
+        {  PREPARED,  Action.ABORT,   false,   PREPARED },
         {  PREPARED,  Action.PREPARE, true,    PREPARED },
         {  COMMITTED, Action.ABORT,   false,   COMMITTED},
         {  COMMITTED, Action.PREPARE, false,   COMMITTED},
-        {  ABORTED,   Action.ABORT,   true,    ABORTED  },
+        {  ABORTED,   Action.ABORT,   false,   ABORTED  },
         {  ABORTED,   Action.PREPARE, false,   ABORTED  },
     };
   }

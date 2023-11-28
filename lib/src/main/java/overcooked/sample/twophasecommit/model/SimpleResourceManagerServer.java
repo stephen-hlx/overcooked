@@ -43,7 +43,7 @@ public class SimpleResourceManagerServer implements ResourceManagerServer {
 
   @Override
   public void abort(TransactionManagerClient transactionManagerClient) {
-    Preconditions.checkState(STATES_ALLOWED_FOR_ABORT.contains(this.state),
+    Preconditions.checkState(STATES_ALLOWED_FOR_SELF_ABORT.contains(this.state),
         "Action abort is not allowed for current state {}", this.state);
     transactionManagerClient.abort(id);
     this.state = ABORTED;
