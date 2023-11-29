@@ -1,5 +1,9 @@
 package overcooked.sample.twophasecommit.modelverifier;
 
+import static overcooked.sample.twophasecommit.model.ResourceManagerState.ABORTED;
+import static overcooked.sample.twophasecommit.model.ResourceManagerState.COMMITTED;
+import static overcooked.sample.twophasecommit.model.ResourceManagerState.WORKING;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -38,10 +42,11 @@ class TransactionStateVerifier implements GlobalStateVerifier {
 
   private static boolean verifyResourceManagerState(
       Collection<ResourceManagerState> resourceManagerStates) {
-    if (resourceManagerStates.contains(ResourceManagerState.ABORTED)) {
-      return !resourceManagerStates.contains(ResourceManagerState.COMMITTED);
-    } else if (resourceManagerStates.contains(ResourceManagerState.COMMITTED)) {
-      return !resourceManagerStates.contains(ResourceManagerState.ABORTED);
+    if (resourceManagerStates.contains(ABORTED)) {
+      return !resourceManagerStates.contains(COMMITTED);
+    } else if (resourceManagerStates.contains(COMMITTED)) {
+      return !(resourceManagerStates.contains(ABORTED)
+          || resourceManagerStates.contains(WORKING));
     }
     return true;
   }

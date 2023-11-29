@@ -36,9 +36,9 @@ class ModelVerifier {
       .id(TM_ID)
       .build();
 
-  private static final String RM_ID_0 = "0";
-  private static final String RM_ID_1 = "1";
-  private static final String RM_ID_2 = "2";
+  private static final String RM_ID_0 = "RM0";
+  private static final String RM_ID_1 = "RM1";
+  private static final String RM_ID_2 = "RM2";
   private static final Actor RM_0 = Actor.builder()
       .id(RM_ID_0)
       .build();
