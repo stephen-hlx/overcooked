@@ -35,7 +35,7 @@ class StateMachineDriver {
    *                                           machine execution
    * @return a set of {@link GlobalState} that is the result of the actions performed by the actors
    */
-  public Set<GlobalState> computeNext(
+  Set<GlobalState> computeNext(
       GlobalState globalState,
       ActorActionConfig actorActionConfig,
       StateMachineExecutionDataCollector stateMachineExecutionDataCollector) {
