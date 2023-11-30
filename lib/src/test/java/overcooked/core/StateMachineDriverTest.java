@@ -15,7 +15,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
 import overcooked.analysis.Arc;
-import overcooked.analysis.Transition;
 import overcooked.core.action.ActionTemplate;
 import overcooked.core.action.IntransitiveActionTemplateExecutor;
 import overcooked.core.action.IntransitiveActionType;
@@ -25,6 +24,9 @@ import overcooked.core.action.TransitiveActionType;
 import overcooked.core.actor.Actor;
 import overcooked.core.actor.LocalState;
 
+/**
+ * TODO: refactoring needed. too cumbersome!
+ */
 class StateMachineDriverTest {
   private final IntransitiveActionTemplateExecutor intransitiveActionTemplateExecutor =
       mock(IntransitiveActionTemplateExecutor.class);
@@ -92,7 +94,7 @@ class StateMachineDriverTest {
             .build());
 
     StateMachineExecutionContext
-        stateMachineExecutionContext = mock(StateMachineExecutionContext.class);
+        stateMachineExecutionContext = spy(new StateMachineExecutionContext(globalState));
 
     assertThat(stateMachineDriver.computeNext(globalState, config,
         stateMachineExecutionContext))
@@ -120,34 +122,44 @@ class StateMachineDriverTest {
         actor2, newActor2LocalState,
         actor3, newActor3LocalState
     ));
-    verify(stateMachineExecutionContext).capture(Transition.builder()
-        .from(globalState)
-        .arc(Arc.builder()
-            .actionPerformerId(actor1Id)
-            .methodName(actor1Method)
-            .actionReceiverId(null)
-            .build())
-        .to(new GlobalState(ImmutableMap.<Actor, LocalState>builder()
+    verify(stateMachineExecutionContext).registerOrGetDuplicate(
+        new GlobalState(ImmutableMap.<Actor, LocalState>builder()
             .put(actor1, newActor1LocalState)
             .put(actor2, actor2LocalState)
             .put(actor3, actor3LocalState)
             .put(actor4, actor4LocalState)
-            .build()))
-        .build());
-    verify(stateMachineExecutionContext).capture(Transition.builder()
-        .from(globalState)
-        .arc(Arc.builder()
-            .actionPerformerId(actor2Id)
-            .methodName(actor2Method)
-            .actionReceiverId(actor3Id)
-            .build())
-        .to(new GlobalState(ImmutableMap.<Actor, LocalState>builder()
+            .build()));
+    verify(stateMachineExecutionContext).capture(globalState,
+        Arc.builder()
+            .actionPerformerId(actor1Id)
+            .methodName(actor1Method)
+            .actionReceiverId(null)
+            .build(),
+        new GlobalState(ImmutableMap.<Actor, LocalState>builder()
+            .put(actor1, newActor1LocalState)
+            .put(actor2, actor2LocalState)
+            .put(actor3, actor3LocalState)
+            .put(actor4, actor4LocalState)
+            .build()));
+    verify(stateMachineExecutionContext).registerOrGetDuplicate(
+        new GlobalState(ImmutableMap.<Actor, LocalState>builder()
             .put(actor1, actor1LocalState)
             .put(actor2, newActor2LocalState)
             .put(actor3, newActor3LocalState)
             .put(actor4, actor4LocalState)
-            .build()))
-        .build());
+            .build()));
+    verify(stateMachineExecutionContext).capture(globalState,
+        Arc.builder()
+            .actionPerformerId(actor2Id)
+            .methodName(actor2Method)
+            .actionReceiverId(actor3Id)
+            .build(),
+        new GlobalState(ImmutableMap.<Actor, LocalState>builder()
+            .put(actor1, actor1LocalState)
+            .put(actor2, newActor2LocalState)
+            .put(actor3, newActor3LocalState)
+            .put(actor4, actor4LocalState)
+            .build()));
     verifyNoMoreInteractions(intransitiveActionTemplateExecutor,
         transitiveActionTemplateExecutor,
         stateMerger,

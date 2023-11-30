@@ -1,7 +1,10 @@
 package overcooked.core;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import overcooked.analysis.Arc;
 import overcooked.analysis.StateMachineExecutionData;
 import overcooked.analysis.Transition;
 
@@ -13,13 +16,23 @@ public class StateMachineExecutionContext {
   private final Set<Transition> transitions = new HashSet<>();
   private final Set<GlobalState> validationFailingGlobalStates = new HashSet<>();
   private final GlobalState initialState;
+  private final Map<Integer, GlobalState> globalStates = new HashMap<>();
 
   public StateMachineExecutionContext(GlobalState globalState) {
     initialState = globalState;
+    registerOrGetDuplicate(globalState);
   }
 
-  public void capture(Transition transition) {
-    this.transitions.add(transition);
+  GlobalState registerOrGetDuplicate(GlobalState globalState) {
+    return globalStates.computeIfAbsent(globalState.hashCode(), notUsed -> globalState);
+  }
+
+  void capture(GlobalState from, Arc arc, GlobalState to) {
+    transitions.add(Transition.builder()
+        .from(from)
+        .arc(arc)
+        .to(to)
+        .build());
   }
 
   public void addValidationFailingNode(GlobalState globalState) {

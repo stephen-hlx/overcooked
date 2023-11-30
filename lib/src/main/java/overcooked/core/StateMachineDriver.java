@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Set;
 import lombok.Builder;
 import overcooked.analysis.Arc;
-import overcooked.analysis.Transition;
 import overcooked.core.action.IntransitiveActionTemplateExecutor;
 import overcooked.core.action.TransitiveActionTemplateExecutor;
 import overcooked.core.actor.Actor;
@@ -27,25 +26,23 @@ class StateMachineDriver {
   /**
    * Computes the next state.
    *
-   * @param globalState        the current state of the state machine
+   * @param from the current state of the state machine
    * @param actorActionConfig  the actor and action configuration from which the driver can discover
    *                           all actors and their actions
    * @param stateMachineExecutionContext the object that collects the data of the state
-   *                                           machine execution
+   *                                     machine execution
    * @return a set of {@link GlobalState} that is the result of the actions performed by the actors
    */
   Set<GlobalState> computeNext(
-      GlobalState globalState,
+      GlobalState from,
       ActorActionConfig actorActionConfig,
       StateMachineExecutionContext stateMachineExecutionContext) {
     Set<GlobalState> nextStates = new HashSet<>();
 
-    globalState.getActorDefinitions().forEach(actorDefinition ->
+    from.getActorDefinitions().forEach(actorDefinition ->
         actorActionConfig.getActionDefinitionTemplates()
             .getOrDefault(actorDefinition, Collections.emptySet())
             .forEach(actionTemplate -> {
-              Transition.TransitionBuilder transitionBuilder = Transition.builder()
-                  .from(globalState);
               Arc.ArcBuilder arcBuilder = Arc.builder()
                   .actionPerformerId(actorDefinition.getId())
                   .methodName(actionTemplate.getMethodName());
@@ -55,22 +52,20 @@ class StateMachineDriver {
                     actionTemplate.getActionType().getActionReceiverDefinition();
                 arcBuilder.actionReceiverId(actionReceiverDefinition.getId());
                 newLocalStates = transitiveActionTemplateExecutor.execute(
-                    globalState.getCopyOfLocalState(actorDefinition),
+                    from.getCopyOfLocalState(actorDefinition),
                     actorDefinition,
-                    globalState.getCopyOfLocalState(actionReceiverDefinition),
+                    from.getCopyOfLocalState(actionReceiverDefinition),
                     actionTemplate);
               } else {
                 newLocalStates = intransitiveActionTemplateExecutor.execute(
-                    globalState.getCopyOfLocalState(actorDefinition),
+                    from.getCopyOfLocalState(actorDefinition),
                     actorDefinition,
                     actionTemplate);
               }
-              GlobalState newGlobalState = stateMerger.merge(globalState, newLocalStates);
-              stateMachineExecutionContext.capture(transitionBuilder
-                  .arc(arcBuilder.build())
-                  .to(newGlobalState)
-                  .build());
-              nextStates.add(newGlobalState);
+              GlobalState to = stateMachineExecutionContext
+                  .registerOrGetDuplicate(stateMerger.merge(from, newLocalStates));
+              stateMachineExecutionContext.capture(from, arcBuilder.build(), to);
+              nextStates.add(to);
             }));
 
     return nextStates;
