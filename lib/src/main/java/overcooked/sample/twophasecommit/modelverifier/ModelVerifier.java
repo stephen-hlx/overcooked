@@ -13,10 +13,10 @@ import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import overcooked.analysis.JgraphtAnalyser;
 import overcooked.analysis.ReportGenerator;
-import overcooked.analysis.StateMachineExecutionDataCollector;
 import overcooked.core.ActorActionConfig;
 import overcooked.core.GlobalState;
 import overcooked.core.StateMachine;
+import overcooked.core.StateMachineExecutionContext;
 import overcooked.core.StateMachineFactory;
 import overcooked.core.action.ActionTemplate;
 import overcooked.core.action.ParamTemplate;
@@ -62,12 +62,12 @@ class ModelVerifier {
   }
 
   public void verify() {
-    StateMachineExecutionDataCollector stateMachineExecutionDataCollector =
-        new StateMachineExecutionDataCollector(initialGlobalState);
+    StateMachineExecutionContext stateMachineExecutionContext =
+        new StateMachineExecutionContext(initialGlobalState);
     StateMachine stateMachine = StateMachineFactory
         .create(new TransactionStateVerifier(TM_ID), actorStateTransformerConfig);
 
-    stateMachine.run(initialGlobalState, actorActionConfig, stateMachineExecutionDataCollector);
+    stateMachine.run(initialGlobalState, actorActionConfig, stateMachineExecutionContext);
 
     String outputDirName = "/tmp/twophasecommit/" + System.currentTimeMillis();
     mkdir(outputDirName);
@@ -76,7 +76,7 @@ class ModelVerifier {
         .dotGraphExporter(DotGraphExporterFactory.create())
         .outputDirName(outputDirName)
         .build();
-    log.info(reportGenerator.generate(stateMachineExecutionDataCollector.getData()).toString());
+    log.info(reportGenerator.generate(stateMachineExecutionContext.getData()).toString());
   }
 
   @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED")

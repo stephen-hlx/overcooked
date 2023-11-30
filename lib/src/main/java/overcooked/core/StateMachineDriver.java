@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Set;
 import lombok.Builder;
 import overcooked.analysis.Arc;
-import overcooked.analysis.StateMachineExecutionDataCollector;
 import overcooked.analysis.Transition;
 import overcooked.core.action.IntransitiveActionTemplateExecutor;
 import overcooked.core.action.TransitiveActionTemplateExecutor;
@@ -31,14 +30,14 @@ class StateMachineDriver {
    * @param globalState        the current state of the state machine
    * @param actorActionConfig  the actor and action configuration from which the driver can discover
    *                           all actors and their actions
-   * @param stateMachineExecutionDataCollector the object that collects the data of the state
+   * @param stateMachineExecutionContext the object that collects the data of the state
    *                                           machine execution
    * @return a set of {@link GlobalState} that is the result of the actions performed by the actors
    */
   Set<GlobalState> computeNext(
       GlobalState globalState,
       ActorActionConfig actorActionConfig,
-      StateMachineExecutionDataCollector stateMachineExecutionDataCollector) {
+      StateMachineExecutionContext stateMachineExecutionContext) {
     Set<GlobalState> nextStates = new HashSet<>();
 
     globalState.getActorDefinitions().forEach(actorDefinition ->
@@ -67,7 +66,7 @@ class StateMachineDriver {
                     actionTemplate);
               }
               GlobalState newGlobalState = stateMerger.merge(globalState, newLocalStates);
-              stateMachineExecutionDataCollector.capture(transitionBuilder
+              stateMachineExecutionContext.capture(transitionBuilder
                   .arc(arcBuilder.build())
                   .to(newGlobalState)
                   .build());

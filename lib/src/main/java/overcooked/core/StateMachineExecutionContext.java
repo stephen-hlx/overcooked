@@ -1,19 +1,20 @@
-package overcooked.analysis;
+package overcooked.core;
 
 import java.util.HashSet;
 import java.util.Set;
-import overcooked.core.GlobalState;
+import overcooked.analysis.StateMachineExecutionData;
+import overcooked.analysis.Transition;
 
 /**
- * A class that captures the data of a state machine execution,
+ * A class that captures the context of a state machine execution,
  * e.g. transitions, initial state.
  */
-public class StateMachineExecutionDataCollector {
+public class StateMachineExecutionContext {
   private final Set<Transition> transitions = new HashSet<>();
   private final Set<GlobalState> validationFailingGlobalStates = new HashSet<>();
   private final GlobalState initialState;
 
-  public StateMachineExecutionDataCollector(GlobalState globalState) {
+  public StateMachineExecutionContext(GlobalState globalState) {
     initialState = globalState;
   }
 

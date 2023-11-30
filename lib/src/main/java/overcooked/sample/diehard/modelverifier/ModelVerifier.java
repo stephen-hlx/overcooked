@@ -9,10 +9,10 @@ import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import overcooked.analysis.JgraphtAnalyser;
 import overcooked.analysis.ReportGenerator;
-import overcooked.analysis.StateMachineExecutionDataCollector;
 import overcooked.core.ActorActionConfig;
 import overcooked.core.GlobalState;
 import overcooked.core.StateMachine;
+import overcooked.core.StateMachineExecutionContext;
 import overcooked.core.StateMachineFactory;
 import overcooked.core.action.ActionTemplate;
 import overcooked.core.action.IntransitiveActionType;
@@ -83,8 +83,8 @@ class ModelVerifier {
         JAR5, jar5Templates
     ));
 
-    StateMachineExecutionDataCollector
-        stateMachineExecutionDataCollector = new StateMachineExecutionDataCollector(initialState);
+    StateMachineExecutionContext
+        stateMachineExecutionContext = new StateMachineExecutionContext(initialState);
     StateMachine stateMachine =
         StateMachineFactory.create(new FourLiterVerifier(), ActorStateTransformerConfig.builder()
             .actorFactories(ImmutableMap.of(
@@ -97,7 +97,7 @@ class ModelVerifier {
             ))
             .build());
 
-    stateMachine.run(initialState, actorActionConfig, stateMachineExecutionDataCollector);
+    stateMachine.run(initialState, actorActionConfig, stateMachineExecutionContext);
 
     String outputDirName = "/tmp/diehard/" + System.currentTimeMillis();
     mkdir(outputDirName);
@@ -106,7 +106,7 @@ class ModelVerifier {
         .dotGraphExporter(DotGraphExporterFactory.create())
         .outputDirName(outputDirName)
         .build();
-    log.info(reportGenerator.generate(stateMachineExecutionDataCollector.getData()).toString());
+    log.info(reportGenerator.generate(stateMachineExecutionContext.getData()).toString());
   }
 
   @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED")
