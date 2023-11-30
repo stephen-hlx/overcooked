@@ -6,7 +6,7 @@ import com.google.common.collect.ImmutableSet;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.util.Set;
-import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import overcooked.analysis.JgraphtAnalyser;
 import overcooked.analysis.ReportGenerator;
 import overcooked.analysis.StateMachineExecutionDataCollector;
@@ -27,7 +27,7 @@ import overcooked.visual.DotGraphExporterFactory;
 /**
  * The ModelVerifier of example diehard.
  */
-@Log
+@Slf4j
 class ModelVerifier {
   private static final Actor JAR3 = Actor.builder()
       .id("jar3")

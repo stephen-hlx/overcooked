@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
 import lombok.Builder;
-import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.mutable.MutableInt;
 import overcooked.visual.DotGraphExporter;
 
@@ -15,7 +15,7 @@ import overcooked.visual.DotGraphExporter;
  * Generator of the report based on the execution data.
  */
 @Builder
-@Log
+@Slf4j
 public class ReportGenerator {
   private static final String FILENAME_ALL_TRANSITIONS = "all";
   private static final String FILENAME_FAILURE_TRANSITION = "failure";

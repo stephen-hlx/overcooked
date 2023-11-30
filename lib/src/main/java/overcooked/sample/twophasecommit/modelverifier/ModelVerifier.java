@@ -10,7 +10,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import overcooked.analysis.JgraphtAnalyser;
 import overcooked.analysis.ReportGenerator;
 import overcooked.analysis.StateMachineExecutionDataCollector;
@@ -28,7 +28,7 @@ import overcooked.sample.twophasecommit.model.ResourceManagerState;
 import overcooked.sample.twophasecommit.model.TransactionManagerClient;
 import overcooked.visual.DotGraphExporterFactory;
 
-@Log
+@Slf4j
 class ModelVerifier {
   private static final String TM_ID = "TM";
   private static final Actor TM = Actor.builder()

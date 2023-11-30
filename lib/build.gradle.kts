@@ -32,6 +32,9 @@ dependencies {
     // https://mvnrepository.com/artifact/org.jgrapht/jgrapht-io
     implementation("org.jgrapht:jgrapht-io:1.5.2")
 
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+    implementation("org.slf4j:slf4j-api:2.0.9")
+
     // Use JUnit Jupiter for testing.
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
 
@@ -39,6 +42,8 @@ dependencies {
     testImplementation("org.assertj:assertj-core:3.6.1")
     // https://mvnrepository.com/artifact/org.mockito/mockito-core
     testImplementation("org.mockito:mockito-core:2.1.0")
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-jdk14
+    testImplementation("org.slf4j:slf4j-jdk14:2.0.9")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
