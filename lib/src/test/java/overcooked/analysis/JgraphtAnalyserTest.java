@@ -13,7 +13,6 @@ import static overcooked.analysis.StateMachineTestSetup.TRANSITION_0_3;
 import static overcooked.analysis.StateMachineTestSetup.TRANSITION_2_3;
 import static overcooked.analysis.StateMachineTestSetup.TRANSITION_3_4;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +33,7 @@ class JgraphtAnalyserTest {
     assertThat(analyser.findShortestPathToFailureState(GLOBAL_STATE_0,
         GLOBAL_STATE_4,
         transitions))
-        .isEqualTo(ImmutableList.of(
+        .isEqualTo(ImmutableSet.of(
             TRANSITION_0_3,
             TRANSITION_3_4
         ));

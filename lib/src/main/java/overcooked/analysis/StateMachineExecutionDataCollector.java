@@ -1,9 +1,7 @@
 package overcooked.analysis;
 
-import com.google.common.collect.ImmutableSet;
 import java.util.HashSet;
 import java.util.Set;
-import lombok.Getter;
 import overcooked.core.GlobalState;
 
 /**
@@ -13,8 +11,6 @@ import overcooked.core.GlobalState;
 public class StateMachineExecutionDataCollector {
   private final Set<Transition> transitions = new HashSet<>();
   private final Set<GlobalState> validationFailingGlobalStates = new HashSet<>();
-
-  @Getter
   private final GlobalState initialState;
 
   public StateMachineExecutionDataCollector(GlobalState globalState) {
@@ -25,16 +21,8 @@ public class StateMachineExecutionDataCollector {
     this.transitions.add(transition);
   }
 
-  public Set<Transition> getTransitions() {
-    return ImmutableSet.copyOf(this.transitions);
-  }
-
   public void addValidationFailingNode(GlobalState globalState) {
     validationFailingGlobalStates.add(globalState);
-  }
-
-  public Set<GlobalState> getValidationFailingGlobalStates() {
-    return ImmutableSet.copyOf(validationFailingGlobalStates);
   }
 
   /**

@@ -5,20 +5,20 @@ import static overcooked.sample.twophasecommit.model.ResourceManagerState.WORKIN
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import lombok.extern.java.Log;
-import overcooked.analysis.Analyser;
 import overcooked.analysis.JgraphtAnalyser;
-import overcooked.analysis.StateMachineExecutionData;
+import overcooked.analysis.ReportGenerator;
 import overcooked.analysis.StateMachineExecutionDataCollector;
 import overcooked.core.ActorActionConfig;
 import overcooked.core.GlobalState;
 import overcooked.core.StateMachine;
 import overcooked.core.StateMachineFactory;
 import overcooked.core.action.ActionTemplate;
-import overcooked.core.action.IntransitiveActionType;
 import overcooked.core.action.ParamTemplate;
 import overcooked.core.action.TransitiveActionType;
 import overcooked.core.actor.Actor;
@@ -26,7 +26,6 @@ import overcooked.core.actor.ActorStateTransformerConfig;
 import overcooked.sample.twophasecommit.model.ResourceManagerClient;
 import overcooked.sample.twophasecommit.model.ResourceManagerState;
 import overcooked.sample.twophasecommit.model.TransactionManagerClient;
-import overcooked.visual.DotGraphExporter;
 import overcooked.visual.DotGraphExporterFactory;
 
 @Log
@@ -70,18 +69,20 @@ class ModelVerifier {
 
     stateMachine.run(initialGlobalState, actorActionConfig, stateMachineExecutionDataCollector);
 
-    StateMachineExecutionData executionData = stateMachineExecutionDataCollector.getData();
+    String outputDirName = "/tmp/twophasecommit/" + System.currentTimeMillis();
+    mkdir(outputDirName);
+    ReportGenerator reportGenerator = ReportGenerator.builder()
+        .analyser(new JgraphtAnalyser())
+        .dotGraphExporter(DotGraphExporterFactory.create())
+        .outputDirName(outputDirName)
+        .build();
+    log.info(reportGenerator.generate(stateMachineExecutionDataCollector.getData()).toString());
+  }
 
-    DotGraphExporter dotGraphExporter = DotGraphExporterFactory.create();
-
-    Analyser analyser = new JgraphtAnalyser();
-    log.info(dotGraphExporter.export(executionData.getTransitions()));
-    executionData.getValidationFailingGlobalStates().forEach(failingState ->
-        log.info(dotGraphExporter.export(
-            ImmutableSet.copyOf(
-                analyser.findShortestPathToFailureState(initialGlobalState,
-                    failingState,
-                    executionData.getTransitions())))));
+  @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED")
+  private static void mkdir(String dirName) {
+    log.info("Making dir " + dirName);
+    new File(dirName).mkdirs();
   }
 
   private static GlobalState initialGlobalState() {

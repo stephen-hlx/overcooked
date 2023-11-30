@@ -1,6 +1,5 @@
 package overcooked.analysis;
 
-import java.util.List;
 import java.util.Set;
 import overcooked.core.GlobalState;
 
@@ -18,8 +17,7 @@ public interface Analyser {
    * @return a set of {@link Transition}s representing the shortest path starting from the initial
    *     state
    */
-  List<Transition> findShortestPathToFailureState(GlobalState initialState,
-                                                  GlobalState failureState,
-                                                  Set<Transition> transitions);
-
+  Set<Transition> findShortestPathToFailureState(GlobalState initialState,
+                                                 GlobalState failureState,
+                                                 Set<Transition> transitions);
 }

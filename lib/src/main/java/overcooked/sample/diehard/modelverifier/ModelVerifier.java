@@ -3,11 +3,12 @@ package overcooked.sample.diehard.modelverifier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.io.File;
 import java.util.Set;
 import lombok.extern.java.Log;
-import overcooked.analysis.Analyser;
 import overcooked.analysis.JgraphtAnalyser;
-import overcooked.analysis.StateMachineExecutionData;
+import overcooked.analysis.ReportGenerator;
 import overcooked.analysis.StateMachineExecutionDataCollector;
 import overcooked.core.ActorActionConfig;
 import overcooked.core.GlobalState;
@@ -21,7 +22,6 @@ import overcooked.core.actor.Actor;
 import overcooked.core.actor.ActorStateTransformerConfig;
 import overcooked.sample.diehard.model.Jar3;
 import overcooked.sample.diehard.model.Jar5;
-import overcooked.visual.DotGraphExporter;
 import overcooked.visual.DotGraphExporterFactory;
 
 /**
@@ -99,18 +99,19 @@ class ModelVerifier {
 
     stateMachine.run(initialState, actorActionConfig, stateMachineExecutionDataCollector);
 
-    StateMachineExecutionData executionData = stateMachineExecutionDataCollector.getData();
+    String outputDirName = "/tmp/diehard/" + System.currentTimeMillis();
+    mkdir(outputDirName);
+    ReportGenerator reportGenerator = ReportGenerator.builder()
+        .analyser(new JgraphtAnalyser())
+        .dotGraphExporter(DotGraphExporterFactory.create())
+        .outputDirName(outputDirName)
+        .build();
+    log.info(reportGenerator.generate(stateMachineExecutionDataCollector.getData()).toString());
+  }
 
-    DotGraphExporter dotGraphExporter = DotGraphExporterFactory.create();
-
-    Analyser analyser = new JgraphtAnalyser();
-    log.info(dotGraphExporter.export(executionData.getTransitions()));
-    executionData.getValidationFailingGlobalStates().forEach(failingState -> {
-      log.info(dotGraphExporter.export(
-          ImmutableSet.copyOf(
-              analyser.findShortestPathToFailureState(initialState,
-                  failingState,
-                  executionData.getTransitions()))));
-    });
+  @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED")
+  private static void mkdir(String dirName) {
+    log.info("Making dir " + dirName);
+    new File(dirName).mkdirs();
   }
 }
