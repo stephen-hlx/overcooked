@@ -1,8 +1,6 @@
 package overcooked.core;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import overcooked.analysis.Arc;
 import overcooked.analysis.StateMachineExecutionData;
@@ -16,7 +14,7 @@ public class StateMachineExecutionContext {
   private final Set<Transition> transitions = new HashSet<>();
   private final Set<GlobalState> validationFailingGlobalStates = new HashSet<>();
   private final GlobalState initialState;
-  private final Map<Integer, GlobalState> globalStates = new HashMap<>();
+  private final Set<GlobalState> globalStates = new HashSet<>();
 
   public StateMachineExecutionContext(GlobalState globalState) {
     initialState = globalState;
@@ -24,7 +22,15 @@ public class StateMachineExecutionContext {
   }
 
   GlobalState registerOrGetDuplicate(GlobalState globalState) {
-    return globalStates.computeIfAbsent(globalState.hashCode(), notUsed -> globalState);
+    if (globalStates.contains(globalState)) {
+      return globalStates.stream()
+          .filter(globalState::equals)
+          .findAny()
+          .orElseThrow(() -> new RuntimeException("Should never happen "
+              + "unless undetected concurrent modification happened"));
+    }
+    globalStates.add(globalState);
+    return globalState;
   }
 
   void capture(GlobalState from, Arc arc, GlobalState to) {
