@@ -2,7 +2,7 @@ package overcooked.analysis;
 
 import java.util.Set;
 import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.graph.DirectedPseudograph;
 import overcooked.core.GlobalState;
 
 /**
@@ -17,7 +17,7 @@ public class JgraphtGraphBuilder {
    * @return a {@link Graph} built based on the transitions provided
    */
   public Graph<GlobalState, Transition> build(Set<Transition> transitions) {
-    Graph<GlobalState, Transition> graph = new DefaultDirectedGraph<>(Transition.class);
+    Graph<GlobalState, Transition> graph = new DirectedPseudograph<>(Transition.class);
 
     transitions.forEach(transition -> {
       GlobalState from = transition.getFrom();

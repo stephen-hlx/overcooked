@@ -10,7 +10,7 @@ import static overcooked.analysis.StateMachineTestSetup.TRANSITION_0_0;
 import static overcooked.analysis.StateMachineTestSetup.TRANSITION_0_1;
 import static overcooked.analysis.StateMachineTestSetup.TRANSITION_0_2;
 import static overcooked.analysis.StateMachineTestSetup.TRANSITION_0_3;
-import static overcooked.analysis.StateMachineTestSetup.TRANSITION_2_3;
+import static overcooked.analysis.StateMachineTestSetup.TRANSITION_2_3_I;
 import static overcooked.analysis.StateMachineTestSetup.TRANSITION_3_4;
 
 import com.google.common.collect.ImmutableSet;
@@ -27,7 +27,7 @@ class JgraphtAnalyserTest {
         TRANSITION_0_1,
         TRANSITION_0_2,
         TRANSITION_0_3,
-        TRANSITION_2_3,
+        TRANSITION_2_3_I,
         TRANSITION_3_4
     );
     assertThat(analyser.findShortestPathToFailureState(GLOBAL_STATE_0,

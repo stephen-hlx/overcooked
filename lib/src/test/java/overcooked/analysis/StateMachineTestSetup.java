@@ -8,9 +8,9 @@ import overcooked.core.actor.LocalState;
 /**
  * This class provides objects for use in testing.
  * They form a state machine like the one illustrated below:
- *          ┌─┐
- *          │ │
- * ┌───┐   ┌┴─▼┐   ┌───┐   ┌───┐   ┌───┐
+ *          ┌─┐     ┌───────┐
+ *          │ │     │       │
+ * ┌───┐   ┌┴─▼┐   ┌┴──┐   ┌▼──┐   ┌───┐
  * │ 1 │◄──┤ 0 ├──►│ 2 ├──►│ 3 ├──►│ 4 │
  * └───┘   └─┬─┘   └───┘   └─▲─┘   └───┘
  *           │               │
@@ -25,6 +25,7 @@ public class StateMachineTestSetup {
   public static final String ACTOR_2_METHOD = "actor2.method1";
   public static final String ACTOR_2_METHOD_2 = "actor2.method2";
   public static final String ACTOR_3_METHOD = "actor3.method1";
+  public static final String ACTOR_3_METHOD_2 = "actor3.method2";
   public static final String ACTOR_4_METHOD = "actor4.method1";
   public static final Actor ACTOR_1 = Actor.builder()
       .id(ACTOR_1_ID)
@@ -117,13 +118,23 @@ public class StateMachineTestSetup {
       .to(GLOBAL_STATE_2)
       .build();
 
-  public static final Arc ARC_2_3 = Arc.builder()
+  public static final Arc ARC_2_3_I = Arc.builder()
       .actionPerformerId(ACTOR_3_ID)
       .methodName(ACTOR_3_METHOD)
       .build();
-  public static final Transition TRANSITION_2_3 = Transition.builder()
+  public static final Transition TRANSITION_2_3_I = Transition.builder()
       .from(GLOBAL_STATE_2)
-      .arc(ARC_2_3)
+      .arc(ARC_2_3_I)
+      .to(GLOBAL_STATE_3)
+      .build();
+
+  public static final Arc ARC_2_3_II = Arc.builder()
+      .actionPerformerId(ACTOR_3_ID)
+      .methodName(ACTOR_3_METHOD_2)
+      .build();
+  public static final Transition TRANSITION_2_3_II = Transition.builder()
+      .from(GLOBAL_STATE_2)
+      .arc(ARC_2_3_II)
       .to(GLOBAL_STATE_3)
       .build();
 
