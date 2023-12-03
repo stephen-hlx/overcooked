@@ -3,49 +3,55 @@ package overcooked.core.action;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.common.collect.ImmutableList;
+import lombok.Value;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.junit.jupiter.api.Test;
-import overcooked.sample.diehard.model.Jar3;
-import overcooked.sample.diehard.model.Jar5;
 
 class ActionTakerTest {
+  private final ActionTaker actionTaker = new ActionTaker();
 
   @Test
   void can_perform_action_without_params() {
-    ActionDefinition fillDefinition = ActionDefinition.builder()
-        .methodName("fill")
+    MutableInt data = new MutableInt(0);
+    ActionPerformer actionPerformer= new ActionPerformer(data);
+    assertThat(actionPerformer.data.getValue()).isEqualTo(0);
+
+    actionTaker.take(actionPerformer, ActionDefinition.builder()
+        .methodName("intransitiveAction")
         .parameters(ImmutableList.of())
-        .build();
+        .build());
 
-    Jar5 jar5 = new Jar5(0);
-
-    assertThat(jar5.getOccupancy()).isEqualTo(0);
-
-    ActionTaker actionTaker = new ActionTaker();
-
-    actionTaker.take(jar5, fillDefinition);
-
-    assertThat(jar5.getOccupancy()).isEqualTo(5);
+    assertThat(actionPerformer.data.getValue()).isEqualTo(1);
   }
 
   @Test
   void can_perform_action_with_params() {
-    Jar5 jar5 = new Jar5(0);
-    jar5.fill();
-    Jar3 jar3 = new Jar3(0);
+    ActionPerformer actionPerformer= new ActionPerformer(null);
+    ActionReceiver actionReceiver = new ActionReceiver(new MutableInt(0));
 
-    ActionDefinition addToJar3 = ActionDefinition.builder()
-        .methodName("addTo")
-        .parameters(ImmutableList.of(new ParamValue(Jar3.class, jar3)))
-        .build();
+    assertThat(actionReceiver.data.getValue()).isEqualTo(0);
 
-    assertThat(jar5.getOccupancy()).isEqualTo(5);
-    assertThat(jar3.getOccupancy()).isEqualTo(0);
+    actionTaker.take(actionPerformer, ActionDefinition.builder()
+        .methodName("transitiveAction")
+        .parameters(ImmutableList.of(new ParamValue(ActionReceiver.class, actionReceiver)))
+        .build());
 
-    ActionTaker actionTaker = new ActionTaker();
-    actionTaker.take(jar5, addToJar3);
-
-    assertThat(jar5.getOccupancy()).isEqualTo(2);
-    assertThat(jar3.getOccupancy()).isEqualTo(3);
+    assertThat(actionReceiver.data.getValue()).isEqualTo(1);
   }
 
+  @Value
+  private static class ActionPerformer {
+    MutableInt data;
+    public void intransitiveAction() {
+      data.increment();
+    }
+    public void transitiveAction(ActionReceiver actionReceiver) {
+      actionReceiver.data.increment();
+    }
+  }
+
+  @Value
+  private static class ActionReceiver {
+    MutableInt data;
+  }
 }
