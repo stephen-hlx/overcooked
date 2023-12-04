@@ -16,14 +16,14 @@ class ActionTaker {
    * @param actor            the actor
    * @param actionDefinition the action to be performed
    */
-  public void take(Object actor,
+  public ActionResult take(Object actor,
                    ActionDefinition actionDefinition) {
     Method method = getMethod(actor.getClass(), actionDefinition);
     List<ParamValue> params = actionDefinition.getParameters();
-    invoke(actor, method, params);
+    return invoke(actor, method, params);
   }
 
-  private static <ActorT> void invoke(ActorT actor,
+  private static <ActorT> ActionResult invoke(ActorT actor,
                                       Method method,
                                       List<ParamValue> params) {
     Object[] parameters = params.stream()
@@ -38,7 +38,10 @@ class ActionTaker {
       log.info(String.format("When %s.%s is called against %s Exception %s was thrown for cause %s",
           actor.getClass().getSimpleName(), method.getName(), params,
           e, e.getCause()));
+      return ActionResult.failure(e.getCause());
     }
+
+    return ActionResult.success();
   }
 
   private <ActorT> Method getMethod(Class<ActorT> actorClass,
