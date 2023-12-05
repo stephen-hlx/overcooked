@@ -1,8 +1,8 @@
 package overcooked.core.action;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
@@ -10,8 +10,6 @@ import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import overcooked.core.actor.Actor;
-import overcooked.sample.diehard.model.Jar3;
-import overcooked.sample.diehard.model.Jar5;
 
 
 class TransitiveActionTakerTest {
@@ -28,30 +26,32 @@ class TransitiveActionTakerTest {
         .actionType(new TransitiveActionType(Actor.builder()
             .id("doesn't matter in this case")
             .build()))
-        .parameters(ImmutableList.of(new ParamTemplate<>(Jar3.class)))
+        .parameters(ImmutableList.of(new ParamTemplate<>(Integer.class)))
         .build();
 
-    Jar5 jar5 = new Jar5(0);
-    Jar3 jar3 = new Jar3(0);
+    Object actionPerformer = "";
+    Object actionReceiver = 0;
 
-    ActionDefinition someActionAgainstJar3 = ActionDefinition.builder()
-        .methodName("someActionAgainstJar3")
-        .parameters(ImmutableList.of(new ParamValue(Jar3.class, jar3)))
+
+    ActionDefinition action = ActionDefinition.builder()
+        .methodName("action")
+        .parameters(ImmutableList.of(new ParamValue(Integer.class, actionReceiver)))
         .build();
 
-    when(actionTemplateMaterialiser.materialise(actionTemplate, jar3))
-        .thenReturn(someActionAgainstJar3);
+    when(actionTemplateMaterialiser.materialise(actionTemplate, actionReceiver))
+        .thenReturn(action);
+    when(actionTaker.take(actionPerformer, action)).thenReturn(ActionResult.success());
 
-    transitiveActionTaker.take(TransitiveAction.builder()
-        .actionPerformer(jar5)
-        .actionReceiver(jar3)
-        .actionReceiverType(Jar3.class)
+    assertThat(transitiveActionTaker.take(TransitiveAction.builder()
+        .actionPerformer(actionPerformer)
+        .actionReceiver(actionReceiver)
         .actionTemplate(actionTemplate)
-        .build());
+        .build()))
+        .isEqualTo(ActionResult.success());
 
-    inOrder.verify(actionTemplateMaterialiser, times(1))
-        .materialise(actionTemplate, jar3);
-    inOrder.verify(actionTaker, times(1)).take(jar5, someActionAgainstJar3);
+    inOrder.verify(actionTemplateMaterialiser)
+        .materialise(actionTemplate, actionReceiver);
+    inOrder.verify(actionTaker).take(actionPerformer, action);
     verifyNoMoreInteractions(actionTemplateMaterialiser, actionTaker);
   }
 }

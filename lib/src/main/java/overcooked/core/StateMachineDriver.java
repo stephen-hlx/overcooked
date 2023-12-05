@@ -2,14 +2,13 @@ package overcooked.core;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import lombok.Builder;
 import overcooked.analysis.Arc;
+import overcooked.core.action.ExecutionResult;
 import overcooked.core.action.IntransitiveActionTemplateExecutor;
 import overcooked.core.action.TransitiveActionTemplateExecutor;
 import overcooked.core.actor.Actor;
-import overcooked.core.actor.LocalState;
 
 
 /**
@@ -46,25 +45,26 @@ class StateMachineDriver {
               Arc.ArcBuilder arcBuilder = Arc.builder()
                   .actionPerformerId(actorDefinition.getId())
                   .methodName(actionTemplate.getMethodName());
-              Map<Actor, LocalState> newLocalStates;
+              ExecutionResult executionResult;
               if (actionTemplate.getActionType().isTransitive()) {
                 Actor actionReceiverDefinition =
                     actionTemplate.getActionType().getActionReceiverDefinition();
                 arcBuilder.actionReceiverId(actionReceiverDefinition.getId());
-                newLocalStates = transitiveActionTemplateExecutor.execute(
+                executionResult = transitiveActionTemplateExecutor.execute(
                     from.getCopyOfLocalState(actorDefinition),
                     actorDefinition,
                     from.getCopyOfLocalState(actionReceiverDefinition),
                     actionTemplate);
               } else {
-                newLocalStates = intransitiveActionTemplateExecutor.execute(
+                executionResult = intransitiveActionTemplateExecutor.execute(
                     from.getCopyOfLocalState(actorDefinition),
                     actorDefinition,
                     actionTemplate);
               }
-              GlobalState to = stateMachineExecutionContext
-                  .registerOrGetDuplicate(stateMerger.merge(from, newLocalStates));
-              stateMachineExecutionContext.capture(from, arcBuilder.build(), to);
+              GlobalState to = stateMachineExecutionContext.registerOrGetDuplicate(
+                  stateMerger.merge(from, executionResult.getLocalStates()));
+              stateMachineExecutionContext.capture(
+                  from, arcBuilder.build(), to, executionResult.getActionResult());
               nextStates.add(to);
             }));
 

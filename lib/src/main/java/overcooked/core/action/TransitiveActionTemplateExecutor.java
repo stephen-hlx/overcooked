@@ -4,7 +4,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import java.util.Map;
 import lombok.Builder;
 import overcooked.core.actor.Actor;
 import overcooked.core.actor.ActorStateTransformerConfig;
@@ -27,10 +26,9 @@ public class TransitiveActionTemplateExecutor {
    * @param actionPerformerDefinition the definition of the action performer
    * @param actionReceiverLocalState  the local state of the action receiver
    * @param actionTemplate            the template of the action that is going to be performed
-   * @return a map of {@link Actor} and {@link LocalState} representing the new local
-   *     states of the affected actors (performer and receiver)
+   * @return an {@link ExecutionResult} object
    */
-  public Map<Actor, LocalState> execute(LocalState actionPerformerLocalState,
+  public ExecutionResult execute(LocalState actionPerformerLocalState,
                                         Actor actionPerformerDefinition,
                                         LocalState actionReceiverLocalState,
                                         ActionTemplate actionTemplate) {
@@ -50,23 +48,27 @@ public class TransitiveActionTemplateExecutor {
         "No ActorFactory found for action receiver {}", actionReceiverDefinition)
         .restoreFromLocalState(actionReceiverLocalState);
 
-    transitiveActionTaker.take(TransitiveAction.builder()
+    ActionResult actionResult = transitiveActionTaker.take(TransitiveAction.builder()
         .actionPerformer(actionPerformer)
         .actionReceiver(actionReceiver)
         .actionTemplate(actionTemplate)
         .build());
 
-    return ImmutableMap.<Actor, LocalState>builder()
-        .put(actionPerformerDefinition,
-            checkNotNull(
-                config.getLocalStateExtractors().get(actionPerformerDefinition),
-                "No LocalStateExtractor found for action performer {}", actionPerformerDefinition)
-                .extract(actionPerformer))
-        .put(actionReceiverDefinition,
-            checkNotNull(
-                config.getLocalStateExtractors().get(actionReceiverDefinition),
-                "No LocalStateExtractor found for action receiver {}", actionReceiverDefinition)
-                .extract(actionReceiver))
+    return ExecutionResult.builder()
+        .actionResult(actionResult)
+        .localStates(ImmutableMap.<Actor, LocalState>builder()
+            .put(actionPerformerDefinition,
+                checkNotNull(
+                    config.getLocalStateExtractors().get(actionPerformerDefinition),
+                    "No LocalStateExtractor found for action performer {}",
+                    actionPerformerDefinition)
+                    .extract(actionPerformer))
+            .put(actionReceiverDefinition,
+                checkNotNull(
+                    config.getLocalStateExtractors().get(actionReceiverDefinition),
+                    "No LocalStateExtractor found for action receiver {}", actionReceiverDefinition)
+                    .extract(actionReceiver))
+            .build())
         .build();
   }
 }

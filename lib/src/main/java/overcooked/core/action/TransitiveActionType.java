@@ -12,6 +12,7 @@ import overcooked.core.actor.Actor;
 @Getter
 @EqualsAndHashCode
 public class TransitiveActionType implements ActionType {
+  // TODO: can this be removed?
   private final Actor actionReceiverDefinition;
 
   @Override

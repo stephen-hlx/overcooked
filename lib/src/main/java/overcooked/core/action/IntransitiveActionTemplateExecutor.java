@@ -4,7 +4,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import java.util.Map;
 import lombok.Builder;
 import overcooked.core.actor.Actor;
 import overcooked.core.actor.ActorStateTransformerConfig;
@@ -26,10 +25,9 @@ public class IntransitiveActionTemplateExecutor {
    * @param actorLocalState the local state of the actor which is going to perform the action
    * @param actorDefinition the definition of the actor
    * @param actionTemplate  the template of the action that is going to be performed
-   * @return a map of {@link Actor} and {@link LocalState} representing the new local
-   *     states of the affected actors
+   * @return an {@link ExecutionResult} object
    */
-  public Map<Actor, LocalState> execute(LocalState actorLocalState,
+  public ExecutionResult execute(LocalState actorLocalState,
                                         Actor actorDefinition,
                                         ActionTemplate actionTemplate) {
     Preconditions.checkArgument(!actionTemplate.getActionType().isTransitive(),
@@ -39,15 +37,18 @@ public class IntransitiveActionTemplateExecutor {
         "No ActorFactory found for actor {}", actorDefinition)
         .restoreFromLocalState(actorLocalState);
 
-    intransitiveActionTaker.take(IntransitiveAction.builder()
+    ActionResult actionResult = intransitiveActionTaker.take(IntransitiveAction.builder()
         .actor(actor)
         .actionTemplate(actionTemplate)
         .build());
 
-    return ImmutableMap.of(
-        actorDefinition,
-        checkNotNull(config.getLocalStateExtractors().get(actorDefinition),
-            "No LocalStateExtractor found for actor {}", actorDefinition)
-            .extract(actor));
+    return ExecutionResult.builder()
+        .actionResult(actionResult)
+        .localStates(ImmutableMap.of(
+            actorDefinition,
+            checkNotNull(config.getLocalStateExtractors().get(actorDefinition),
+                "No LocalStateExtractor found for actor {}", actorDefinition)
+                .extract(actor)))
+        .build();
   }
 }

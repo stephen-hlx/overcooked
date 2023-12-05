@@ -22,6 +22,14 @@ import overcooked.sample.diehard.modelverifier.Jar5State;
 
 class TransitiveActionTemplateExecutorTest {
   private final TransitiveActionTaker transitiveActionTaker = mock(TransitiveActionTaker.class);
+  @SuppressWarnings("unchecked")
+  private final ActorFactory<Jar3> jar3ActorFactory = mock(ActorFactory.class);
+  @SuppressWarnings("unchecked")
+  private final ActorFactory<Jar5> jar5ActorFactory = mock(ActorFactory.class);
+  private final LocalStateExtractor actionPerformerLocalStateExtractor =
+      mock(LocalStateExtractor.class);
+  private final LocalStateExtractor actionReceiverLocalStateExtractor =
+      mock(LocalStateExtractor.class);
 
   @Test
   void when_provided_with_an_intransitive_action_then_throws_illegalArgumentException() {
@@ -60,21 +68,21 @@ class TransitiveActionTemplateExecutorTest {
         .parameters(ImmutableList.of(new ParamTemplate<>(Jar3.class)))
         .build();
 
-    @SuppressWarnings("unchecked")
-    ActorFactory<Jar3> jar3ActorFactory = mock(ActorFactory.class);
-    @SuppressWarnings("unchecked")
-    ActorFactory<Jar5> jar5ActorFactory = mock(ActorFactory.class);
     when(jar5ActorFactory.restoreFromLocalState(actionPerformerLocalState)).thenReturn(
         actionPerformer);
     when(jar3ActorFactory.restoreFromLocalState(actionReceiverLocalState)).thenReturn(
         actionReceiver);
 
-    LocalStateExtractor actionPerformerLocalStateExtractor = mock(LocalStateExtractor.class);
     when(actionPerformerLocalStateExtractor.extract(actionPerformer)).thenReturn(
         newActionPerformerLocalState);
-    LocalStateExtractor actionReceiverLocalStateExtractor = mock(LocalStateExtractor.class);
     when(actionReceiverLocalStateExtractor.extract(actionReceiver)).thenReturn(
         newActionReceiverLocalState);
+    when(transitiveActionTaker.take(TransitiveAction.builder()
+            .actionTemplate(actionTemplate)
+            .actionReceiver(actionReceiver)
+            .actionPerformer(actionPerformer)
+        .build()))
+        .thenReturn(ActionResult.success());
 
     TransitiveActionTemplateExecutor executor = TransitiveActionTemplateExecutor.builder()
         .config(ActorStateTransformerConfig.builder()
@@ -95,10 +103,12 @@ class TransitiveActionTemplateExecutorTest {
         actionPerformerDefinition,
         actionReceiverLocalState,
         actionTemplate))
-        .isEqualTo(ImmutableMap.of(
-            actionPerformerDefinition, newActionPerformerLocalState,
-            actionReceiverDefinition, newActionReceiverLocalState
-        ));
+        .isEqualTo(ExecutionResult.builder()
+            .actionResult(ActionResult.success())
+            .localStates(ImmutableMap.of(
+                actionPerformerDefinition, newActionPerformerLocalState,
+                actionReceiverDefinition, newActionReceiverLocalState
+            )).build());
 
     verify(jar5ActorFactory).restoreFromLocalState(actionPerformerLocalState);
     verify(jar3ActorFactory).restoreFromLocalState(actionReceiverLocalState);

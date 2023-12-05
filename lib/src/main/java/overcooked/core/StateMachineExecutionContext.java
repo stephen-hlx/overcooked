@@ -5,6 +5,7 @@ import java.util.Set;
 import overcooked.analysis.Arc;
 import overcooked.analysis.StateMachineExecutionData;
 import overcooked.analysis.Transition;
+import overcooked.core.action.ActionResult;
 
 /**
  * A class that captures the context of a state machine execution,
@@ -33,11 +34,12 @@ public class StateMachineExecutionContext {
     return globalState;
   }
 
-  void capture(GlobalState from, Arc arc, GlobalState to) {
+  void capture(GlobalState from, Arc arc, GlobalState to, ActionResult actionResult) {
     transitions.add(Transition.builder()
         .from(from)
         .arc(arc)
         .to(to)
+        .actionResult(actionResult)
         .build());
   }
 

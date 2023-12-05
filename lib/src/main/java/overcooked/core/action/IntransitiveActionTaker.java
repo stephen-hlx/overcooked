@@ -14,12 +14,13 @@ class IntransitiveActionTaker {
    * Takes the {@link IntransitiveAction} provided.
    *
    * @param intransitiveAction the intransitive action
+   * @return the {@link ActionResult} object
    */
-  public void take(IntransitiveAction intransitiveAction) {
+  public ActionResult take(IntransitiveAction intransitiveAction) {
     ActionDefinition materialised =
         materialiser.materialise(intransitiveAction.getActionTemplate());
 
-    actionTaker.take(intransitiveAction.getActor(), materialised);
+    return actionTaker.take(intransitiveAction.getActor(), materialised);
   }
 
 }

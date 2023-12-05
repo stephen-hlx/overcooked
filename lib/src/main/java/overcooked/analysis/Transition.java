@@ -3,6 +3,7 @@ package overcooked.analysis;
 import lombok.Builder;
 import lombok.Value;
 import overcooked.core.GlobalState;
+import overcooked.core.action.ActionResult;
 
 /**
  * Represents a transition in the state machine.
@@ -14,4 +15,5 @@ public class Transition {
   GlobalState from;
   Arc arc;
   GlobalState to;
+  ActionResult actionResult;
 }

@@ -10,7 +10,6 @@ import lombok.Value;
 @Value
 class TransitiveAction {
   Object actionPerformer;
-  Class<?> actionReceiverType;
   Object actionReceiver;
   ActionTemplate actionTemplate;
 }

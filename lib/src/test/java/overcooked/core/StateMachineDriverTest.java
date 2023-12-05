@@ -15,7 +15,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
 import overcooked.analysis.Arc;
+import overcooked.core.action.ActionResult;
 import overcooked.core.action.ActionTemplate;
+import overcooked.core.action.ExecutionResult;
 import overcooked.core.action.IntransitiveActionTemplateExecutor;
 import overcooked.core.action.IntransitiveActionType;
 import overcooked.core.action.ParamTemplate;
@@ -77,13 +79,18 @@ class StateMachineDriverTest {
     LocalState newActor3LocalState = new TestLocalState(3, 1);
 
     when(intransitiveActionTemplateExecutor.execute(actor1LocalState, actor1, actor1ActionTemplate))
-        .thenReturn(ImmutableMap.of(actor1, newActor1LocalState));
+        .thenReturn(ExecutionResult.builder()
+            .actionResult(ActionResult.success())
+            .localStates(ImmutableMap.of(actor1, newActor1LocalState))
+            .build());
     when(transitiveActionTemplateExecutor.execute(actor2LocalState, actor2, actor3LocalState,
         actor2ActionTemplate))
-        .thenReturn(ImmutableMap.of(
-            actor2, newActor2LocalState,
-            actor3, newActor3LocalState
-        ));
+        .thenReturn(ExecutionResult.builder()
+            .actionResult(ActionResult.success())
+            .localStates(ImmutableMap.of(
+                actor2, newActor2LocalState,
+                actor3, newActor3LocalState
+            )).build());
 
     GlobalState globalState = new GlobalState(
         ImmutableMap.<Actor, LocalState>builder()
@@ -140,7 +147,8 @@ class StateMachineDriverTest {
             .put(actor2, actor2LocalState)
             .put(actor3, actor3LocalState)
             .put(actor4, actor4LocalState)
-            .build()));
+            .build()),
+        ActionResult.success());
     verify(stateMachineExecutionContext).registerOrGetDuplicate(
         new GlobalState(ImmutableMap.<Actor, LocalState>builder()
             .put(actor1, actor1LocalState)
@@ -159,7 +167,8 @@ class StateMachineDriverTest {
             .put(actor2, newActor2LocalState)
             .put(actor3, newActor3LocalState)
             .put(actor4, actor4LocalState)
-            .build()));
+            .build()),
+        ActionResult.success());
     verifyNoMoreInteractions(intransitiveActionTemplateExecutor,
         transitiveActionTemplateExecutor,
         stateMerger,

@@ -3,12 +3,12 @@ package overcooked.core.action;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import com.google.common.collect.ImmutableMap;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
+import org.mockito.Mockito;
 import overcooked.core.actor.Actor;
 import overcooked.core.actor.ActorFactory;
 import overcooked.core.actor.ActorStateTransformerConfig;
@@ -20,6 +20,11 @@ import overcooked.sample.diehard.modelverifier.Jar3State;
 class IntransitiveActionTemplateExecutorTest {
   private final IntransitiveActionTaker intransitiveActionTaker =
       mock(IntransitiveActionTaker.class);
+  @SuppressWarnings("unchecked")
+  private final ActorFactory<Jar5> actorFactory = mock(ActorFactory.class);
+  private final LocalStateExtractor actorLocalStateExtractor = mock(LocalStateExtractor.class);
+  private final InOrder inOrder = Mockito.inOrder(intransitiveActionTaker,
+      actorFactory, actorLocalStateExtractor);
 
   @Test
   void when_provided_with_a_transitive_action_then_throws_illegalArgumentException() {
@@ -34,6 +39,7 @@ class IntransitiveActionTemplateExecutorTest {
                 .build()))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessageStartingWith("Expecting an intransitive action template but it was transitive");
+    inOrder.verifyNoMoreInteractions();
   }
 
   @Test
@@ -50,12 +56,14 @@ class IntransitiveActionTemplateExecutorTest {
         .methodName("fill - but doesn't really matter in this test")
         .build();
 
-    @SuppressWarnings("unchecked")
-    ActorFactory<Jar5> actorFactory = mock(ActorFactory.class);
     when(actorFactory.restoreFromLocalState(actorLocalState)).thenReturn(actor);
 
-    LocalStateExtractor actorLocalStateExtractor = mock(LocalStateExtractor.class);
     when(actorLocalStateExtractor.extract(actor)).thenReturn(newActorLocalState);
+    when(intransitiveActionTaker.take(IntransitiveAction.builder()
+            .actionTemplate(actionTemplate)
+            .actor(actor)
+        .build()))
+        .thenReturn(ActionResult.success());
 
     IntransitiveActionTemplateExecutor executor = IntransitiveActionTemplateExecutor.builder()
         .config(ActorStateTransformerConfig.builder()
@@ -73,19 +81,20 @@ class IntransitiveActionTemplateExecutorTest {
         actorLocalState,
         actorDefinition,
         actionTemplate))
-        .isEqualTo(ImmutableMap.of(
-            actorDefinition, newActorLocalState
-        ));
+        .isEqualTo(ExecutionResult.builder()
+            .actionResult(ActionResult.success())
+            .localStates(ImmutableMap.of(
+                actorDefinition, newActorLocalState
+            ))
+            .build());
 
-    verify(actorFactory).restoreFromLocalState(actorLocalState);
-    verify(intransitiveActionTaker).take(IntransitiveAction.builder()
+    inOrder.verify(actorFactory).restoreFromLocalState(actorLocalState);
+    inOrder.verify(intransitiveActionTaker).take(IntransitiveAction.builder()
         .actor(actor)
         .actionTemplate(actionTemplate)
         .build());
-    verify(actorLocalStateExtractor).extract(actor);
+    inOrder.verify(actorLocalStateExtractor).extract(actor);
 
-    verifyNoMoreInteractions(
-        actorFactory,
-        actorLocalStateExtractor);
+    inOrder.verifyNoMoreInteractions();
   }
 }
