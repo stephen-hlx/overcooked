@@ -5,6 +5,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
@@ -17,11 +19,14 @@ import overcooked.visual.DotGraphExporter;
 @Builder
 @Slf4j
 public class ReportGenerator {
-  private static final String FILENAME_ALL_TRANSITIONS = "all";
+  private static final String FILENAME_ALL_TRANSITIONS = "stateMachine";
   private static final String FILENAME_FAILURE_TRANSITION = "failure";
   
   @Builder.Default
   private final String outputDirName = "/tmp/overcooked";
+
+  @Builder.Default
+  private final Predicate<Transition> transitionFilter = transition -> true;
 
   private final DotGraphExporter dotGraphExporter;
   private final Analyser analyser;
@@ -43,7 +48,9 @@ public class ReportGenerator {
   private void exportGraphs(StateMachineExecutionData data) {
     String allTransitions = String.format("%s/%s", outputDirName, FILENAME_ALL_TRANSITIONS);
     log.info("Exporting full state machine to " + allTransitions);
-    writeToFile(allTransitions, dotGraphExporter.export(data.getTransitions()));
+    writeToFile(allTransitions, dotGraphExporter.export(data.getTransitions().stream()
+        .filter(transitionFilter)
+        .collect(Collectors.toSet())));
 
     MutableInt counter = new MutableInt(0);
     data.getValidationFailingGlobalStates().forEach(failingState -> {

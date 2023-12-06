@@ -13,6 +13,7 @@ import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import overcooked.analysis.JgraphtAnalyser;
 import overcooked.analysis.ReportGenerator;
+import overcooked.analysis.TransitionFilter;
 import overcooked.core.ActorActionConfig;
 import overcooked.core.GlobalState;
 import overcooked.core.StateMachine;
@@ -75,6 +76,7 @@ class ModelVerifier {
         .analyser(new JgraphtAnalyser())
         .dotGraphExporter(DotGraphExporterFactory.create())
         .outputDirName(outputDirName)
+        .transitionFilter(TransitionFilter.EXCEPTION_FREE.and(TransitionFilter.NON_SELF_LOOP))
         .build();
     log.info(reportGenerator.generate(stateMachineExecutionContext.getData()).toString());
   }
