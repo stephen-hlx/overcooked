@@ -1,4 +1,4 @@
-package overcooked.analysis;
+package overcooked.util;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;

@@ -1,10 +1,10 @@
 package overcooked.visual;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static overcooked.analysis.StateMachineTestSetup.TRANSITION_0_1;
-import static overcooked.analysis.StateMachineTestSetup.TRANSITION_2_3_I;
-import static overcooked.analysis.StateMachineTestSetup.TRANSITION_2_3_II;
-import static overcooked.analysis.StateMachineTestSetup.TRANSITION_3_4;
+import static overcooked.util.StateMachineTestSetup.TRANSITION_0_1;
+import static overcooked.util.StateMachineTestSetup.TRANSITION_2_3_I;
+import static overcooked.util.StateMachineTestSetup.TRANSITION_2_3_II;
+import static overcooked.util.StateMachineTestSetup.TRANSITION_3_4;
 
 import com.google.common.collect.ImmutableSet;
 import org.junit.jupiter.api.Test;

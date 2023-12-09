@@ -1,6 +1,8 @@
-package overcooked.analysis;
+package overcooked.util;
 
 import com.google.common.collect.ImmutableMap;
+import overcooked.analysis.Arc;
+import overcooked.analysis.Transition;
 import overcooked.core.GlobalState;
 import overcooked.core.actor.Actor;
 import overcooked.core.actor.LocalState;
