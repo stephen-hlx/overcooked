@@ -4,9 +4,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import overcooked.core.actor.LocalState;
 
+/**
+ * A {@link LocalState} implementation for use by tests.
+ */
 @Value
 @EqualsAndHashCode(callSuper = false)
-class TestLocalState extends LocalState {
+public class TestLocalState extends LocalState {
   int f1;
   int f2;
 

@@ -14,14 +14,13 @@ import overcooked.core.actor.ActorFactory;
 import overcooked.core.actor.ActorStateTransformerConfig;
 import overcooked.core.actor.LocalState;
 import overcooked.core.actor.LocalStateExtractor;
-import overcooked.sample.diehard.model.Jar5;
-import overcooked.sample.diehard.modelverifier.Jar3State;
+import overcooked.util.TestLocalState;
 
 class IntransitiveActionTemplateExecutorTest {
   private final IntransitiveActionTaker intransitiveActionTaker =
       mock(IntransitiveActionTaker.class);
   @SuppressWarnings("unchecked")
-  private final ActorFactory<Jar5> actorFactory = mock(ActorFactory.class);
+  private final ActorFactory<Object> actorFactory = mock(ActorFactory.class);
   private final LocalStateExtractor actorLocalStateExtractor = mock(LocalStateExtractor.class);
   private final InOrder inOrder = Mockito.inOrder(intransitiveActionTaker,
       actorFactory, actorLocalStateExtractor);
@@ -44,11 +43,11 @@ class IntransitiveActionTemplateExecutorTest {
 
   @Test
   void execute_calls_intransitive_action_taker_and_converts_actor_back_to_local_state() {
-    Jar5 actor = new Jar5(0);
-    LocalState actorLocalState = new Jar3State(0);
-    LocalState newActorLocalState = new Jar3State(1);
+    Object actor = 0;
+    LocalState actorLocalState = new TestLocalState(0, 0);
+    LocalState newActorLocalState = new TestLocalState(1, 1);
     Actor actorDefinition = Actor.builder()
-        .id("jar5")
+        .id("actor")
         .build();
 
     ActionTemplate actionTemplate = ActionTemplate.builder()
