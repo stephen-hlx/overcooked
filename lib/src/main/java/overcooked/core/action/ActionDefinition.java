@@ -1,6 +1,5 @@
 package overcooked.core.action;
 
-import com.google.common.collect.ImmutableList;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -19,6 +18,5 @@ public class ActionDefinition {
 
   String methodName;
 
-  @Builder.Default
-  ImmutableList<ParamValue> parameters = ImmutableList.of();
+  ParamValue paramValue;
 }

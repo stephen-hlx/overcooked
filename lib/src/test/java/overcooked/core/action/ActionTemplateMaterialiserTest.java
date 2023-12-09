@@ -1,60 +1,48 @@
 package overcooked.core.action;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Test;
-import overcooked.core.actor.Actor;
-import overcooked.sample.diehard.model.Jar3;
 
 class ActionTemplateMaterialiserTest {
+  private final ActionType actionType = mock(ActionType.class);
+  private final ActionTemplateMaterialiser materialiser = new ActionTemplateMaterialiser();
+
   @Test
   void call_with_filling_value_works() {
-    Jar3 jar3 = new Jar3(0);
-    Actor jarActor = Actor.builder()
-        .id("someId")
-        .build();
+    Class<Integer> placeHolderType = Integer.class;
+    Integer placeHolderValue = 1;
+
+    when(actionType.isTransitive()).thenReturn(true);
+
     ActionTemplate template = ActionTemplate.builder()
-        .actionType(new TransitiveActionType(jarActor))
+        .actionType(actionType)
         .methodName("someMethod")
-        .parameters(ImmutableList.of(
-            new ParamTemplate<>(Jar3.class),
-            new ParamValue(Integer.class, 1)
-        ))
+        .parameter(new ParamTemplate<>(placeHolderType))
         .build();
 
-    assertThat(new ActionTemplateMaterialiser().materialise(template, jar3))
+    assertThat(materialiser.materialise(template, placeHolderValue))
         .isEqualTo(ActionDefinition.builder()
-            .actionType(new TransitiveActionType(jarActor))
+            .actionType(actionType)
             .methodName("someMethod")
-            .parameters(ImmutableList.of(
-                new ParamValue(Jar3.class, jar3),
-                new ParamValue(Integer.class, 1)
-            ))
+            .paramValue(new ParamValue(placeHolderType, placeHolderValue))
             .build());
   }
 
   @Test
   void call_without_filling_value_works() {
-    Jar3 jar3 = new Jar3(0);
-    Actor jarActor = Actor.builder()
-        .id("someId")
-        .build();
-    ActionTemplate template = ActionTemplate.builder()
-        .actionType(new TransitiveActionType(jarActor))
+    when(actionType.isTransitive()).thenReturn(false);
+    assertThat(materialiser.materialise(ActionTemplate.builder()
+        .actionType(actionType)
         .methodName("someMethod")
-        .parameters(ImmutableList.of(
-            new ParamValue(Integer.class, 1)
-        ))
-        .build();
-
-    assertThat(new ActionTemplateMaterialiser().materialise(template, jar3))
+        .parameter(null)
+        .build()))
         .isEqualTo(ActionDefinition.builder()
-            .actionType(new TransitiveActionType(jarActor))
+            .actionType(actionType)
             .methodName("someMethod")
-            .parameters(ImmutableList.of(
-                new ParamValue(Integer.class, 1)
-            ))
+            .paramValue(null)
             .build());
   }
 }

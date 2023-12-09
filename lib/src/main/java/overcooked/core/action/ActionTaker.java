@@ -2,7 +2,7 @@ package overcooked.core.action;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -19,24 +19,24 @@ class ActionTaker {
   public ActionResult take(Object actor,
                    ActionDefinition actionDefinition) {
     Method method = getMethod(actor.getClass(), actionDefinition);
-    List<ParamValue> params = actionDefinition.getParameters();
-    return invoke(actor, method, params);
+    ParamValue param = actionDefinition.getParamValue();
+    return invoke(actor, method, param);
   }
 
   private static <ActorT> ActionResult invoke(ActorT actor,
                                       Method method,
-                                      List<ParamValue> params) {
-    Object[] parameters = params.stream()
-        .map(ParamValue::getValue)
-        .toArray(Object[]::new);
+                                      ParamValue paramValue) {
     try {
-      method.invoke(actor, parameters);
+      if (paramValue != null) {
+        method.invoke(actor, paramValue.getValue());
+      } else {
+        method.invoke(actor);
+      }
     } catch (IllegalAccessException e) {
       throw new RuntimeException(e);
     } catch (InvocationTargetException e) {
-      // TODO: no testing
       log.info(String.format("When %s.%s is called against %s Exception %s was thrown for cause %s",
-          actor.getClass().getSimpleName(), method.getName(), params,
+          actor.getClass().getSimpleName(), method.getName(), paramValue,
           e, e.getCause()));
       return ActionResult.failure(e.getCause());
     }
@@ -46,9 +46,10 @@ class ActionTaker {
 
   private <ActorT> Method getMethod(Class<ActorT> actorClass,
                                     ActionDefinition actionDefinition) {
-    Class<?>[] parameterTypes = actionDefinition.getParameters().stream()
-        .map(ParamValue::getType)
-        .toArray(Class<?>[]::new);
+    Class<?>[] parameterTypes = Optional.ofNullable(actionDefinition.getParamValue())
+        .map(paramValue -> new Class<?>[] {paramValue.getType()})
+        .orElse(new Class<?>[] {});
+
     try {
       return actorClass.getMethod(actionDefinition.getMethodName(), parameterTypes);
     } catch (NoSuchMethodException e) {

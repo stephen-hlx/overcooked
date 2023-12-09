@@ -1,7 +1,5 @@
 package overcooked.core.action;
 
-import com.google.common.collect.ImmutableList;
-
 /**
  * An {@link ActionTemplate} is the blueprint of an action, it is not executable. It needs to be
  * materialised into an {@link ActionDefinition} before it can be performed.
@@ -17,18 +15,14 @@ class ActionTemplateMaterialiser {
    * @return an {@link ActionDefinition} object that is created based on the parameter data
    *     provided
    */
-  public ActionDefinition materialise(
-      ActionTemplate actionTemplate,
-      Object value) {
+  public ActionDefinition materialise(ActionTemplate actionTemplate, Object value) {
+    Param param = actionTemplate.getParameter();
     return ActionDefinition.builder()
         .actionType(actionTemplate.getActionType())
         .methodName(actionTemplate.getMethodName())
-        .parameters(actionTemplate.getParameters().stream()
-            .map(param ->
-                param.isTemplate()
-                    ? new ParamValue(param.getType(), value)
-                    : (ParamValue) param)
-            .collect(ImmutableList.toImmutableList()))
+        .paramValue(actionTemplate.getActionType().isTransitive()
+            ? new ParamValue(param.getType(), value)
+            : (ParamValue) param)
         .build();
   }
 

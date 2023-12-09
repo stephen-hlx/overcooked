@@ -7,7 +7,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.junit.jupiter.api.Test;
 import overcooked.core.actor.Actor;
@@ -65,7 +64,7 @@ class TransitiveActionTemplateExecutorTest {
     ActionTemplate actionTemplate = ActionTemplate.builder()
         .actionType(new TransitiveActionType(actionReceiverDefinition))
         .methodName("addTo - but doesn't really matter in this test")
-        .parameters(ImmutableList.of(new ParamTemplate<>(Jar3.class)))
+        .parameter(new ParamTemplate<>(Jar3.class))
         .build();
 
     when(jar5ActorFactory.restoreFromLocalState(actionPerformerLocalState)).thenReturn(

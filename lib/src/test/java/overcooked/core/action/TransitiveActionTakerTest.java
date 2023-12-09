@@ -6,7 +6,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import overcooked.core.actor.Actor;
@@ -26,7 +25,7 @@ class TransitiveActionTakerTest {
         .actionType(new TransitiveActionType(Actor.builder()
             .id("doesn't matter in this case")
             .build()))
-        .parameters(ImmutableList.of(new ParamTemplate<>(Integer.class)))
+        .parameter(new ParamTemplate<>(Integer.class))
         .build();
 
     Object actionPerformer = "";
@@ -35,7 +34,7 @@ class TransitiveActionTakerTest {
 
     ActionDefinition action = ActionDefinition.builder()
         .methodName("action")
-        .parameters(ImmutableList.of(new ParamValue(Integer.class, actionReceiver)))
+        .paramValue(new ParamValue(Integer.class, actionReceiver))
         .build();
 
     when(actionTemplateMaterialiser.materialise(actionTemplate, actionReceiver))

@@ -1,6 +1,5 @@
 package overcooked.sample.diehard.modelverifier;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -51,12 +50,11 @@ class ModelVerifier {
             .methodName("fill")
             .build(),
         ActionTemplate.builder()
-            // TODO ???
             .actionType(new TransitiveActionType(Actor.builder()
                 .id("jar5")
                 .build()))
             .methodName("addTo")
-            .parameters(ImmutableList.of(new ParamTemplate<>(Jar5.class)))
+            .parameter(new ParamTemplate<>(Jar5.class))
             .build()
     );
 
@@ -74,7 +72,7 @@ class ModelVerifier {
                 .id("jar3")
                 .build()))
             .methodName("addTo")
-            .parameters(ImmutableList.of(new ParamTemplate<>(Jar3.class)))
+            .parameter(new ParamTemplate<>(Jar3.class))
             .build()
     );
 

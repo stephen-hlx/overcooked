@@ -7,7 +7,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.Set;
@@ -62,7 +61,7 @@ class StateMachineDriverTest {
     ActionTemplate actor2ActionTemplate = ActionTemplate.builder()
         .actionType(new TransitiveActionType(actor3))
         .methodName(actor2Method)
-        .parameters(ImmutableList.of(new ParamTemplate<>(Integer.class)))
+        .parameter(new ParamTemplate<>(Integer.class))
         .build();
     ActorActionConfig config = new ActorActionConfig(
         ImmutableMap.<Actor, Set<ActionTemplate>>builder()

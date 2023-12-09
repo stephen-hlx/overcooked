@@ -1,6 +1,7 @@
 package overcooked.core.action;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
@@ -11,7 +12,9 @@ import lombok.Value;
 @Getter
 @Value
 class ParamValue implements Param {
+  @NonNull
   Class<?> type;
+  @NonNull
   Object value;
 
   @Override
