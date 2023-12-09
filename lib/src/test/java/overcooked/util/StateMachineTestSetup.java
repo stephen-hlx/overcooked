@@ -10,6 +10,7 @@ import overcooked.core.actor.LocalState;
 /**
  * This class provides objects for use in testing.
  * They form a state machine like the one illustrated below:
+ * <pre>
  *          ┌─┐     ┌───────┐
  *          │ │     │       │
  * ┌───┐   ┌┴─▼┐   ┌┴──┐   ┌▼──┐   ┌───┐
@@ -17,6 +18,7 @@ import overcooked.core.actor.LocalState;
  * └───┘   └─┬─┘   └───┘   └─▲─┘   └───┘
  *           │               │
  *           └───────────────┘
+ * </pre>
  */
 public class StateMachineTestSetup {
   public static final String ACTOR_1_ID = "actor1";

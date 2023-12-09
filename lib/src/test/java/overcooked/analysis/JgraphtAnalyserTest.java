@@ -15,11 +15,15 @@ import static overcooked.util.StateMachineTestSetup.TRANSITION_3_4;
 
 import com.google.common.collect.ImmutableSet;
 import org.junit.jupiter.api.Test;
+import overcooked.util.StateMachineTestSetup;
 
 class JgraphtAnalyserTest {
   private final JgraphtGraphBuilder graphBuilder = spy(new JgraphtGraphBuilder());
   private final JgraphtAnalyser analyser = new JgraphtAnalyser(graphBuilder);
 
+  /**
+   * See {@link StateMachineTestSetup} for the graph.
+   */
   @Test
   void works() {
     ImmutableSet<Transition> transitions = ImmutableSet.of(
