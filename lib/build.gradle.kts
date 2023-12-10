@@ -33,4 +33,7 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.mockito/mockito-core
     testImplementation("org.mockito:mockito-core:2.1.0")
+
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-jdk14
+    testImplementation("org.slf4j:slf4j-jdk14:2.0.9")
 }
