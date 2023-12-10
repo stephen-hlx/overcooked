@@ -12,3 +12,4 @@ plugins {
 
 rootProject.name = "overcooked"
 include("lib")
+include("sample")

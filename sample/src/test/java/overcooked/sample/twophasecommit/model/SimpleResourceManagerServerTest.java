@@ -3,7 +3,6 @@ package overcooked.sample.twophasecommit.model;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static overcooked.sample.twophasecommit.model.ResourceManagerState.ABORTED;
 import static overcooked.sample.twophasecommit.model.ResourceManagerState.COMMITTED;
 import static overcooked.sample.twophasecommit.model.ResourceManagerState.PREPARED;
@@ -12,6 +11,7 @@ import static overcooked.sample.twophasecommit.model.ResourceManagerState.WORKIN
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mockito;
 
 class SimpleResourceManagerServerTest {
 
@@ -97,11 +97,11 @@ class SimpleResourceManagerServerTest {
     switch (action) {
       case PREPARE -> {
         resourceManagerServer.prepare(transactionManagerClient);
-        verify(transactionManagerClient).prepare(RESOURCE_MANAGER_ID);
+        Mockito.verify(transactionManagerClient).prepare(RESOURCE_MANAGER_ID);
       }
       case ABORT -> {
         resourceManagerServer.abort(transactionManagerClient);
-        verify(transactionManagerClient).abort(RESOURCE_MANAGER_ID);
+        Mockito.verify(transactionManagerClient).abort(RESOURCE_MANAGER_ID);
       }
       default -> throw new RuntimeException("Unexpected new state: {}" + action);
     }

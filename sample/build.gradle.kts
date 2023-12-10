@@ -10,27 +10,18 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":lib"))
+
     // This dependency is used by the application.
     implementation("com.google.guava:guava:32.1.1-jre")
-
-    // https://mvnrepository.com/artifact/com.google.code.gson/gson
-    implementation("com.google.code.gson:gson:2.10.1")
-
-    // https://mvnrepository.com/artifact/org.jgrapht/jgrapht-core
-    implementation("org.jgrapht:jgrapht-core:1.5.2")
-
-    // https://mvnrepository.com/artifact/org.jgrapht/jgrapht-io
-    implementation("org.jgrapht:jgrapht-io:1.5.2")
 
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
     implementation("org.slf4j:slf4j-api:2.0.9")
 
-    // Use JUnit Jupiter for testing.
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
-
     // https://mvnrepository.com/artifact/org.assertj/assertj-core
     testImplementation("org.assertj:assertj-core:3.6.1")
-
+    // Use JUnit Jupiter for testing.
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
     // https://mvnrepository.com/artifact/org.mockito/mockito-core
     testImplementation("org.mockito:mockito-core:2.1.0")
 }

@@ -1,8 +1,5 @@
 package overcooked.sample.twophasecommit.model;
 
-import static overcooked.sample.twophasecommit.model.ResourceManagerClient.STATES_ALLOWED_FOR_ABORT;
-import static overcooked.sample.twophasecommit.model.ResourceManagerClient.STATES_ALLOWED_FOR_COMMIT;
-import static overcooked.sample.twophasecommit.model.ResourceManagerClient.STATES_ALLOWED_FOR_PREPARE;
 import static overcooked.sample.twophasecommit.model.ResourceManagerState.ABORTED;
 import static overcooked.sample.twophasecommit.model.ResourceManagerState.COMMITTED;
 import static overcooked.sample.twophasecommit.model.ResourceManagerState.PREPARED;
