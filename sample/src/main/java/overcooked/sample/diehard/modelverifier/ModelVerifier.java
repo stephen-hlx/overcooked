@@ -7,6 +7,7 @@ import java.io.File;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import overcooked.analysis.JgraphtAnalyser;
+import overcooked.analysis.Report;
 import overcooked.analysis.ReportGenerator;
 import overcooked.core.ActorActionConfig;
 import overcooked.core.GlobalState;
@@ -35,7 +36,7 @@ class ModelVerifier {
       .id("jar5")
       .build();
 
-  void verify() {
+  Report run() {
     GlobalState initialState = new GlobalState(ImmutableMap.of(
         JAR3, new Jar3State(0),
         JAR5, new Jar5State(0)));
@@ -104,7 +105,7 @@ class ModelVerifier {
         .dotGraphExporter(DotGraphExporterFactory.create())
         .outputDirName(outputDirName)
         .build();
-    log.info(reportGenerator.generate(stateMachineExecutionContext.getData()).toString());
+    return reportGenerator.generate(stateMachineExecutionContext.getData());
   }
 
   @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED")

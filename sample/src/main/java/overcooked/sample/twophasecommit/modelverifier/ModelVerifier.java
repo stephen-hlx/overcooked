@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import overcooked.analysis.JgraphtAnalyser;
+import overcooked.analysis.Report;
 import overcooked.analysis.ReportGenerator;
 import overcooked.analysis.TransitionFilter;
 import overcooked.core.ActorActionConfig;
@@ -61,7 +62,7 @@ class ModelVerifier {
     actorStateTransformerConfig = actorStateTransformerConfig();
   }
 
-  public void verify() {
+  public Report run() {
     StateMachineExecutionContext stateMachineExecutionContext =
         new StateMachineExecutionContext(initialGlobalState);
     StateMachine stateMachine = StateMachineFactory
@@ -77,7 +78,7 @@ class ModelVerifier {
         .outputDirName(outputDirName)
         .transitionFilter(TransitionFilter.EXCEPTION_FREE.and(TransitionFilter.NON_SELF_LOOP))
         .build();
-    log.info(reportGenerator.generate(stateMachineExecutionContext.getData()).toString());
+    return reportGenerator.generate(stateMachineExecutionContext.getData());
   }
 
   @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED")

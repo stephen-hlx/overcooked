@@ -8,7 +8,7 @@ import lombok.Value;
  */
 @Value
 @Builder
-class ExecutionSummary {
+public class ExecutionSummary {
   long numOfStates;
   long numOfValidationFailingStates;
   long numOfTransitions;
