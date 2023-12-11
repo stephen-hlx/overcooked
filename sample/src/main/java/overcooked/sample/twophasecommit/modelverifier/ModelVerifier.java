@@ -20,13 +20,10 @@ import overcooked.core.StateMachine;
 import overcooked.core.StateMachineExecutionContext;
 import overcooked.core.StateMachineFactory;
 import overcooked.core.action.ActionTemplate;
-import overcooked.core.action.ParamTemplate;
 import overcooked.core.action.TransitiveActionType;
 import overcooked.core.actor.Actor;
 import overcooked.core.actor.ActorStateTransformerConfig;
-import overcooked.sample.twophasecommit.model.ResourceManagerClient;
 import overcooked.sample.twophasecommit.model.ResourceManagerState;
-import overcooked.sample.twophasecommit.model.TransactionManagerClient;
 import overcooked.visual.DotGraphExporterFactory;
 
 @Slf4j
@@ -101,7 +98,7 @@ class ModelVerifier {
   }
 
   private static ActorActionConfig actorActionConfig() {
-    Set<ActionTemplate> resourceManagerActionTemplates = resourceManagerActionTemplates();
+    Set<ActionTemplate<?, ?>> resourceManagerActionTemplates = resourceManagerActionTemplates();
     return new ActorActionConfig(ImmutableMap.of(
         TM, transactionManagerActionTemplates(),
         RM_0, resourceManagerActionTemplates,
@@ -130,68 +127,68 @@ class ModelVerifier {
         .build();
   }
 
-  private static ImmutableSet<ActionTemplate> transactionManagerActionTemplates() {
+  private static Set<ActionTemplate<?, ?>> transactionManagerActionTemplates() {
     return ImmutableSet.of(
-        ActionTemplate.builder()
+        ActionTemplate.<TransactionManager, ResourceManager>builder()
             .actionType(new TransitiveActionType(Actor.builder()
                 .id(RM_ID_0)
                 .build()))
             .methodName("abort")
-            .parameter(new ParamTemplate<>(ResourceManagerClient.class))
+            .action(TransactionManager::abort)
             .build(),
-        ActionTemplate.builder()
+        ActionTemplate.<TransactionManager, ResourceManager>builder()
             .actionType(new TransitiveActionType(Actor.builder()
                 .id(RM_ID_0)
                 .build()))
             .methodName("commit")
-            .parameter(new ParamTemplate<>(ResourceManagerClient.class))
+            .action(TransactionManager::commit)
             .build(),
-        ActionTemplate.builder()
+        ActionTemplate.<TransactionManager, ResourceManager>builder()
             .actionType(new TransitiveActionType(Actor.builder()
                 .id(RM_ID_1)
                 .build()))
             .methodName("abort")
-            .parameter(new ParamTemplate<>(ResourceManagerClient.class))
+            .action(TransactionManager::abort)
             .build(),
-        ActionTemplate.builder()
+        ActionTemplate.<TransactionManager, ResourceManager>builder()
             .actionType(new TransitiveActionType(Actor.builder()
                 .id(RM_ID_1)
                 .build()))
             .methodName("commit")
-            .parameter(new ParamTemplate<>(ResourceManagerClient.class))
+            .action(TransactionManager::commit)
             .build(),
-        ActionTemplate.builder()
+        ActionTemplate.<TransactionManager, ResourceManager>builder()
             .actionType(new TransitiveActionType(Actor.builder()
                 .id(RM_ID_2)
                 .build()))
             .methodName("abort")
-            .parameter(new ParamTemplate<>(ResourceManagerClient.class))
+            .action(TransactionManager::abort)
             .build(),
-        ActionTemplate.builder()
+        ActionTemplate.<TransactionManager, ResourceManager>builder()
             .actionType(new TransitiveActionType(Actor.builder()
                 .id(RM_ID_2)
                 .build()))
             .methodName("commit")
-            .parameter(new ParamTemplate<>(ResourceManagerClient.class))
+            .action(TransactionManager::commit)
             .build()
     );
   }
 
-  private static ImmutableSet<ActionTemplate> resourceManagerActionTemplates() {
+  private static ImmutableSet<ActionTemplate<?, ?>> resourceManagerActionTemplates() {
     return ImmutableSet.of(
-        ActionTemplate.builder()
+        ActionTemplate.<ResourceManager, TransactionManager>builder()
             .actionType(new TransitiveActionType(Actor.builder()
                 .id(TM_ID)
                 .build()))
             .methodName("abort")
-            .parameter(new ParamTemplate<>(TransactionManagerClient.class))
+            .action(ResourceManager::abort)
             .build(),
-        ActionTemplate.builder()
+        ActionTemplate.<ResourceManager, TransactionManager>builder()
             .actionType(new TransitiveActionType(Actor.builder()
                 .id(TM_ID)
                 .build()))
             .methodName("prepare")
-            .parameter(new ParamTemplate<>(TransactionManagerClient.class))
+            .action(ResourceManager::prepare)
             .build()
     );
   }

@@ -11,18 +11,17 @@ class ActionTemplateMaterialiser {
    * Materialises the {@link ActionTemplate} provided.
    *
    * @param actionTemplate the action template
-   * @param value          the value to be filled into the template
+   * @param actionReceiver          the actionReceiver to be filled into the template
    * @return an {@link ActionDefinition} object that is created based on the parameter data
    *     provided
    */
-  public ActionDefinition materialise(ActionTemplate actionTemplate, Object value) {
-    Param param = actionTemplate.getParameter();
-    return ActionDefinition.builder()
+  public <PerformerT, ReceiverT> ActionDefinition<PerformerT, ReceiverT> materialise(
+      ActionTemplate<PerformerT, ReceiverT> actionTemplate, ReceiverT actionReceiver) {
+    return ActionDefinition.<PerformerT, ReceiverT>builder()
         .actionType(actionTemplate.getActionType())
         .methodName(actionTemplate.getMethodName())
-        .paramValue(actionTemplate.getActionType().isTransitive()
-            ? new ParamValue(param.getType(), value)
-            : (ParamValue) param)
+        .actionReceiver(actionReceiver)
+        .action(actionTemplate.getAction())
         .build();
   }
 
@@ -35,7 +34,8 @@ class ActionTemplateMaterialiser {
    * @return an {@link ActionDefinition} object that is created based on the parameter data
    *     provided
    */
-  public ActionDefinition materialise(ActionTemplate actionTemplate) {
+  public <PerformerT, ReceiverT> ActionDefinition<PerformerT, ReceiverT> materialise(
+      ActionTemplate<PerformerT, ReceiverT> actionTemplate) {
     return materialise(actionTemplate, null);
   }
 }

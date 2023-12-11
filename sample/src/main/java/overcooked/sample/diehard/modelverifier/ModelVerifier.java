@@ -16,7 +16,6 @@ import overcooked.core.StateMachineExecutionContext;
 import overcooked.core.StateMachineFactory;
 import overcooked.core.action.ActionTemplate;
 import overcooked.core.action.IntransitiveActionType;
-import overcooked.core.action.ParamTemplate;
 import overcooked.core.action.TransitiveActionType;
 import overcooked.core.actor.Actor;
 import overcooked.core.actor.ActorStateTransformerConfig;
@@ -41,39 +40,43 @@ class ModelVerifier {
         JAR3, new Jar3State(0),
         JAR5, new Jar5State(0)));
 
-    Set<ActionTemplate> jar3Templates = ImmutableSet.of(
-        ActionTemplate.builder()
+    Set<ActionTemplate<?, ?>> jar3Templates = ImmutableSet.of(
+        ActionTemplate.<Jar3, Void>builder()
             .actionType(new IntransitiveActionType())
             .methodName("empty")
+            .action(((jar3, unused) -> jar3.empty()))
             .build(),
-        ActionTemplate.builder()
+        ActionTemplate.<Jar3, Void>builder()
             .actionType(new IntransitiveActionType())
             .methodName("fill")
+            .action(((jar3, unused) -> jar3.fill()))
             .build(),
-        ActionTemplate.builder()
+        ActionTemplate.<Jar3, Jar5>builder()
             .actionType(new TransitiveActionType(Actor.builder()
                 .id("jar5")
                 .build()))
             .methodName("addTo")
-            .parameter(new ParamTemplate<>(Jar5.class))
+            .action((Jar3::addTo))
             .build()
     );
 
-    Set<ActionTemplate> jar5Templates = ImmutableSet.of(
-        ActionTemplate.builder()
+    Set<ActionTemplate<?, ?>> jar5Templates = ImmutableSet.of(
+        ActionTemplate.<Jar5, Void>builder()
             .actionType(new IntransitiveActionType())
             .methodName("empty")
+            .action((jar5, unused) -> jar5.empty())
             .build(),
-        ActionTemplate.builder()
+        ActionTemplate.<Jar5, Void>builder()
             .actionType(new IntransitiveActionType())
             .methodName("fill")
+            .action((jar5, unused) -> jar5.fill())
             .build(),
-        ActionTemplate.builder()
+        ActionTemplate.<Jar5, Jar3>builder()
             .actionType(new TransitiveActionType(Actor.builder()
                 .id("jar3")
                 .build()))
             .methodName("addTo")
-            .parameter(new ParamTemplate<>(Jar3.class))
+            .action(Jar5::addTo)
             .build()
     );
 

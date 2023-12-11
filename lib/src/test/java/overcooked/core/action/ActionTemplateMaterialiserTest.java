@@ -12,22 +12,20 @@ class ActionTemplateMaterialiserTest {
 
   @Test
   void call_with_filling_value_works() {
-    Class<Integer> placeHolderType = Integer.class;
-    Integer placeHolderValue = 1;
+    Integer actionReceiver = 1;
 
     when(actionType.isTransitive()).thenReturn(true);
 
-    ActionTemplate template = ActionTemplate.builder()
+    ActionTemplate<Void, Integer> template = ActionTemplate.<Void, Integer>builder()
         .actionType(actionType)
         .methodName("someMethod")
-        .parameter(new ParamTemplate<>(placeHolderType))
         .build();
 
-    assertThat(materialiser.materialise(template, placeHolderValue))
-        .isEqualTo(ActionDefinition.builder()
+    assertThat(materialiser.materialise(template, actionReceiver))
+        .isEqualTo(ActionDefinition.<Void, Integer>builder()
             .actionType(actionType)
             .methodName("someMethod")
-            .paramValue(new ParamValue(placeHolderType, placeHolderValue))
+            .actionReceiver(actionReceiver)
             .build());
   }
 
@@ -37,12 +35,11 @@ class ActionTemplateMaterialiserTest {
     assertThat(materialiser.materialise(ActionTemplate.builder()
         .actionType(actionType)
         .methodName("someMethod")
-        .parameter(null)
         .build()))
         .isEqualTo(ActionDefinition.builder()
             .actionType(actionType)
             .methodName("someMethod")
-            .paramValue(null)
+            .actionReceiver(null)
             .build());
   }
 }

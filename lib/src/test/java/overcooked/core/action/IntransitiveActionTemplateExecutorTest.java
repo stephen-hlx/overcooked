@@ -43,14 +43,14 @@ class IntransitiveActionTemplateExecutorTest {
 
   @Test
   void execute_calls_intransitive_action_taker_and_converts_actor_back_to_local_state() {
-    Object actor = 0;
+    Integer actor = 0;
     LocalState actorLocalState = new TestLocalState(0, 0);
     LocalState newActorLocalState = new TestLocalState(1, 1);
     Actor actorDefinition = Actor.builder()
         .id("actor")
         .build();
 
-    ActionTemplate actionTemplate = ActionTemplate.builder()
+    ActionTemplate<Integer, Void> actionTemplate = ActionTemplate.<Integer, Void>builder()
         .actionType(new IntransitiveActionType())
         .methodName("fill - but doesn't really matter in this test")
         .build();
@@ -58,7 +58,7 @@ class IntransitiveActionTemplateExecutorTest {
     when(actorFactory.restoreFromLocalState(actorLocalState)).thenReturn(actor);
 
     when(actorLocalStateExtractor.extract(actor)).thenReturn(newActorLocalState);
-    when(intransitiveActionTaker.take(IntransitiveAction.builder()
+    when(intransitiveActionTaker.take(IntransitiveAction.<Integer, Void>builder()
             .actionTemplate(actionTemplate)
             .actor(actor)
         .build()))
@@ -88,7 +88,7 @@ class IntransitiveActionTemplateExecutorTest {
             .build());
 
     inOrder.verify(actorFactory).restoreFromLocalState(actorLocalState);
-    inOrder.verify(intransitiveActionTaker).take(IntransitiveAction.builder()
+    inOrder.verify(intransitiveActionTaker).take(IntransitiveAction.<Integer, Void>builder()
         .actor(actor)
         .actionTemplate(actionTemplate)
         .build());

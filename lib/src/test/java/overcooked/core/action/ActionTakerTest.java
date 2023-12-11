@@ -6,31 +6,30 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.junit.jupiter.api.Test;
+import overcooked.core.actor.Actor;
 
 class ActionTakerTest {
   private final ActionTaker actionTaker = new ActionTaker();
 
   @Test
-  void suppresses_IllegalAccessException() {
-    assertThat(actionTaker.take(new ActionPerformer(null), ActionDefinition.builder()
-        .methodName("nonPublicMethod")
-        .build())).isEqualTo(ActionResult.success());
+  void rethrows_exception_when_transitive_action_throws_exception() {
+    assertThat(actionTaker.take(new ActionPerformer(null),
+        ActionDefinition.<ActionPerformer, ActionReceiver>builder()
+            .actionType(new TransitiveActionType(Actor.builder().id("actionReceiver").build()))
+            .action(ActionPerformer::exceptionThrowingMethod)
+            .actionReceiver(new ActionReceiver(null))
+            .build()))
+        .isEqualTo(ActionResult.failure(new MyException()));
   }
 
   @Test
-  void throws_InvocationTargetException_when_method_throws_checked_exception() {
-    assertThat(actionTaker.take(new ActionPerformer(null), ActionDefinition.builder()
-        .methodName("checkedExceptionThrowingMethod")
-        .build()))
-        .isEqualTo(ActionResult.failure(new MyCheckedException()));
-  }
-
-  @Test
-  void throws_InvocationTargetException_when_method_throws_unchecked_exception() {
-    assertThat(actionTaker.take(new ActionPerformer(null), ActionDefinition.builder()
-        .methodName("uncheckedExceptionThrowingMethod")
-        .build()))
-        .isEqualTo(ActionResult.failure(new MyUncheckedException()));
+  void rethrows_exception_when_intransitive_action_throws_exception() {
+    assertThat(actionTaker.take(new ActionPerformer(null),
+        ActionDefinition.<ActionPerformer, Void>builder()
+            .actionType(new IntransitiveActionType())
+            .action((actionPerformer, unused) -> actionPerformer.exceptionThrowingMethod())
+            .build()))
+        .isEqualTo(ActionResult.failure(new MyException()));
   }
 
   @Test
@@ -39,42 +38,43 @@ class ActionTakerTest {
     ActionPerformer actionPerformer = new ActionPerformer(data);
     assertThat(actionPerformer.data.getValue()).isEqualTo(0);
 
-    actionTaker.take(actionPerformer, ActionDefinition.builder()
-        .methodName("intransitiveAction")
-        .build());
+    assertThat(actionTaker.take(actionPerformer, ActionDefinition.<ActionPerformer, Void>builder()
+        .actionType(new IntransitiveActionType())
+        .action((actionPerformer1, unused) -> actionPerformer.intransitiveAction())
+        .build()))
+        .isEqualTo(ActionResult.success());
 
     assertThat(actionPerformer.data.getValue()).isEqualTo(1);
   }
 
   @Test
   void can_perform_action_with_params() {
-    ActionPerformer actionPerformer = new ActionPerformer(null);
+    ActionPerformer actionPerformer = new ActionPerformer(new MutableInt(0));
     ActionReceiver actionReceiver = new ActionReceiver(new MutableInt(0));
 
     assertThat(actionReceiver.data.getValue()).isEqualTo(0);
 
-    actionTaker.take(actionPerformer, ActionDefinition.builder()
-        .methodName("transitiveAction")
-        .paramValue(new ParamValue(ActionReceiver.class, actionReceiver))
-        .build());
+    assertThat(actionTaker.take(actionPerformer,
+        ActionDefinition.<ActionPerformer, ActionReceiver>builder()
+            .actionType(new TransitiveActionType(Actor.builder().id("doesn't matter").build()))
+            .action(ActionPerformer::transitiveAction)
+            .actionReceiver(actionReceiver).build()))
+        .isEqualTo(ActionResult.success());
 
+    assertThat(actionPerformer.data.getValue()).isEqualTo(1);
     assertThat(actionReceiver.data.getValue()).isEqualTo(1);
   }
 
   @Value
-  @SuppressWarnings("unused")
   private static class ActionPerformer {
     MutableInt data;
 
-    public void nonPublicMethod() {
+    public void exceptionThrowingMethod() throws MyException {
+      throw new MyException();
     }
 
-    public void checkedExceptionThrowingMethod() throws MyCheckedException {
-      throw new MyCheckedException();
-    }
-
-    public void uncheckedExceptionThrowingMethod() {
-      throw new MyUncheckedException();
+    public void exceptionThrowingMethod(ActionReceiver notUsed) throws MyException {
+      exceptionThrowingMethod();
     }
 
     public void intransitiveAction() {
@@ -82,6 +82,7 @@ class ActionTakerTest {
     }
 
     public void transitiveAction(ActionReceiver actionReceiver) {
+      data.increment();
       actionReceiver.data.increment();
     }
   }
@@ -93,10 +94,6 @@ class ActionTakerTest {
   }
 
   @EqualsAndHashCode(callSuper = false)
-  private static class MyCheckedException extends Exception {
-  }
-
-  @EqualsAndHashCode(callSuper = false)
-  private static class MyUncheckedException extends RuntimeException {
+  private static class MyException extends RuntimeException {
   }
 }

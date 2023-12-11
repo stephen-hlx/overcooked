@@ -17,9 +17,11 @@ class TransitiveActionTaker {
    * @param transitiveAction the transitive action
    * @return the {@link ActionResult} object
    */
-  public ActionResult take(TransitiveAction transitiveAction) {
-    ActionDefinition materialised = materialiser.materialise(transitiveAction.getActionTemplate(),
-        transitiveAction.getActionReceiver());
+  public <PerformerT, ReceiverT> ActionResult take(
+      TransitiveAction<PerformerT, ReceiverT> transitiveAction) {
+    ActionDefinition<PerformerT, ReceiverT> materialised =
+        materialiser.materialise(transitiveAction.getActionTemplate(),
+            transitiveAction.getActionReceiver());
 
     return actionTaker.take(transitiveAction.getActionPerformer(), materialised);
   }

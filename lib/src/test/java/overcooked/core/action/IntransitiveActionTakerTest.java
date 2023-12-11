@@ -20,21 +20,21 @@ class IntransitiveActionTakerTest {
 
   @Test
   void materialises_the_template_before_calling_action_taker() {
-    ActionTemplate actionTemplate = ActionTemplate.builder()
+    ActionTemplate<String, Integer> actionTemplate = ActionTemplate.<String, Integer>builder()
         .actionType(new IntransitiveActionType())
         .build();
 
-    ActionDefinition someAction = ActionDefinition.builder()
+    ActionDefinition<String, Integer> someAction = ActionDefinition.<String, Integer>builder()
         .methodName("someAction")
         .build();
 
-    Object actor = new Object();
+    String actor = "";
 
     when(actionTemplateMaterialiser.materialise(actionTemplate))
         .thenReturn(someAction);
     when(actionTaker.take(actor, someAction)).thenReturn(ActionResult.success());
 
-    assertThat(intransitiveActionTaker.take(IntransitiveAction.builder()
+    assertThat(intransitiveActionTaker.take(IntransitiveAction.<String, Integer>builder()
         .actor(actor)
         .actionTemplate(actionTemplate)
         .build()))

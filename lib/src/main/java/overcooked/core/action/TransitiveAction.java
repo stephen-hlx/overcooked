@@ -8,8 +8,8 @@ import lombok.Value;
  */
 @Builder
 @Value
-class TransitiveAction {
-  Object actionPerformer;
-  Object actionReceiver;
-  ActionTemplate actionTemplate;
+class TransitiveAction<PerformerT, ReceiverT> {
+  PerformerT actionPerformer;
+  ReceiverT actionReceiver;
+  ActionTemplate<PerformerT, ReceiverT> actionTemplate;
 }

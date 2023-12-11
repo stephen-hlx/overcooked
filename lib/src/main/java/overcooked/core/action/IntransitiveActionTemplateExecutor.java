@@ -27,9 +27,10 @@ public class IntransitiveActionTemplateExecutor {
    * @param actionTemplate  the template of the action that is going to be performed
    * @return an {@link ExecutionResult} object
    */
-  public ExecutionResult execute(LocalState actorLocalState,
-                                        Actor actorDefinition,
-                                        ActionTemplate actionTemplate) {
+  public <PerformerT, ReceiverT> ExecutionResult execute(
+      LocalState actorLocalState,
+      Actor actorDefinition,
+      ActionTemplate<PerformerT, ReceiverT> actionTemplate) {
     Preconditions.checkArgument(!actionTemplate.getActionType().isTransitive(),
         "Expecting an intransitive action template but it was transitive {}", actionTemplate);
 
@@ -37,10 +38,12 @@ public class IntransitiveActionTemplateExecutor {
         "No ActorFactory found for actor {}", actorDefinition)
         .restoreFromLocalState(actorLocalState);
 
-    ActionResult actionResult = intransitiveActionTaker.take(IntransitiveAction.builder()
-        .actor(actor)
-        .actionTemplate(actionTemplate)
-        .build());
+    @SuppressWarnings("unchecked")
+    ActionResult actionResult = intransitiveActionTaker.take(
+        IntransitiveAction.<PerformerT, ReceiverT>builder()
+            .actor((PerformerT) actor)
+            .actionTemplate(actionTemplate)
+            .build());
 
     return ExecutionResult.builder()
         .actionResult(actionResult)

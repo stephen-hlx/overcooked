@@ -16,8 +16,9 @@ class IntransitiveActionTaker {
    * @param intransitiveAction the intransitive action
    * @return the {@link ActionResult} object
    */
-  public ActionResult take(IntransitiveAction intransitiveAction) {
-    ActionDefinition materialised =
+  public <PerformerT, ReceiverT> ActionResult take(
+      IntransitiveAction<PerformerT, ReceiverT> intransitiveAction) {
+    ActionDefinition<PerformerT, ReceiverT> materialised =
         materialiser.materialise(intransitiveAction.getActionTemplate());
 
     return actionTaker.take(intransitiveAction.getActor(), materialised);

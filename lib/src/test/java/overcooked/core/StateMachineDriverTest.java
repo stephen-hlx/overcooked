@@ -19,7 +19,6 @@ import overcooked.core.action.ActionTemplate;
 import overcooked.core.action.ExecutionResult;
 import overcooked.core.action.IntransitiveActionTemplateExecutor;
 import overcooked.core.action.IntransitiveActionType;
-import overcooked.core.action.ParamTemplate;
 import overcooked.core.action.TransitiveActionTemplateExecutor;
 import overcooked.core.action.TransitiveActionType;
 import overcooked.core.actor.Actor;
@@ -54,17 +53,16 @@ class StateMachineDriverTest {
     Actor actor3 = Actor.builder().id(actor3Id).build();
     Actor actor4 = Actor.builder().id(actor4Id).build();
 
-    ActionTemplate actor1ActionTemplate = ActionTemplate.builder()
+    ActionTemplate<?, ?> actor1ActionTemplate = ActionTemplate.builder()
         .actionType(new IntransitiveActionType())
         .methodName(actor1Method)
         .build();
-    ActionTemplate actor2ActionTemplate = ActionTemplate.builder()
+    ActionTemplate<?, ?> actor2ActionTemplate = ActionTemplate.<Void, Integer>builder()
         .actionType(new TransitiveActionType(actor3))
         .methodName(actor2Method)
-        .parameter(new ParamTemplate<>(Integer.class))
         .build();
     ActorActionConfig config = new ActorActionConfig(
-        ImmutableMap.<Actor, Set<ActionTemplate>>builder()
+        ImmutableMap.<Actor, Set<ActionTemplate<?, ?>>>builder()
             .put(actor1, ImmutableSet.of(actor1ActionTemplate))
             .put(actor2, ImmutableSet.of(actor2ActionTemplate))
             .build());

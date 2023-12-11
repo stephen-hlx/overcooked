@@ -9,7 +9,7 @@ import lombok.Value;
  */
 @Builder
 @Value
-class IntransitiveAction {
-  Object actor;
-  ActionTemplate actionTemplate;
+class IntransitiveAction<PerformerT, ReceiverT> {
+  PerformerT actor;
+  ActionTemplate<PerformerT, ReceiverT> actionTemplate;
 }

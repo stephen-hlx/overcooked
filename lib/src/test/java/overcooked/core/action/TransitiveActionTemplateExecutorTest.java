@@ -44,21 +44,21 @@ class TransitiveActionTemplateExecutorTest {
 
   @Test
   void execute_calls_transitive_action_taker_and_converts_actors_back_to_local_state() {
-    Object actionPerformer = "actionPerformerObject";
+    String actionPerformer = "actionPerformerObject";
     LocalState actionPerformerLocalState = new TestLocalState(0, 0);
     LocalState newActionPerformerLocalState = new TestLocalState(0, 1);
     Actor actionPerformerDefinition = Actor.builder()
         .id("actionPerformer")
         .build();
 
-    Object actionReceiver = "actionReceiverObject";
+    String actionReceiver = "actionReceiverObject";
     LocalState actionReceiverLocalState = new TestLocalState(1, 0);
     LocalState newActionReceiverLocalState = new TestLocalState(1, 1);
     Actor actionReceiverDefinition = Actor.builder()
         .id("actionReceiver")
         .build();
 
-    ActionTemplate actionTemplate = ActionTemplate.builder()
+    ActionTemplate<String, String> actionTemplate = ActionTemplate.<String, String>builder()
         .actionType(new TransitiveActionType(actionReceiverDefinition))
         .build();
 
@@ -71,7 +71,7 @@ class TransitiveActionTemplateExecutorTest {
         newActionPerformerLocalState);
     when(actionReceiverLocalStateExtractor.extract(actionReceiver)).thenReturn(
         newActionReceiverLocalState);
-    when(transitiveActionTaker.take(TransitiveAction.builder()
+    when(transitiveActionTaker.take(TransitiveAction.<String, String>builder()
             .actionTemplate(actionTemplate)
             .actionReceiver(actionReceiver)
             .actionPerformer(actionPerformer)
@@ -106,7 +106,7 @@ class TransitiveActionTemplateExecutorTest {
 
     verify(actionPerformerFactory).restoreFromLocalState(actionPerformerLocalState);
     verify(actionReceiverFactory).restoreFromLocalState(actionReceiverLocalState);
-    verify(transitiveActionTaker).take(TransitiveAction.builder()
+    verify(transitiveActionTaker).take(TransitiveAction.<String, String>builder()
         .actionPerformer(actionPerformer)
         .actionReceiver(actionReceiver)
         .actionTemplate(actionTemplate)

@@ -1,5 +1,6 @@
 package overcooked.core.action;
 
+import java.util.function.BiConsumer;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Value;
@@ -10,10 +11,9 @@ import lombok.Value;
 @Builder
 @Getter
 @Value
-public class ActionTemplate {
+public class ActionTemplate<ActionPerformerT, ActionReceiverT> {
   ActionType actionType;
 
   String methodName;
-
-  Param parameter;
+  BiConsumer<ActionPerformerT, ActionReceiverT> action;
 }

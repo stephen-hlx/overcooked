@@ -28,10 +28,11 @@ public class TransitiveActionTemplateExecutor {
    * @param actionTemplate            the template of the action that is going to be performed
    * @return an {@link ExecutionResult} object
    */
-  public ExecutionResult execute(LocalState actionPerformerLocalState,
-                                        Actor actionPerformerDefinition,
-                                        LocalState actionReceiverLocalState,
-                                        ActionTemplate actionTemplate) {
+  public <PerformerT, ReceiverT> ExecutionResult execute(
+      LocalState actionPerformerLocalState,
+      Actor actionPerformerDefinition,
+      LocalState actionReceiverLocalState,
+      ActionTemplate<PerformerT, ReceiverT>  actionTemplate) {
     Preconditions.checkArgument(actionTemplate.getActionType().isTransitive(),
         "Expecting a transitive action template but it was intransitive {}", actionTemplate);
 
@@ -48,11 +49,13 @@ public class TransitiveActionTemplateExecutor {
         "No ActorFactory found for action receiver {}", actionReceiverDefinition)
         .restoreFromLocalState(actionReceiverLocalState);
 
-    ActionResult actionResult = transitiveActionTaker.take(TransitiveAction.builder()
-        .actionPerformer(actionPerformer)
-        .actionReceiver(actionReceiver)
-        .actionTemplate(actionTemplate)
-        .build());
+    @SuppressWarnings("unchecked")
+    ActionResult actionResult =
+        transitiveActionTaker.take(TransitiveAction.<PerformerT, ReceiverT>builder()
+            .actionPerformer((PerformerT) actionPerformer)
+            .actionReceiver((ReceiverT) actionReceiver)
+            .actionTemplate(actionTemplate)
+            .build());
 
     return ExecutionResult.builder()
         .actionResult(actionResult)

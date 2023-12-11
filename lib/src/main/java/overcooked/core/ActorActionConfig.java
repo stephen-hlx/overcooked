@@ -11,5 +11,5 @@ import overcooked.core.actor.Actor;
  */
 @Value
 public class ActorActionConfig {
-  ImmutableMap<Actor, Set<ActionTemplate>> actionDefinitionTemplates;
+  ImmutableMap<Actor, Set<ActionTemplate<?, ?>>> actionDefinitionTemplates;
 }

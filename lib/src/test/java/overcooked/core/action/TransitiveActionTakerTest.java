@@ -21,27 +21,25 @@ class TransitiveActionTakerTest {
 
   @Test
   void materialises_the_template_before_calling_action_taker() {
-    ActionTemplate actionTemplate = ActionTemplate.builder()
+    ActionTemplate<String, Integer> actionTemplate = ActionTemplate.<String, Integer>builder()
         .actionType(new TransitiveActionType(Actor.builder()
             .id("doesn't matter in this case")
             .build()))
-        .parameter(new ParamTemplate<>(Integer.class))
         .build();
 
-    Object actionPerformer = "";
-    Object actionReceiver = 0;
+    String actionPerformer = "";
+    Integer actionReceiver = 0;
 
-
-    ActionDefinition action = ActionDefinition.builder()
+    ActionDefinition<String, Integer> action = ActionDefinition.<String, Integer>builder()
         .methodName("action")
-        .paramValue(new ParamValue(Integer.class, actionReceiver))
+        .actionReceiver(actionReceiver)
         .build();
 
     when(actionTemplateMaterialiser.materialise(actionTemplate, actionReceiver))
         .thenReturn(action);
     when(actionTaker.take(actionPerformer, action)).thenReturn(ActionResult.success());
 
-    assertThat(transitiveActionTaker.take(TransitiveAction.builder()
+    assertThat(transitiveActionTaker.take(TransitiveAction.<String, Integer>builder()
         .actionPerformer(actionPerformer)
         .actionReceiver(actionReceiver)
         .actionTemplate(actionTemplate)
