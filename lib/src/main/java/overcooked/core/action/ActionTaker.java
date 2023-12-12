@@ -24,7 +24,7 @@ class ActionTaker {
     } catch (Exception e) {
       log.info(String.format("When %s.%s is called against %s Exception %s was thrown",
           actor.getClass().getSimpleName(),
-          actionDefinition.getMethodName(),
+          actionDefinition.getActionLabel(),
           actionReceiverName(actionReceiver),
           e));
       return ActionResult.failure(e);

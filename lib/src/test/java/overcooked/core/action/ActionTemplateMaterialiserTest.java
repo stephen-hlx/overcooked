@@ -18,13 +18,13 @@ class ActionTemplateMaterialiserTest {
 
     ActionTemplate<Void, Integer> template = ActionTemplate.<Void, Integer>builder()
         .actionType(actionType)
-        .methodName("someMethod")
+        .actionLabel("someMethod")
         .build();
 
     assertThat(materialiser.materialise(template, actionReceiver))
         .isEqualTo(ActionDefinition.<Void, Integer>builder()
             .actionType(actionType)
-            .methodName("someMethod")
+            .actionLabel("someMethod")
             .actionReceiver(actionReceiver)
             .build());
   }
@@ -34,11 +34,11 @@ class ActionTemplateMaterialiserTest {
     when(actionType.isTransitive()).thenReturn(false);
     assertThat(materialiser.materialise(ActionTemplate.builder()
         .actionType(actionType)
-        .methodName("someMethod")
+        .actionLabel("someMethod")
         .build()))
         .isEqualTo(ActionDefinition.builder()
             .actionType(actionType)
-            .methodName("someMethod")
+            .actionLabel("someMethod")
             .actionReceiver(null)
             .build());
   }

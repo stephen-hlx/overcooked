@@ -14,6 +14,6 @@ import lombok.Value;
 public class ActionTemplate<ActionPerformerT, ActionReceiverT> {
   ActionType actionType;
 
-  String methodName;
+  String actionLabel;
   BiConsumer<ActionPerformerT, ActionReceiverT> action;
 }

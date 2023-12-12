@@ -54,7 +54,7 @@ class IntransitiveActionTemplateExecutorTest {
 
     ActionTemplate<Integer, Void> actionTemplate = ActionTemplate.<Integer, Void>builder()
         .actionType(new IntransitiveActionType())
-        .methodName("fill - but doesn't really matter in this test")
+        .actionLabel("fill - but doesn't really matter in this test")
         .build();
 
     when(actorFactory.restoreFromLocalState(actorLocalState)).thenReturn(ACTOR);

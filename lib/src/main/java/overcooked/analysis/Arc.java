@@ -10,6 +10,6 @@ import lombok.Value;
 @Value
 public class Arc {
   String actionPerformerId;
-  String methodName;
+  String label;
   String actionReceiverId;
 }

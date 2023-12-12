@@ -44,7 +44,7 @@ class StateMachineDriver {
             .forEach(actionTemplate -> {
               Arc.ArcBuilder arcBuilder = Arc.builder()
                   .actionPerformerId(actorDefinition.getId())
-                  .methodName(actionTemplate.getMethodName());
+                  .label(actionTemplate.getActionLabel());
               ExecutionResult executionResult;
               if (actionTemplate.getActionType().isTransitive()) {
                 Actor actionReceiverDefinition =

@@ -19,7 +19,7 @@ class ActionTemplateMaterialiser {
       ActionTemplate<PerformerT, ReceiverT> actionTemplate, ReceiverT actionReceiver) {
     return ActionDefinition.<PerformerT, ReceiverT>builder()
         .actionType(actionTemplate.getActionType())
-        .methodName(actionTemplate.getMethodName())
+        .actionLabel(actionTemplate.getActionLabel())
         .actionReceiver(actionReceiver)
         .action(actionTemplate.getAction())
         .build();

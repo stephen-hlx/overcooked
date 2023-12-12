@@ -25,7 +25,7 @@ class IntransitiveActionTakerTest {
         .build();
 
     ActionDefinition<String, Integer> someAction = ActionDefinition.<String, Integer>builder()
-        .methodName("someAction")
+        .actionLabel("someAction")
         .build();
 
     String actor = "";

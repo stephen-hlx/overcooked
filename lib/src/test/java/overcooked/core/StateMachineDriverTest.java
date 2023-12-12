@@ -55,11 +55,11 @@ class StateMachineDriverTest {
 
     ActionTemplate<?, ?> actor1ActionTemplate = ActionTemplate.builder()
         .actionType(new IntransitiveActionType())
-        .methodName(actor1Method)
+        .actionLabel(actor1Method)
         .build();
     ActionTemplate<?, ?> actor2ActionTemplate = ActionTemplate.<Void, Integer>builder()
         .actionType(new TransitiveActionType(actor3))
-        .methodName(actor2Method)
+        .actionLabel(actor2Method)
         .build();
     ActorActionConfig config = new ActorActionConfig(
         ImmutableMap.<Actor, Set<ActionTemplate<?, ?>>>builder()
@@ -136,7 +136,7 @@ class StateMachineDriverTest {
     verify(stateMachineExecutionContext).capture(globalState,
         Arc.builder()
             .actionPerformerId(actor1Id)
-            .methodName(actor1Method)
+            .label(actor1Method)
             .actionReceiverId(null)
             .build(),
         new GlobalState(ImmutableMap.<Actor, LocalState>builder()
@@ -156,7 +156,7 @@ class StateMachineDriverTest {
     verify(stateMachineExecutionContext).capture(globalState,
         Arc.builder()
             .actionPerformerId(actor2Id)
-            .methodName(actor2Method)
+            .label(actor2Method)
             .actionReceiverId(actor3Id)
             .build(),
         new GlobalState(ImmutableMap.<Actor, LocalState>builder()

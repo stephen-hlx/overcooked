@@ -31,7 +31,7 @@ class TransitiveActionTakerTest {
     Integer actionReceiver = 0;
 
     ActionDefinition<String, Integer> action = ActionDefinition.<String, Integer>builder()
-        .methodName("action")
+        .actionLabel("action")
         .actionReceiver(actionReceiver)
         .build();
 

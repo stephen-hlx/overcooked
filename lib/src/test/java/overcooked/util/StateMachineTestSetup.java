@@ -93,7 +93,7 @@ public class StateMachineTestSetup {
 
   public static final Arc ARC_0_0 = Arc.builder()
       .actionPerformerId(ACTOR_4_ID)
-      .methodName(ACTOR_4_METHOD)
+      .label(ACTOR_4_METHOD)
       .build();
   public static final Transition TRANSITION_0_0 = Transition.builder()
         .from(GLOBAL_STATE_0)
@@ -103,7 +103,7 @@ public class StateMachineTestSetup {
 
   public static final Arc ARC_0_1 = Arc.builder()
       .actionPerformerId(ACTOR_1_ID)
-      .methodName(ACTOR_1_METHOD)
+      .label(ACTOR_1_METHOD)
       .build();
   public static final Transition TRANSITION_0_1 = Transition.builder()
       .from(GLOBAL_STATE_0)
@@ -113,7 +113,7 @@ public class StateMachineTestSetup {
 
   public static final Arc ARC_0_2 = Arc.builder()
       .actionPerformerId(ACTOR_2_ID)
-      .methodName(ACTOR_2_METHOD)
+      .label(ACTOR_2_METHOD)
       .actionReceiverId(ACTOR_3_ID)
       .build();
   public static final Transition TRANSITION_0_2 = Transition.builder()
@@ -124,7 +124,7 @@ public class StateMachineTestSetup {
 
   public static final Arc ARC_2_3_I = Arc.builder()
       .actionPerformerId(ACTOR_3_ID)
-      .methodName(ACTOR_3_METHOD)
+      .label(ACTOR_3_METHOD)
       .build();
   public static final Transition TRANSITION_2_3_I = Transition.builder()
       .from(GLOBAL_STATE_2)
@@ -134,7 +134,7 @@ public class StateMachineTestSetup {
 
   public static final Arc ARC_2_3_II = Arc.builder()
       .actionPerformerId(ACTOR_3_ID)
-      .methodName(ACTOR_3_METHOD_2)
+      .label(ACTOR_3_METHOD_2)
       .build();
   public static final Transition TRANSITION_2_3_II = Transition.builder()
       .from(GLOBAL_STATE_2)
@@ -144,7 +144,7 @@ public class StateMachineTestSetup {
 
   public static final Arc ARC_3_4 = Arc.builder()
       .actionPerformerId(ACTOR_1_ID)
-      .methodName(ACTOR_1_METHOD)
+      .label(ACTOR_1_METHOD)
       .build();
   public static final Transition TRANSITION_3_4 = Transition.builder()
       .from(GLOBAL_STATE_3)
@@ -154,7 +154,7 @@ public class StateMachineTestSetup {
 
   public static final Arc ARC_0_3 = Arc.builder()
       .actionPerformerId(ACTOR_2_ID)
-      .methodName(ACTOR_2_METHOD_2)
+      .label(ACTOR_2_METHOD_2)
       .build();
   public static final Transition TRANSITION_0_3 = Transition.builder()
       .from(GLOBAL_STATE_0)

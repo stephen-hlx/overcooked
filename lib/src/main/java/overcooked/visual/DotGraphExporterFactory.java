@@ -38,7 +38,7 @@ public class DotGraphExporterFactory {
   private static String printArc(Arc arc) {
     return String.format("%s.%s(%s)",
         arc.getActionPerformerId(),
-        arc.getMethodName(),
+        arc.getLabel(),
         Strings.isNullOrEmpty(arc.getActionReceiverId()) ? "" :
             arc.getActionReceiverId());
   }
