@@ -17,14 +17,18 @@ import overcooked.core.actor.LocalStateExtractor;
 import overcooked.util.TestLocalState;
 
 class TransitiveActionTemplateExecutorTest {
+  private static final String ACTION_PERFORMER = "actionPerformerObject";
+  private static final String ACTION_RECEIVER = "actionReceiverObject";
   private final TransitiveActionTaker transitiveActionTaker = mock(TransitiveActionTaker.class);
   @SuppressWarnings("unchecked")
-  private final ActorFactory<Object> actionPerformerFactory = mock(ActorFactory.class);
+  private final ActorFactory<String> actionPerformerFactory = mock(ActorFactory.class);
   @SuppressWarnings("unchecked")
-  private final ActorFactory<Object> actionReceiverFactory = mock(ActorFactory.class);
-  private final LocalStateExtractor actionPerformerLocalStateExtractor =
+  private final ActorFactory<String> actionReceiverFactory = mock(ActorFactory.class);
+  @SuppressWarnings("unchecked")
+  private final LocalStateExtractor<String> actionPerformerLocalStateExtractor =
       mock(LocalStateExtractor.class);
-  private final LocalStateExtractor actionReceiverLocalStateExtractor =
+  @SuppressWarnings("unchecked")
+  private final LocalStateExtractor<String> actionReceiverLocalStateExtractor =
       mock(LocalStateExtractor.class);
 
   @Test
@@ -44,14 +48,12 @@ class TransitiveActionTemplateExecutorTest {
 
   @Test
   void execute_calls_transitive_action_taker_and_converts_actors_back_to_local_state() {
-    String actionPerformer = "actionPerformerObject";
     LocalState actionPerformerLocalState = new TestLocalState(0, 0);
     LocalState newActionPerformerLocalState = new TestLocalState(0, 1);
     Actor actionPerformerDefinition = Actor.builder()
         .id("actionPerformer")
         .build();
 
-    String actionReceiver = "actionReceiverObject";
     LocalState actionReceiverLocalState = new TestLocalState(1, 0);
     LocalState newActionReceiverLocalState = new TestLocalState(1, 1);
     Actor actionReceiverDefinition = Actor.builder()
@@ -62,19 +64,19 @@ class TransitiveActionTemplateExecutorTest {
         .actionType(new TransitiveActionType(actionReceiverDefinition))
         .build();
 
-    when(actionPerformerFactory.restoreFromLocalState(actionPerformerLocalState)).thenReturn(
-        actionPerformer);
-    when(actionReceiverFactory.restoreFromLocalState(actionReceiverLocalState)).thenReturn(
-        actionReceiver);
+    when(actionPerformerFactory.restoreFromLocalState(actionPerformerLocalState))
+        .thenReturn(ACTION_PERFORMER);
+    when(actionReceiverFactory.restoreFromLocalState(actionReceiverLocalState))
+        .thenReturn(ACTION_RECEIVER);
 
-    when(actionPerformerLocalStateExtractor.extract(actionPerformer)).thenReturn(
-        newActionPerformerLocalState);
-    when(actionReceiverLocalStateExtractor.extract(actionReceiver)).thenReturn(
-        newActionReceiverLocalState);
+    when(actionPerformerLocalStateExtractor.extract(ACTION_PERFORMER))
+        .thenReturn(newActionPerformerLocalState);
+    when(actionReceiverLocalStateExtractor.extract(ACTION_RECEIVER))
+        .thenReturn(newActionReceiverLocalState);
     when(transitiveActionTaker.take(TransitiveAction.<String, String>builder()
             .actionTemplate(actionTemplate)
-            .actionReceiver(actionReceiver)
-            .actionPerformer(actionPerformer)
+            .actionReceiver(ACTION_RECEIVER)
+            .actionPerformer(ACTION_PERFORMER)
         .build()))
         .thenReturn(ActionResult.success());
 
@@ -107,14 +109,15 @@ class TransitiveActionTemplateExecutorTest {
     verify(actionPerformerFactory).restoreFromLocalState(actionPerformerLocalState);
     verify(actionReceiverFactory).restoreFromLocalState(actionReceiverLocalState);
     verify(transitiveActionTaker).take(TransitiveAction.<String, String>builder()
-        .actionPerformer(actionPerformer)
-        .actionReceiver(actionReceiver)
+        .actionPerformer(ACTION_PERFORMER)
+        .actionReceiver(ACTION_RECEIVER)
         .actionTemplate(actionTemplate)
         .build());
-    verify(actionPerformerLocalStateExtractor).extract(actionPerformer);
-    verify(actionReceiverLocalStateExtractor).extract(actionReceiver);
+    verify(actionPerformerLocalStateExtractor).extract(ACTION_PERFORMER);
+    verify(actionReceiverLocalStateExtractor).extract(ACTION_RECEIVER);
 
     verifyNoMoreInteractions(
+        transitiveActionTaker,
         actionReceiverFactory,
         actionPerformerFactory,
         actionPerformerLocalStateExtractor,

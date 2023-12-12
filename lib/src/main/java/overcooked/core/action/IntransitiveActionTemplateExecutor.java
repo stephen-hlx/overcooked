@@ -6,8 +6,10 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import lombok.Builder;
 import overcooked.core.actor.Actor;
+import overcooked.core.actor.ActorFactory;
 import overcooked.core.actor.ActorStateTransformerConfig;
 import overcooked.core.actor.LocalState;
+import overcooked.core.actor.LocalStateExtractor;
 
 /**
  * The object that is responsible for executing an intransitive action.
@@ -34,24 +36,28 @@ public class IntransitiveActionTemplateExecutor {
     Preconditions.checkArgument(!actionTemplate.getActionType().isTransitive(),
         "Expecting an intransitive action template but it was transitive {}", actionTemplate);
 
-    Object actor = checkNotNull(config.getActorFactories().get(actorDefinition),
-        "No ActorFactory found for actor {}", actorDefinition)
+    @SuppressWarnings("unchecked")
+    ActorFactory<PerformerT> actorFactory =
+        (ActorFactory<PerformerT>) checkNotNull(config.getActorFactories().get(actorDefinition),
+            "No ActorFactory found for actor {}", actorDefinition);
+    PerformerT actor = actorFactory
         .restoreFromLocalState(actorLocalState);
 
-    @SuppressWarnings("unchecked")
     ActionResult actionResult = intransitiveActionTaker.take(
         IntransitiveAction.<PerformerT, ReceiverT>builder()
-            .actor((PerformerT) actor)
+            .actor(actor)
             .actionTemplate(actionTemplate)
             .build());
 
+    @SuppressWarnings("unchecked")
+    LocalStateExtractor<PerformerT> localStateExtractor =
+        (LocalStateExtractor<PerformerT>) checkNotNull(
+            config.getLocalStateExtractors().get(actorDefinition),
+            "No LocalStateExtractor found for actor {}", actorDefinition);
+
     return ExecutionResult.builder()
         .actionResult(actionResult)
-        .localStates(ImmutableMap.of(
-            actorDefinition,
-            checkNotNull(config.getLocalStateExtractors().get(actorDefinition),
-                "No LocalStateExtractor found for actor {}", actorDefinition)
-                .extract(actor)))
+        .localStates(ImmutableMap.of(actorDefinition, localStateExtractor.extract(actor)))
         .build();
   }
 }

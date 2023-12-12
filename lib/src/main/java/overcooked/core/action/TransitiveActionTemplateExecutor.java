@@ -6,8 +6,10 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import lombok.Builder;
 import overcooked.core.actor.Actor;
+import overcooked.core.actor.ActorFactory;
 import overcooked.core.actor.ActorStateTransformerConfig;
 import overcooked.core.actor.LocalState;
+import overcooked.core.actor.LocalStateExtractor;
 
 /**
  * The object that is responsible for executing a transitive action template.
@@ -36,24 +38,19 @@ public class TransitiveActionTemplateExecutor {
     Preconditions.checkArgument(actionTemplate.getActionType().isTransitive(),
         "Expecting a transitive action template but it was intransitive {}", actionTemplate);
 
-    Object actionPerformer = checkNotNull(
-        config.getActorFactories().get(actionPerformerDefinition),
-        "No ActorFactory found for action performer {}", actionPerformerDefinition)
+    PerformerT actionPerformer = this.<PerformerT>getActorFactory(actionPerformerDefinition)
         .restoreFromLocalState(actionPerformerLocalState);
 
     Actor actionReceiverDefinition =
         actionTemplate.getActionType().getActionReceiverDefinition();
 
-    Object actionReceiver = checkNotNull(
-        config.getActorFactories().get(actionReceiverDefinition),
-        "No ActorFactory found for action receiver {}", actionReceiverDefinition)
+    ReceiverT actionReceiver = this.<ReceiverT>getActorFactory(actionReceiverDefinition)
         .restoreFromLocalState(actionReceiverLocalState);
 
-    @SuppressWarnings("unchecked")
     ActionResult actionResult =
         transitiveActionTaker.take(TransitiveAction.<PerformerT, ReceiverT>builder()
-            .actionPerformer((PerformerT) actionPerformer)
-            .actionReceiver((ReceiverT) actionReceiver)
+            .actionPerformer(actionPerformer)
+            .actionReceiver(actionReceiver)
             .actionTemplate(actionTemplate)
             .build());
 
@@ -61,17 +58,28 @@ public class TransitiveActionTemplateExecutor {
         .actionResult(actionResult)
         .localStates(ImmutableMap.<Actor, LocalState>builder()
             .put(actionPerformerDefinition,
-                checkNotNull(
-                    config.getLocalStateExtractors().get(actionPerformerDefinition),
-                    "No LocalStateExtractor found for action performer {}",
-                    actionPerformerDefinition)
+                getLocalStateExtractor(actionPerformerDefinition)
                     .extract(actionPerformer))
             .put(actionReceiverDefinition,
-                checkNotNull(
-                    config.getLocalStateExtractors().get(actionReceiverDefinition),
-                    "No LocalStateExtractor found for action receiver {}", actionReceiverDefinition)
+                getLocalStateExtractor(actionReceiverDefinition)
                     .extract(actionReceiver))
             .build())
         .build();
+  }
+
+  @SuppressWarnings("unchecked")
+  private <ActorT> LocalStateExtractor<ActorT> getLocalStateExtractor(
+      Actor actionPerformerDefinition) {
+    return (LocalStateExtractor<ActorT>) checkNotNull(
+        config.getLocalStateExtractors().get(actionPerformerDefinition),
+        "No LocalStateExtractor found for actor {}",
+        actionPerformerDefinition);
+  }
+
+  @SuppressWarnings("unchecked")
+  private <ActorT> ActorFactory<ActorT> getActorFactory(Actor actionReceiverDefinition) {
+    return (ActorFactory<ActorT>) checkNotNull(
+        config.getActorFactories().get(actionReceiverDefinition),
+        "No ActorFactory found for actor {}", actionReceiverDefinition);
   }
 }

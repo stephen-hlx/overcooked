@@ -17,11 +17,14 @@ import overcooked.core.actor.LocalStateExtractor;
 import overcooked.util.TestLocalState;
 
 class IntransitiveActionTemplateExecutorTest {
+  private static final Integer ACTOR = 0;
   private final IntransitiveActionTaker intransitiveActionTaker =
       mock(IntransitiveActionTaker.class);
   @SuppressWarnings("unchecked")
-  private final ActorFactory<Object> actorFactory = mock(ActorFactory.class);
-  private final LocalStateExtractor actorLocalStateExtractor = mock(LocalStateExtractor.class);
+  private final ActorFactory<Integer> actorFactory = mock(ActorFactory.class);
+  @SuppressWarnings("unchecked")
+  private final LocalStateExtractor<Integer> actorLocalStateExtractor =
+      mock(LocalStateExtractor.class);
   private final InOrder inOrder = Mockito.inOrder(intransitiveActionTaker,
       actorFactory, actorLocalStateExtractor);
 
@@ -43,7 +46,6 @@ class IntransitiveActionTemplateExecutorTest {
 
   @Test
   void execute_calls_intransitive_action_taker_and_converts_actor_back_to_local_state() {
-    Integer actor = 0;
     LocalState actorLocalState = new TestLocalState(0, 0);
     LocalState newActorLocalState = new TestLocalState(1, 1);
     Actor actorDefinition = Actor.builder()
@@ -55,12 +57,12 @@ class IntransitiveActionTemplateExecutorTest {
         .methodName("fill - but doesn't really matter in this test")
         .build();
 
-    when(actorFactory.restoreFromLocalState(actorLocalState)).thenReturn(actor);
+    when(actorFactory.restoreFromLocalState(actorLocalState)).thenReturn(ACTOR);
 
-    when(actorLocalStateExtractor.extract(actor)).thenReturn(newActorLocalState);
+    when(actorLocalStateExtractor.extract(ACTOR)).thenReturn(newActorLocalState);
     when(intransitiveActionTaker.take(IntransitiveAction.<Integer, Void>builder()
             .actionTemplate(actionTemplate)
-            .actor(actor)
+            .actor(ACTOR)
         .build()))
         .thenReturn(ActionResult.success());
 
@@ -89,10 +91,10 @@ class IntransitiveActionTemplateExecutorTest {
 
     inOrder.verify(actorFactory).restoreFromLocalState(actorLocalState);
     inOrder.verify(intransitiveActionTaker).take(IntransitiveAction.<Integer, Void>builder()
-        .actor(actor)
+        .actor(ACTOR)
         .actionTemplate(actionTemplate)
         .build());
-    inOrder.verify(actorLocalStateExtractor).extract(actor);
+    inOrder.verify(actorLocalStateExtractor).extract(ACTOR);
 
     inOrder.verifyNoMoreInteractions();
   }
