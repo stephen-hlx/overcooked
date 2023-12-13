@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Value;
 import overcooked.core.actor.Actor;
 
@@ -13,12 +14,16 @@ import overcooked.core.actor.Actor;
  */
 @Builder
 @Getter(AccessLevel.PACKAGE)
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = "action")
 @Value
 public class ActionDefinition<PerformerT, ReceiverT> {
+  @NonNull
   Actor actionPerformerDefinition;
+  @NonNull
   ActionType actionType;
+  @NonNull
   String actionLabel;
+  @NonNull
   BiConsumer<PerformerT, ReceiverT> action;
   ReceiverT actionReceiver;
 }

@@ -18,6 +18,7 @@ class ActionTemplateMaterialiser {
   public <PerformerT, ReceiverT> ActionDefinition<PerformerT, ReceiverT> materialise(
       ActionTemplate<PerformerT, ReceiverT> actionTemplate, ReceiverT actionReceiver) {
     return ActionDefinition.<PerformerT, ReceiverT>builder()
+        .actionPerformerDefinition(actionTemplate.getActionPerformerDefinition())
         .actionType(actionTemplate.getActionType())
         .actionLabel(actionTemplate.getActionLabel())
         .actionReceiver(actionReceiver)

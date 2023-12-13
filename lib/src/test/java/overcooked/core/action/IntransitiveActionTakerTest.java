@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
+import overcooked.core.actor.Actor;
 
 
 class IntransitiveActionTakerTest {
@@ -21,27 +22,34 @@ class IntransitiveActionTakerTest {
   @Test
   void materialises_the_template_before_calling_action_taker() {
     ActionTemplate<String, Integer> actionTemplate = ActionTemplate.<String, Integer>builder()
+        .actionPerformerDefinition(Actor.builder().id("not used").build())
+        .action((notUsed1, notUsed2) -> {})
         .actionType(new IntransitiveActionType())
+        .actionLabel("not used")
         .build();
 
     ActionDefinition<String, Integer> someAction = ActionDefinition.<String, Integer>builder()
+        .actionPerformerDefinition(Actor.builder().id("not used").build())
+        .action((notUsed1, notUsed2) -> {})
+        .actionType(new IntransitiveActionType())
         .actionLabel("someAction")
+        .actionReceiver(1)
         .build();
 
-    String actor = "";
+    String actionPerformer = "";
 
     when(actionTemplateMaterialiser.materialise(actionTemplate))
         .thenReturn(someAction);
-    when(actionTaker.take(actor, someAction)).thenReturn(ActionResult.success());
+    when(actionTaker.take(actionPerformer, someAction)).thenReturn(ActionResult.success());
 
     assertThat(intransitiveActionTaker.take(IntransitiveAction.<String, Integer>builder()
-        .actor(actor)
+        .actor(actionPerformer)
         .actionTemplate(actionTemplate)
         .build()))
         .isEqualTo(ActionResult.success());
 
     inOrder.verify(actionTemplateMaterialiser).materialise(actionTemplate);
-    inOrder.verify(actionTaker).take(actor, someAction);
+    inOrder.verify(actionTaker).take(actionPerformer, someAction);
     verifyNoMoreInteractions(actionTemplateMaterialiser, actionTaker);
   }
 }

@@ -57,11 +57,13 @@ class StateMachineDriverTest {
         .actionPerformerDefinition(actor1)
         .actionType(new IntransitiveActionType())
         .actionLabel(actor1Method)
+        .action((notUsed1, notUsed2) -> {})
         .build();
     ActionTemplate<?, ?> actor2ActionTemplate = ActionTemplate.<Void, Integer>builder()
         .actionPerformerDefinition(actor2)
         .actionType(new TransitiveActionType(actor3))
         .actionLabel(actor2Method)
+        .action((notUsed1, notUsed2) -> {})
         .build();
     ActorActionConfig config = new ActorActionConfig(
         ImmutableMap.<Actor, Set<ActionTemplate<?, ?>>>builder()

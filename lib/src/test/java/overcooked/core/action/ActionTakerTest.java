@@ -18,6 +18,8 @@ class ActionTakerTest {
             .actionType(new TransitiveActionType(Actor.builder().id("actionReceiver").build()))
             .action(ActionPerformer::exceptionThrowingMethod)
             .actionReceiver(new ActionReceiver(null))
+            .actionPerformerDefinition(Actor.builder().id("not used").build())
+            .actionLabel("not used")
             .build()))
         .isEqualTo(ActionResult.failure(new MyException()));
   }
@@ -28,12 +30,14 @@ class ActionTakerTest {
         ActionDefinition.<ActionPerformer, Void>builder()
             .actionType(new IntransitiveActionType())
             .action((actionPerformer, unused) -> actionPerformer.exceptionThrowingMethod())
+            .actionPerformerDefinition(Actor.builder().id("not used").build())
+            .actionLabel("not used")
             .build()))
         .isEqualTo(ActionResult.failure(new MyException()));
   }
 
   @Test
-  void can_perform_action_without_params() {
+  void can_perform_action_without_action_receiver() {
     MutableInt data = new MutableInt(0);
     ActionPerformer actionPerformer = new ActionPerformer(data);
     assertThat(actionPerformer.data.getValue()).isEqualTo(0);
@@ -41,6 +45,8 @@ class ActionTakerTest {
     assertThat(actionTaker.take(actionPerformer, ActionDefinition.<ActionPerformer, Void>builder()
         .actionType(new IntransitiveActionType())
         .action((actionPerformer1, unused) -> actionPerformer.intransitiveAction())
+        .actionPerformerDefinition(Actor.builder().id("not used").build())
+        .actionLabel("not used")
         .build()))
         .isEqualTo(ActionResult.success());
 
@@ -48,7 +54,7 @@ class ActionTakerTest {
   }
 
   @Test
-  void can_perform_action_with_params() {
+  void can_perform_action_with_action_receiver() {
     ActionPerformer actionPerformer = new ActionPerformer(new MutableInt(0));
     ActionReceiver actionReceiver = new ActionReceiver(new MutableInt(0));
 
@@ -56,6 +62,8 @@ class ActionTakerTest {
 
     assertThat(actionTaker.take(actionPerformer,
         ActionDefinition.<ActionPerformer, ActionReceiver>builder()
+            .actionPerformerDefinition(Actor.builder().id("not used").build())
+            .actionLabel("not used")
             .actionType(new TransitiveActionType(Actor.builder().id("doesn't matter").build()))
             .action(ActionPerformer::transitiveAction)
             .actionReceiver(actionReceiver).build()))

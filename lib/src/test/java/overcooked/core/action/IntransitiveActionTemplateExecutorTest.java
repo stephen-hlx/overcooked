@@ -36,6 +36,9 @@ class IntransitiveActionTemplateExecutorTest {
         () -> executor.execute(
             ActionTemplate.builder()
                 .actionType(new TransitiveActionType(null))
+                .actionPerformerDefinition(Actor.builder().id("notUsed").build())
+                .actionLabel("not used")
+                .action((notUsed1, notUsed2) -> {})
                 .build(),
             null))
         .isInstanceOf(IllegalArgumentException.class)
@@ -47,14 +50,13 @@ class IntransitiveActionTemplateExecutorTest {
   void execute_calls_intransitive_action_taker_and_converts_actor_back_to_local_state() {
     LocalState actorLocalState = new TestLocalState(0, 0);
     LocalState newActorLocalState = new TestLocalState(1, 1);
-    Actor actionPerformerDefinition = Actor.builder()
-        .id("actor")
-        .build();
+    Actor actionPerformerDefinition = Actor.builder().id("actor").build();
 
     ActionTemplate<Integer, Void> actionTemplate = ActionTemplate.<Integer, Void>builder()
         .actionPerformerDefinition(actionPerformerDefinition)
         .actionType(new IntransitiveActionType())
-        .actionLabel("fill - but doesn't really matter in this test")
+        .actionLabel("not used")
+        .action((notUsed1, notUsed2) -> {})
         .build();
 
     when(actorFactory.restoreFromLocalState(actorLocalState)).thenReturn(ACTOR);
@@ -68,12 +70,9 @@ class IntransitiveActionTemplateExecutorTest {
 
     IntransitiveActionTemplateExecutor executor = IntransitiveActionTemplateExecutor.builder()
         .config(ActorStateTransformerConfig.builder()
-            .actorFactories(ImmutableMap.of(
-                actionPerformerDefinition, actorFactory
-            ))
+            .actorFactories(ImmutableMap.of(actionPerformerDefinition, actorFactory))
             .localStateExtractors(ImmutableMap.of(
-                actionPerformerDefinition, actorLocalStateExtractor
-            ))
+                actionPerformerDefinition, actorLocalStateExtractor))
             .build())
         .intransitiveActionTaker(intransitiveActionTaker)
         .build();
@@ -83,9 +82,7 @@ class IntransitiveActionTemplateExecutorTest {
         actorLocalState))
         .isEqualTo(ExecutionResult.builder()
             .actionResult(ActionResult.success())
-            .localStates(ImmutableMap.of(
-                actionPerformerDefinition, newActorLocalState
-            ))
+            .localStates(ImmutableMap.of(actionPerformerDefinition, newActorLocalState))
             .build());
 
     inOrder.verify(actorFactory).restoreFromLocalState(actorLocalState);

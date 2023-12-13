@@ -11,5 +11,6 @@ import lombok.Value;
 class TransitiveAction<PerformerT, ReceiverT> {
   PerformerT actionPerformer;
   ReceiverT actionReceiver;
+  // TODO - only action is needed here
   ActionTemplate<PerformerT, ReceiverT> actionTemplate;
 }

@@ -22,16 +22,20 @@ class TransitiveActionTakerTest {
   @Test
   void materialises_the_template_before_calling_action_taker() {
     ActionTemplate<String, Integer> actionTemplate = ActionTemplate.<String, Integer>builder()
-        .actionType(new TransitiveActionType(Actor.builder()
-            .id("doesn't matter in this case")
-            .build()))
+        .actionType(new TransitiveActionType(Actor.builder().id("doesn't matter").build()))
+        .actionPerformerDefinition(Actor.builder().id("notUsed").build())
+        .actionLabel("not used")
+        .action((notUsed1, notUsed2) -> {})
         .build();
 
     String actionPerformer = "";
     Integer actionReceiver = 0;
 
     ActionDefinition<String, Integer> action = ActionDefinition.<String, Integer>builder()
-        .actionLabel("action")
+        .actionType(new TransitiveActionType(Actor.builder().id("doesn't matter").build()))
+        .actionPerformerDefinition(Actor.builder().id("notUsed").build())
+        .actionLabel("not used")
+        .action((notUsed1, notUsed2) -> {})
         .actionReceiver(actionReceiver)
         .build();
 
