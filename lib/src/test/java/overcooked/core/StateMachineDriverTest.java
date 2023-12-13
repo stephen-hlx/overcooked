@@ -106,22 +106,22 @@ class StateMachineDriverTest {
     StateMachineExecutionContext stateMachineExecutionContext =
         spy(new StateMachineExecutionContext(initialState));
 
+    GlobalState globalState1 = new GlobalState(ImmutableMap.<Actor, LocalState>builder()
+        .put(ACTOR_1, NEW_ACTOR_1_LOCAL_STATE)
+        .put(ACTOR_2, ACTOR_2_LOCAL_STATE)
+        .put(ACTOR_3, ACTOR_3_LOCAL_STATE)
+        .put(ACTOR_4, ACTOR_4_LOCAL_STATE)
+        .build());
+    GlobalState globalState2 = new GlobalState(ImmutableMap.<Actor, LocalState>builder()
+        .put(ACTOR_1, ACTOR_1_LOCAL_STATE)
+        .put(ACTOR_2, NEW_ACTOR_2_LOCAL_STATE)
+        .put(ACTOR_3, NEW_ACTOR_3_LOCAL_STATE)
+        .put(ACTOR_4, ACTOR_4_LOCAL_STATE)
+        .build());
+
     assertThat(stateMachineDriver.computeNext(initialState, ACTOR_ACTION_CONFIG,
         stateMachineExecutionContext))
-        .isEqualTo(ImmutableSet.of(
-            new GlobalState(ImmutableMap.<Actor, LocalState>builder()
-                .put(ACTOR_1, NEW_ACTOR_1_LOCAL_STATE)
-                .put(ACTOR_2, ACTOR_2_LOCAL_STATE)
-                .put(ACTOR_3, ACTOR_3_LOCAL_STATE)
-                .put(ACTOR_4, ACTOR_4_LOCAL_STATE)
-                .build()),
-            new GlobalState(ImmutableMap.<Actor, LocalState>builder()
-                .put(ACTOR_1, ACTOR_1_LOCAL_STATE)
-                .put(ACTOR_2, NEW_ACTOR_2_LOCAL_STATE)
-                .put(ACTOR_3, NEW_ACTOR_3_LOCAL_STATE)
-                .put(ACTOR_4, ACTOR_4_LOCAL_STATE)
-                .build())
-        ));
+        .isEqualTo(ImmutableSet.of(globalState1, globalState2));
 
     verify(intransitiveActionTemplateExecutor)
         .execute(ACTOR_1_ACTION_TEMPLATE, ACTOR_1_LOCAL_STATE);
@@ -130,47 +130,24 @@ class StateMachineDriverTest {
     verify(stateMerger).merge(initialState, ImmutableMap.of(ACTOR_1, NEW_ACTOR_1_LOCAL_STATE));
     verify(stateMerger).merge(initialState, ImmutableMap.of(
         ACTOR_2, NEW_ACTOR_2_LOCAL_STATE,
-        ACTOR_3, NEW_ACTOR_3_LOCAL_STATE
-    ));
-    verify(stateMachineExecutionContext).registerOrGetDuplicate(
-        new GlobalState(ImmutableMap.<Actor, LocalState>builder()
-            .put(ACTOR_1, NEW_ACTOR_1_LOCAL_STATE)
-            .put(ACTOR_2, ACTOR_2_LOCAL_STATE)
-            .put(ACTOR_3, ACTOR_3_LOCAL_STATE)
-            .put(ACTOR_4, ACTOR_4_LOCAL_STATE)
-            .build()));
+        ACTOR_3, NEW_ACTOR_3_LOCAL_STATE));
+    verify(stateMachineExecutionContext).registerOrGetDuplicate(globalState1);
     verify(stateMachineExecutionContext).capture(initialState,
         Arc.builder()
             .actionPerformerId(ACTOR_1_ID)
             .label(ACTOR_1_METHOD_1)
             .actionReceiverId(null)
             .build(),
-        new GlobalState(ImmutableMap.<Actor, LocalState>builder()
-            .put(ACTOR_1, NEW_ACTOR_1_LOCAL_STATE)
-            .put(ACTOR_2, ACTOR_2_LOCAL_STATE)
-            .put(ACTOR_3, ACTOR_3_LOCAL_STATE)
-            .put(ACTOR_4, ACTOR_4_LOCAL_STATE)
-            .build()),
+        globalState1,
         ActionResult.success());
-    verify(stateMachineExecutionContext).registerOrGetDuplicate(
-        new GlobalState(ImmutableMap.<Actor, LocalState>builder()
-            .put(ACTOR_1, ACTOR_1_LOCAL_STATE)
-            .put(ACTOR_2, NEW_ACTOR_2_LOCAL_STATE)
-            .put(ACTOR_3, NEW_ACTOR_3_LOCAL_STATE)
-            .put(ACTOR_4, ACTOR_4_LOCAL_STATE)
-            .build()));
+    verify(stateMachineExecutionContext).registerOrGetDuplicate(globalState2);
     verify(stateMachineExecutionContext).capture(initialState,
         Arc.builder()
             .actionPerformerId(ACTOR_2_ID)
             .label(ACTOR_2_METHOD_1)
             .actionReceiverId(ACTOR_3_ID)
             .build(),
-        new GlobalState(ImmutableMap.<Actor, LocalState>builder()
-            .put(ACTOR_1, ACTOR_1_LOCAL_STATE)
-            .put(ACTOR_2, NEW_ACTOR_2_LOCAL_STATE)
-            .put(ACTOR_3, NEW_ACTOR_3_LOCAL_STATE)
-            .put(ACTOR_4, ACTOR_4_LOCAL_STATE)
-            .build()),
+        globalState2,
         ActionResult.success());
     verifyNoMoreInteractions(intransitiveActionTemplateExecutor,
         transitiveActionTemplateExecutor,
