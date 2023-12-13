@@ -17,7 +17,7 @@ import overcooked.core.actor.LocalStateExtractor;
 @Builder
 public class TransitiveActionTemplateExecutor {
   private final ActorStateTransformerConfig config;
-  private final TransitiveActionTaker transitiveActionTaker;
+  private final ActionTaker actionTaker;
 
   /**
    * Executes the action defined in the {@link ActionTemplate} object on behalf of the actor that
@@ -48,12 +48,12 @@ public class TransitiveActionTemplateExecutor {
     ReceiverT actionReceiver = this.<ReceiverT>getActorFactory(actionReceiverDefinition)
         .restoreFromLocalState(actionReceiverLocalState);
 
-    ActionResult actionResult =
-        transitiveActionTaker.take(TransitiveAction.<PerformerT, ReceiverT>builder()
-            .actionPerformer(actionPerformer)
-            .actionReceiver(actionReceiver)
-            .actionTemplate(actionTemplate)
-            .build());
+    ActionResult actionResult = actionTaker.take(ActionDefinition.<PerformerT, ReceiverT>builder()
+        .action(actionTemplate.getAction())
+        .actionLabel(actionTemplate.getActionLabel())
+        .actionPerformer(actionPerformer)
+        .actionReceiver(actionReceiver)
+        .build());
 
     return ExecutionResult.builder()
         .actionResult(actionResult)

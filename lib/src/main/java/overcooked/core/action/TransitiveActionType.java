@@ -1,19 +1,16 @@
 package overcooked.core.action;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NonNull;
+import lombok.Value;
 import overcooked.core.actor.Actor;
 
 /**
  * An {@link ActionType} that is transitive.
  */
-@RequiredArgsConstructor
-@Getter
-@EqualsAndHashCode
+@Value
 public class TransitiveActionType implements ActionType {
-  // TODO: can this be removed?
-  private final Actor actionReceiverDefinition;
+  @NonNull
+  Actor actionReceiverDefinition;
 
   @Override
   public boolean isTransitive() {

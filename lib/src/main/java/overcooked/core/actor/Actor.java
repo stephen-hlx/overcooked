@@ -1,6 +1,7 @@
 package overcooked.core.actor;
 
 import lombok.Builder;
+import lombok.NonNull;
 import lombok.Value;
 
 
@@ -10,5 +11,6 @@ import lombok.Value;
 @Value
 @Builder
 public class Actor {
+  @NonNull
   String id;
 }

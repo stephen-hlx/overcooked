@@ -7,7 +7,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Value;
-import overcooked.core.actor.Actor;
 
 /**
  * Describes an action, with its type, the method name as well as the parameters.
@@ -18,12 +17,10 @@ import overcooked.core.actor.Actor;
 @Value
 public class ActionDefinition<PerformerT, ReceiverT> {
   @NonNull
-  Actor actionPerformerDefinition;
-  @NonNull
-  ActionType actionType;
-  @NonNull
   String actionLabel;
   @NonNull
   BiConsumer<PerformerT, ReceiverT> action;
+  @NonNull
+  PerformerT actionPerformer;
   ReceiverT actionReceiver;
 }

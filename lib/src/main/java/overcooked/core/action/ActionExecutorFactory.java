@@ -7,7 +7,6 @@ import overcooked.core.actor.ActorStateTransformerConfig;
  * {@link TransitiveActionTemplateExecutor}.
  */
 public class ActionExecutorFactory {
-  private static final ActionTemplateMaterialiser MATERIALISER = new ActionTemplateMaterialiser();
   private static final ActionTaker ACTION_TAKER = new ActionTaker();
 
   /**
@@ -20,10 +19,7 @@ public class ActionExecutorFactory {
   public static IntransitiveActionTemplateExecutor createIntransitiveActionTemplateExecutor(
       ActorStateTransformerConfig actorStateTransformerConfig) {
     return IntransitiveActionTemplateExecutor.builder()
-        .intransitiveActionTaker(IntransitiveActionTaker.builder()
-            .actionTaker(ACTION_TAKER)
-            .materialiser(MATERIALISER)
-            .build())
+        .actionTaker(ACTION_TAKER)
         .config(actorStateTransformerConfig)
         .build();
   }
@@ -38,10 +34,7 @@ public class ActionExecutorFactory {
   public static TransitiveActionTemplateExecutor createTransitiveActionTemplateExecutor(
       ActorStateTransformerConfig actorStateTransformerConfig) {
     return TransitiveActionTemplateExecutor.builder()
-        .transitiveActionTaker(TransitiveActionTaker.builder()
-            .actionTaker(ACTION_TAKER)
-            .materialiser(MATERIALISER)
-            .build())
+        .actionTaker(ACTION_TAKER)
         .config(actorStateTransformerConfig)
         .build();
   }

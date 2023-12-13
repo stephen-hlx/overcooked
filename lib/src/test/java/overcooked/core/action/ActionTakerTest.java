@@ -6,33 +6,29 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.junit.jupiter.api.Test;
-import overcooked.core.actor.Actor;
 
 class ActionTakerTest {
   private final ActionTaker actionTaker = new ActionTaker();
 
   @Test
   void rethrows_exception_when_transitive_action_throws_exception() {
-    assertThat(actionTaker.take(new ActionPerformer(null),
-        ActionDefinition.<ActionPerformer, ActionReceiver>builder()
-            .actionType(new TransitiveActionType(Actor.builder().id("actionReceiver").build()))
-            .action(ActionPerformer::exceptionThrowingMethod)
-            .actionReceiver(new ActionReceiver(null))
-            .actionPerformerDefinition(Actor.builder().id("not used").build())
-            .actionLabel("not used")
-            .build()))
+    assertThat(actionTaker.take(ActionDefinition.<ActionPerformer, ActionReceiver>builder()
+        .action(ActionPerformer::exceptionThrowingMethod)
+        .actionReceiver(new ActionReceiver(null))
+        .actionPerformer(new ActionPerformer(null))
+        .actionLabel("not used")
+        .build()))
         .isEqualTo(ActionResult.failure(new MyException()));
   }
 
   @Test
   void rethrows_exception_when_intransitive_action_throws_exception() {
-    assertThat(actionTaker.take(new ActionPerformer(null),
-        ActionDefinition.<ActionPerformer, Void>builder()
-            .actionType(new IntransitiveActionType())
-            .action((actionPerformer, unused) -> actionPerformer.exceptionThrowingMethod())
-            .actionPerformerDefinition(Actor.builder().id("not used").build())
-            .actionLabel("not used")
-            .build()))
+    assertThat(actionTaker.take(ActionDefinition.<ActionPerformer, Void>builder()
+        .action((actionPerformer, unused) -> actionPerformer.exceptionThrowingMethod())
+        .actionReceiver(null)
+        .actionPerformer(new ActionPerformer(null))
+        .actionLabel("not used")
+        .build()))
         .isEqualTo(ActionResult.failure(new MyException()));
   }
 
@@ -42,11 +38,10 @@ class ActionTakerTest {
     ActionPerformer actionPerformer = new ActionPerformer(data);
     assertThat(actionPerformer.data.getValue()).isEqualTo(0);
 
-    assertThat(actionTaker.take(actionPerformer, ActionDefinition.<ActionPerformer, Void>builder()
-        .actionType(new IntransitiveActionType())
+    assertThat(actionTaker.take(ActionDefinition.<ActionPerformer, Void>builder()
         .action((actionPerformer1, unused) -> actionPerformer.intransitiveAction())
-        .actionPerformerDefinition(Actor.builder().id("not used").build())
         .actionLabel("not used")
+        .actionPerformer(actionPerformer)
         .build()))
         .isEqualTo(ActionResult.success());
 
@@ -60,12 +55,11 @@ class ActionTakerTest {
 
     assertThat(actionReceiver.data.getValue()).isEqualTo(0);
 
-    assertThat(actionTaker.take(actionPerformer,
+    assertThat(actionTaker.take(
         ActionDefinition.<ActionPerformer, ActionReceiver>builder()
-            .actionPerformerDefinition(Actor.builder().id("not used").build())
             .actionLabel("not used")
-            .actionType(new TransitiveActionType(Actor.builder().id("doesn't matter").build()))
             .action(ActionPerformer::transitiveAction)
+            .actionPerformer(actionPerformer)
             .actionReceiver(actionReceiver).build()))
         .isEqualTo(ActionResult.success());
 

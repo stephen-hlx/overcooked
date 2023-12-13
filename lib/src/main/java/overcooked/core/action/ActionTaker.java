@@ -11,19 +11,20 @@ class ActionTaker {
   /**
    * Takes the action defined in the {@link ActionDefinition} object on behalf of the actor.
    *
-   * @param actor            the actor
    * @param actionDefinition the action to be performed
    */
   public <PerformerT, ReceiverT> ActionResult take(
-      PerformerT actor,
       ActionDefinition<PerformerT, ReceiverT> actionDefinition) {
+
     BiConsumer<PerformerT, ReceiverT> action = actionDefinition.getAction();
+    PerformerT actionPerformer = actionDefinition.getActionPerformer();
     ReceiverT actionReceiver = actionDefinition.getActionReceiver();
+
     try {
-      action.accept(actor, actionReceiver);
+      action.accept(actionPerformer, actionReceiver);
     } catch (Exception e) {
       log.info(String.format("When %s.%s is called against %s Exception %s was thrown",
-          actor.getClass().getSimpleName(),
+          actionPerformer.getClass().getSimpleName(),
           actionDefinition.getActionLabel(),
           actionReceiverName(actionReceiver),
           e));
