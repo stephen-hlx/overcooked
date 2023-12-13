@@ -42,16 +42,19 @@ class ModelVerifier {
 
     Set<ActionTemplate<?, ?>> jar3Templates = ImmutableSet.of(
         ActionTemplate.<Jar3, Void>builder()
+            .actionPerformerDefinition(JAR3)
             .actionType(new IntransitiveActionType())
             .actionLabel("empty")
             .action(((jar3, unused) -> jar3.empty()))
             .build(),
         ActionTemplate.<Jar3, Void>builder()
+            .actionPerformerDefinition(JAR3)
             .actionType(new IntransitiveActionType())
             .actionLabel("fill")
             .action(((jar3, unused) -> jar3.fill()))
             .build(),
         ActionTemplate.<Jar3, Jar5>builder()
+            .actionPerformerDefinition(JAR3)
             .actionType(new TransitiveActionType(Actor.builder()
                 .id("jar5")
                 .build()))
@@ -62,16 +65,19 @@ class ModelVerifier {
 
     Set<ActionTemplate<?, ?>> jar5Templates = ImmutableSet.of(
         ActionTemplate.<Jar5, Void>builder()
+            .actionPerformerDefinition(JAR5)
             .actionType(new IntransitiveActionType())
             .actionLabel("empty")
             .action((jar5, unused) -> jar5.empty())
             .build(),
         ActionTemplate.<Jar5, Void>builder()
+            .actionPerformerDefinition(JAR5)
             .actionType(new IntransitiveActionType())
             .actionLabel("fill")
             .action((jar5, unused) -> jar5.fill())
             .build(),
         ActionTemplate.<Jar5, Jar3>builder()
+            .actionPerformerDefinition(JAR5)
             .actionType(new TransitiveActionType(Actor.builder()
                 .id("jar3")
                 .build()))

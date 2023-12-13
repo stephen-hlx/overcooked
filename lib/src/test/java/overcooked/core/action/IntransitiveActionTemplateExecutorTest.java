@@ -34,11 +34,10 @@ class IntransitiveActionTemplateExecutorTest {
         IntransitiveActionTemplateExecutor.builder().build();
     assertThatThrownBy(
         () -> executor.execute(
-            null,
-            null,
             ActionTemplate.builder()
                 .actionType(new TransitiveActionType(null))
-                .build()))
+                .build(),
+            null))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessageStartingWith("Expecting an intransitive action template but it was transitive");
     inOrder.verifyNoMoreInteractions();
@@ -48,11 +47,12 @@ class IntransitiveActionTemplateExecutorTest {
   void execute_calls_intransitive_action_taker_and_converts_actor_back_to_local_state() {
     LocalState actorLocalState = new TestLocalState(0, 0);
     LocalState newActorLocalState = new TestLocalState(1, 1);
-    Actor actorDefinition = Actor.builder()
+    Actor actionPerformerDefinition = Actor.builder()
         .id("actor")
         .build();
 
     ActionTemplate<Integer, Void> actionTemplate = ActionTemplate.<Integer, Void>builder()
+        .actionPerformerDefinition(actionPerformerDefinition)
         .actionType(new IntransitiveActionType())
         .actionLabel("fill - but doesn't really matter in this test")
         .build();
@@ -69,23 +69,22 @@ class IntransitiveActionTemplateExecutorTest {
     IntransitiveActionTemplateExecutor executor = IntransitiveActionTemplateExecutor.builder()
         .config(ActorStateTransformerConfig.builder()
             .actorFactories(ImmutableMap.of(
-                actorDefinition, actorFactory
+                actionPerformerDefinition, actorFactory
             ))
             .localStateExtractors(ImmutableMap.of(
-                actorDefinition, actorLocalStateExtractor
+                actionPerformerDefinition, actorLocalStateExtractor
             ))
             .build())
         .intransitiveActionTaker(intransitiveActionTaker)
         .build();
 
     assertThat(executor.execute(
-        actorLocalState,
-        actorDefinition,
-        actionTemplate))
+        actionTemplate,
+        actorLocalState))
         .isEqualTo(ExecutionResult.builder()
             .actionResult(ActionResult.success())
             .localStates(ImmutableMap.of(
-                actorDefinition, newActorLocalState
+                actionPerformerDefinition, newActorLocalState
             ))
             .build());
 

@@ -98,12 +98,11 @@ class ModelVerifier {
   }
 
   private static ActorActionConfig actorActionConfig() {
-    Set<ActionTemplate<?, ?>> resourceManagerActionTemplates = resourceManagerActionTemplates();
     return new ActorActionConfig(ImmutableMap.of(
         TM, transactionManagerActionTemplates(),
-        RM_0, resourceManagerActionTemplates,
-        RM_1, resourceManagerActionTemplates,
-        RM_2, resourceManagerActionTemplates
+        RM_0, resourceManagerActionTemplates(RM_0),
+        RM_1, resourceManagerActionTemplates(RM_1),
+        RM_2, resourceManagerActionTemplates(RM_2)
     ));
   }
 
@@ -130,6 +129,7 @@ class ModelVerifier {
   private static Set<ActionTemplate<?, ?>> transactionManagerActionTemplates() {
     return ImmutableSet.of(
         ActionTemplate.<TransactionManager, ResourceManager>builder()
+            .actionPerformerDefinition(TM)
             .actionType(new TransitiveActionType(Actor.builder()
                 .id(RM_ID_0)
                 .build()))
@@ -137,6 +137,7 @@ class ModelVerifier {
             .action(TransactionManager::abort)
             .build(),
         ActionTemplate.<TransactionManager, ResourceManager>builder()
+            .actionPerformerDefinition(TM)
             .actionType(new TransitiveActionType(Actor.builder()
                 .id(RM_ID_0)
                 .build()))
@@ -144,6 +145,7 @@ class ModelVerifier {
             .action(TransactionManager::commit)
             .build(),
         ActionTemplate.<TransactionManager, ResourceManager>builder()
+            .actionPerformerDefinition(TM)
             .actionType(new TransitiveActionType(Actor.builder()
                 .id(RM_ID_1)
                 .build()))
@@ -151,6 +153,7 @@ class ModelVerifier {
             .action(TransactionManager::abort)
             .build(),
         ActionTemplate.<TransactionManager, ResourceManager>builder()
+            .actionPerformerDefinition(TM)
             .actionType(new TransitiveActionType(Actor.builder()
                 .id(RM_ID_1)
                 .build()))
@@ -158,6 +161,7 @@ class ModelVerifier {
             .action(TransactionManager::commit)
             .build(),
         ActionTemplate.<TransactionManager, ResourceManager>builder()
+            .actionPerformerDefinition(TM)
             .actionType(new TransitiveActionType(Actor.builder()
                 .id(RM_ID_2)
                 .build()))
@@ -165,6 +169,7 @@ class ModelVerifier {
             .action(TransactionManager::abort)
             .build(),
         ActionTemplate.<TransactionManager, ResourceManager>builder()
+            .actionPerformerDefinition(TM)
             .actionType(new TransitiveActionType(Actor.builder()
                 .id(RM_ID_2)
                 .build()))
@@ -174,9 +179,11 @@ class ModelVerifier {
     );
   }
 
-  private static ImmutableSet<ActionTemplate<?, ?>> resourceManagerActionTemplates() {
+  private static ImmutableSet<ActionTemplate<?, ?>> resourceManagerActionTemplates(
+      Actor actionPerformerDefinition) {
     return ImmutableSet.of(
         ActionTemplate.<ResourceManager, TransactionManager>builder()
+            .actionPerformerDefinition(actionPerformerDefinition)
             .actionType(new TransitiveActionType(Actor.builder()
                 .id(TM_ID)
                 .build()))
@@ -184,6 +191,7 @@ class ModelVerifier {
             .action(ResourceManager::abort)
             .build(),
         ActionTemplate.<ResourceManager, TransactionManager>builder()
+            .actionPerformerDefinition(actionPerformerDefinition)
             .actionType(new TransitiveActionType(Actor.builder()
                 .id(TM_ID)
                 .build()))

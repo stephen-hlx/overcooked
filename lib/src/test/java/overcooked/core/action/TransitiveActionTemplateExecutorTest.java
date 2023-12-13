@@ -36,12 +36,11 @@ class TransitiveActionTemplateExecutorTest {
     TransitiveActionTemplateExecutor executor = TransitiveActionTemplateExecutor.builder().build();
     assertThatThrownBy(
         () -> executor.execute(
-            null,
-            null,
-            null,
             ActionTemplate.builder()
                 .actionType(new IntransitiveActionType())
-                .build()))
+                .build(),
+            null,
+            null))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessageStartingWith("Expecting a transitive action template but it was intransitive");
   }
@@ -61,6 +60,7 @@ class TransitiveActionTemplateExecutorTest {
         .build();
 
     ActionTemplate<String, String> actionTemplate = ActionTemplate.<String, String>builder()
+        .actionPerformerDefinition(actionPerformerDefinition)
         .actionType(new TransitiveActionType(actionReceiverDefinition))
         .build();
 
@@ -95,10 +95,9 @@ class TransitiveActionTemplateExecutorTest {
         .build();
 
     assertThat(executor.execute(
+        actionTemplate,
         actionPerformerLocalState,
-        actionPerformerDefinition,
-        actionReceiverLocalState,
-        actionTemplate))
+        actionReceiverLocalState))
         .isEqualTo(ExecutionResult.builder()
             .actionResult(ActionResult.success())
             .localStates(ImmutableMap.of(

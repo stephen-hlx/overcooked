@@ -25,39 +25,40 @@ public class IntransitiveActionTemplateExecutor {
    * {@link LocalState} object.
    *
    * @param actorLocalState the local state of the actor which is going to perform the action
-   * @param actorDefinition the definition of the actor
    * @param actionTemplate  the template of the action that is going to be performed
    * @return an {@link ExecutionResult} object
    */
   public <PerformerT, ReceiverT> ExecutionResult execute(
-      LocalState actorLocalState,
-      Actor actorDefinition,
-      ActionTemplate<PerformerT, ReceiverT> actionTemplate) {
+      ActionTemplate<PerformerT, ReceiverT> actionTemplate,
+      LocalState actorLocalState) {
     Preconditions.checkArgument(!actionTemplate.getActionType().isTransitive(),
         "Expecting an intransitive action template but it was transitive {}", actionTemplate);
 
+    Actor actionPerformerDefinition = actionTemplate.getActionPerformerDefinition();
     @SuppressWarnings("unchecked")
     ActorFactory<PerformerT> actorFactory =
-        (ActorFactory<PerformerT>) checkNotNull(config.getActorFactories().get(actorDefinition),
-            "No ActorFactory found for actor {}", actorDefinition);
-    PerformerT actor = actorFactory
+        (ActorFactory<PerformerT>) checkNotNull(
+            config.getActorFactories().get(actionPerformerDefinition),
+            "No ActorFactory found for actor {}", actionPerformerDefinition);
+    PerformerT actionPerformer = actorFactory
         .restoreFromLocalState(actorLocalState);
 
     ActionResult actionResult = intransitiveActionTaker.take(
         IntransitiveAction.<PerformerT, ReceiverT>builder()
-            .actor(actor)
+            .actor(actionPerformer)
             .actionTemplate(actionTemplate)
             .build());
 
     @SuppressWarnings("unchecked")
     LocalStateExtractor<PerformerT> localStateExtractor =
         (LocalStateExtractor<PerformerT>) checkNotNull(
-            config.getLocalStateExtractors().get(actorDefinition),
-            "No LocalStateExtractor found for actor {}", actorDefinition);
+            config.getLocalStateExtractors().get(actionPerformerDefinition),
+            "No LocalStateExtractor found for actor {}", actionPerformerDefinition);
 
     return ExecutionResult.builder()
         .actionResult(actionResult)
-        .localStates(ImmutableMap.of(actorDefinition, localStateExtractor.extract(actor)))
+        .localStates(ImmutableMap.of(
+            actionPerformerDefinition, localStateExtractor.extract(actionPerformer)))
         .build();
   }
 }

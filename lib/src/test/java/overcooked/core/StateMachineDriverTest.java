@@ -54,10 +54,12 @@ class StateMachineDriverTest {
     Actor actor4 = Actor.builder().id(actor4Id).build();
 
     ActionTemplate<?, ?> actor1ActionTemplate = ActionTemplate.builder()
+        .actionPerformerDefinition(actor1)
         .actionType(new IntransitiveActionType())
         .actionLabel(actor1Method)
         .build();
     ActionTemplate<?, ?> actor2ActionTemplate = ActionTemplate.<Void, Integer>builder()
+        .actionPerformerDefinition(actor2)
         .actionType(new TransitiveActionType(actor3))
         .actionLabel(actor2Method)
         .build();
@@ -75,13 +77,13 @@ class StateMachineDriverTest {
     LocalState newActor2LocalState = new TestLocalState(2, 1);
     LocalState newActor3LocalState = new TestLocalState(3, 1);
 
-    when(intransitiveActionTemplateExecutor.execute(actor1LocalState, actor1, actor1ActionTemplate))
+    when(intransitiveActionTemplateExecutor.execute(actor1ActionTemplate, actor1LocalState))
         .thenReturn(ExecutionResult.builder()
             .actionResult(ActionResult.success())
             .localStates(ImmutableMap.of(actor1, newActor1LocalState))
             .build());
-    when(transitiveActionTemplateExecutor.execute(actor2LocalState, actor2, actor3LocalState,
-        actor2ActionTemplate))
+    when(transitiveActionTemplateExecutor
+        .execute(actor2ActionTemplate, actor2LocalState, actor3LocalState))
         .thenReturn(ExecutionResult.builder()
             .actionResult(ActionResult.success())
             .localStates(ImmutableMap.of(
@@ -117,10 +119,9 @@ class StateMachineDriverTest {
                 .build())
         ));
 
-    verify(intransitiveActionTemplateExecutor).execute(actor1LocalState, actor1,
-        actor1ActionTemplate);
+    verify(intransitiveActionTemplateExecutor).execute(actor1ActionTemplate, actor1LocalState);
     verify(transitiveActionTemplateExecutor)
-        .execute(actor2LocalState, actor2, actor3LocalState, actor2ActionTemplate);
+        .execute(actor2ActionTemplate, actor2LocalState, actor3LocalState);
     verify(stateMerger).merge(globalState, ImmutableMap.of(actor1, newActor1LocalState));
     verify(stateMerger).merge(globalState, ImmutableMap.of(
         actor2, newActor2LocalState,

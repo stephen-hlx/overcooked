@@ -24,22 +24,23 @@ public class TransitiveActionTemplateExecutor {
    * is defined in the {@link Actor} object. The actor will be initialised from the
    * {@link LocalState} object.
    *
-   * @param actionPerformerLocalState the local state of the action performer
-   * @param actionPerformerDefinition the definition of the action performer
-   * @param actionReceiverLocalState  the local state of the action receiver
    * @param actionTemplate            the template of the action that is going to be performed
+   * @param actionPerformerLocalState the local state of the action performer
+   * @param actionReceiverLocalState  the local state of the action receiver
    * @return an {@link ExecutionResult} object
    */
   public <PerformerT, ReceiverT> ExecutionResult execute(
+      ActionTemplate<PerformerT, ReceiverT>  actionTemplate,
       LocalState actionPerformerLocalState,
-      Actor actionPerformerDefinition,
-      LocalState actionReceiverLocalState,
-      ActionTemplate<PerformerT, ReceiverT>  actionTemplate) {
+      LocalState actionReceiverLocalState) {
     Preconditions.checkArgument(actionTemplate.getActionType().isTransitive(),
         "Expecting a transitive action template but it was intransitive {}", actionTemplate);
 
-    PerformerT actionPerformer = this.<PerformerT>getActorFactory(actionPerformerDefinition)
-        .restoreFromLocalState(actionPerformerLocalState);
+    Actor actionPerformerDefinition = actionTemplate.getActionPerformerDefinition();
+
+    PerformerT actionPerformer =
+        this.<PerformerT>getActorFactory(actionTemplate.getActionPerformerDefinition())
+            .restoreFromLocalState(actionPerformerLocalState);
 
     Actor actionReceiverDefinition =
         actionTemplate.getActionType().getActionReceiverDefinition();

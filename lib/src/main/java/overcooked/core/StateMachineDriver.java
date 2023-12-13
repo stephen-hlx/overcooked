@@ -46,25 +46,27 @@ class StateMachineDriver {
                   .actionPerformerId(actorDefinition.getId())
                   .label(actionTemplate.getActionLabel());
               ExecutionResult executionResult;
+
               if (actionTemplate.getActionType().isTransitive()) {
                 Actor actionReceiverDefinition =
                     actionTemplate.getActionType().getActionReceiverDefinition();
                 arcBuilder.actionReceiverId(actionReceiverDefinition.getId());
                 executionResult = transitiveActionTemplateExecutor.execute(
+                    actionTemplate,
                     from.getCopyOfLocalState(actorDefinition),
-                    actorDefinition,
-                    from.getCopyOfLocalState(actionReceiverDefinition),
-                    actionTemplate);
+                    from.getCopyOfLocalState(actionReceiverDefinition));
               } else {
                 executionResult = intransitiveActionTemplateExecutor.execute(
-                    from.getCopyOfLocalState(actorDefinition),
-                    actorDefinition,
-                    actionTemplate);
+                    actionTemplate,
+                    from.getCopyOfLocalState(actorDefinition));
               }
+
               GlobalState to = stateMachineExecutionContext.registerOrGetDuplicate(
                   stateMerger.merge(from, executionResult.getLocalStates()));
+
               stateMachineExecutionContext.capture(
                   from, arcBuilder.build(), to, executionResult.getActionResult());
+
               nextStates.add(to);
             }));
 
