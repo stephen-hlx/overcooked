@@ -11,7 +11,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
-import overcooked.analysis.Arc;
 import overcooked.core.action.ActionResult;
 import overcooked.core.action.ActionTemplate;
 import overcooked.core.action.ExecutionResult;
@@ -133,20 +132,12 @@ class StateMachineDriverTest {
         ACTOR_3, NEW_ACTOR_3_LOCAL_STATE));
     verify(stateMachineExecutionContext).registerOrGetDuplicate(globalState1);
     verify(stateMachineExecutionContext).capture(initialState,
-        Arc.builder()
-            .actionPerformerId(ACTOR_1_ID)
-            .label(ACTOR_1_METHOD_1)
-            .actionReceiverId(null)
-            .build(),
+        ACTOR_1_ACTION_TEMPLATE,
         globalState1,
         ActionResult.success());
     verify(stateMachineExecutionContext).registerOrGetDuplicate(globalState2);
     verify(stateMachineExecutionContext).capture(initialState,
-        Arc.builder()
-            .actionPerformerId(ACTOR_2_ID)
-            .label(ACTOR_2_METHOD_1)
-            .actionReceiverId(ACTOR_3_ID)
-            .build(),
+        ACTOR_2_ACTION_TEMPLATE,
         globalState2,
         ActionResult.success());
     verifyNoMoreInteractions(intransitiveActionTemplateExecutor,

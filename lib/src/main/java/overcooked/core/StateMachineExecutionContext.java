@@ -6,6 +6,8 @@ import overcooked.analysis.Arc;
 import overcooked.analysis.StateMachineExecutionData;
 import overcooked.analysis.Transition;
 import overcooked.core.action.ActionResult;
+import overcooked.core.action.ActionTemplate;
+import overcooked.core.action.ActionType;
 
 /**
  * A class that captures the context of a state machine execution,
@@ -34,13 +36,24 @@ public class StateMachineExecutionContext {
     return globalState;
   }
 
-  void capture(GlobalState from, Arc arc, GlobalState to, ActionResult actionResult) {
+  void capture(GlobalState from,
+               ActionTemplate<?, ?> actionTemplate,
+               GlobalState to,
+               ActionResult actionResult) {
     transitions.add(Transition.builder()
         .from(from)
-        .arc(arc)
+        .arc(Arc.builder()
+            .actionPerformerId(actionTemplate.getActionPerformerDefinition().getId())
+            .actionReceiverId(getActionReceiverId(actionTemplate.getActionType()))
+            .label(actionTemplate.getActionLabel())
+            .build())
         .to(to)
         .actionResult(actionResult)
         .build());
+  }
+
+  private static String getActionReceiverId(ActionType actionType) {
+    return actionType.isTransitive() ? actionType.getActionReceiverDefinition().getId() : null;
   }
 
   public void addValidationFailingNode(GlobalState globalState) {

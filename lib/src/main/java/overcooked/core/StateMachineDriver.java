@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Builder;
-import overcooked.analysis.Arc;
 import overcooked.core.action.ExecutionResult;
 import overcooked.core.action.IntransitiveActionTemplateExecutor;
 import overcooked.core.action.TransitiveActionTemplateExecutor;
@@ -42,15 +41,11 @@ class StateMachineDriver {
         actorActionConfig.getActionDefinitionTemplates()
             .getOrDefault(actorDefinition, Collections.emptySet())
             .forEach(actionTemplate -> {
-              Arc.ArcBuilder arcBuilder = Arc.builder()
-                  .actionPerformerId(actorDefinition.getId())
-                  .label(actionTemplate.getActionLabel());
               ExecutionResult executionResult;
 
               if (actionTemplate.getActionType().isTransitive()) {
                 Actor actionReceiverDefinition =
                     actionTemplate.getActionType().getActionReceiverDefinition();
-                arcBuilder.actionReceiverId(actionReceiverDefinition.getId());
                 executionResult = transitiveActionTemplateExecutor.execute(
                     actionTemplate,
                     from.getCopyOfLocalState(actorDefinition),
@@ -65,7 +60,7 @@ class StateMachineDriver {
                   stateMerger.merge(from, executionResult.getLocalStates()));
 
               stateMachineExecutionContext.capture(
-                  from, arcBuilder.build(), to, executionResult.getActionResult());
+                  from, actionTemplate, to, executionResult.getActionResult());
 
               nextStates.add(to);
             }));
