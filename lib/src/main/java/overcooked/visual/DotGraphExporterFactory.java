@@ -1,6 +1,5 @@
 package overcooked.visual;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import org.jgrapht.nio.DefaultAttribute;
 import org.jgrapht.nio.dot.DOTExporter;
@@ -39,7 +38,7 @@ public class DotGraphExporterFactory {
     return String.format("%s.%s(%s)",
         arc.getActionPerformerId(),
         arc.getLabel(),
-        Strings.isNullOrEmpty(arc.getActionReceiverId()) ? "" :
+        arc.getActionReceiverId() == null ? "" :
             arc.getActionReceiverId());
   }
 }

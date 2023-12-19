@@ -9,12 +9,12 @@ import java.util.Map;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
-import overcooked.core.actor.Actor;
+import overcooked.core.actor.ActorId;
 import overcooked.core.actor.LocalState;
 
 class StateMergerTest {
-  private static final Actor ACTOR_0 = Actor.builder().id("0").build();
-  private static final Actor ACTOR_1 = Actor.builder().id("1").build();
+  private static final ActorId ACTOR_ID_0 = ActorId.builder().id("0").build();
+  private static final ActorId ACTOR_ID_1 = ActorId.builder().id("1").build();
 
   @Test
   @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH")
@@ -24,29 +24,29 @@ class StateMergerTest {
     actor1LocalState0internal.put("actor1", "state0");
     Actor1LocalState actor1LocalState0 = new Actor1LocalState(actor1LocalState0internal);
     GlobalState oldGlobalState = new GlobalState(ImmutableMap.of(
-        ACTOR_0, actor0LocalState0,
-        ACTOR_1, actor1LocalState0
+        ACTOR_ID_0, actor0LocalState0,
+        ACTOR_ID_1, actor1LocalState0
     ));
 
     GlobalState newGlobalState =
         new StateMerger()
-            .merge(oldGlobalState, ImmutableMap.of(ACTOR_0,
+            .merge(oldGlobalState, ImmutableMap.of(ACTOR_ID_0,
                 new Actor0LocalState(ImmutableMap.of("actor0", "state1"))));
 
     assertThat(newGlobalState).isEqualTo(new GlobalState(ImmutableMap.of(
-        ACTOR_0, new Actor0LocalState(ImmutableMap.of("actor0", "state1")),
-        ACTOR_1, new Actor1LocalState(ImmutableMap.of("actor1", "state0"))
+        ACTOR_ID_0, new Actor0LocalState(ImmutableMap.of("actor0", "state1")),
+        ACTOR_ID_1, new Actor1LocalState(ImmutableMap.of("actor1", "state0"))
     )));
 
     // change the old global state
-    ((Actor1LocalState) (oldGlobalState.getCopyOfLocalStates().get(ACTOR_1))).getData()
+    ((Actor1LocalState) (oldGlobalState.getCopyOfLocalStates().get(ACTOR_ID_1))).getData()
         .put("actor1", "state1");
 
     assertThat(newGlobalState)
         .as("changes made to the old global state should not affect the new global state")
         .isEqualTo(new GlobalState(ImmutableMap.of(
-            ACTOR_0, new Actor0LocalState(ImmutableMap.of("actor0", "state1")),
-            ACTOR_1, new Actor1LocalState(ImmutableMap.of("actor1", "state0"))
+            ACTOR_ID_0, new Actor0LocalState(ImmutableMap.of("actor0", "state1")),
+            ACTOR_ID_1, new Actor1LocalState(ImmutableMap.of("actor1", "state0"))
         )));
   }
 

@@ -21,7 +21,7 @@ import overcooked.core.StateMachineExecutionContext;
 import overcooked.core.StateMachineFactory;
 import overcooked.core.action.ActionTemplate;
 import overcooked.core.action.TransitiveActionType;
-import overcooked.core.actor.Actor;
+import overcooked.core.actor.ActorId;
 import overcooked.core.actor.ActorStateTransformerConfig;
 import overcooked.sample.twophasecommit.model.ResourceManagerState;
 import overcooked.visual.DotGraphExporterFactory;
@@ -29,22 +29,22 @@ import overcooked.visual.DotGraphExporterFactory;
 @Slf4j
 class ModelVerifier {
   private static final String TM_ID = "TM";
-  private static final Actor TM = Actor.builder()
+  private static final ActorId TM = ActorId.builder()
       .id(TM_ID)
       .build();
 
   private static final String RM_ID_0 = "RM0";
   private static final String RM_ID_1 = "RM1";
   private static final String RM_ID_2 = "RM2";
-  private static final Actor RM_0 = Actor.builder()
+  private static final ActorId RM_0 = ActorId.builder()
       .id(RM_ID_0)
       .build();
 
-  private static final Actor RM_1 = Actor.builder()
+  private static final ActorId RM_1 = ActorId.builder()
       .id(RM_ID_1)
       .build();
 
-  private static final Actor RM_2 = Actor.builder()
+  private static final ActorId RM_2 = ActorId.builder()
       .id(RM_ID_2)
       .build();
 
@@ -129,37 +129,37 @@ class ModelVerifier {
   private static Set<ActionTemplate<?, ?>> transactionManagerActionTemplates() {
     return ImmutableSet.of(
         ActionTemplate.<TransactionManager, ResourceManager>builder()
-            .actionPerformerDefinition(TM)
+            .actionPerformerId(TM)
             .actionType(new TransitiveActionType(RM_0))
             .actionLabel("abort")
             .action(TransactionManager::abort)
             .build(),
         ActionTemplate.<TransactionManager, ResourceManager>builder()
-            .actionPerformerDefinition(TM)
+            .actionPerformerId(TM)
             .actionType(new TransitiveActionType(RM_0))
             .actionLabel("commit")
             .action(TransactionManager::commit)
             .build(),
         ActionTemplate.<TransactionManager, ResourceManager>builder()
-            .actionPerformerDefinition(TM)
+            .actionPerformerId(TM)
             .actionType(new TransitiveActionType(RM_1))
             .actionLabel("abort")
             .action(TransactionManager::abort)
             .build(),
         ActionTemplate.<TransactionManager, ResourceManager>builder()
-            .actionPerformerDefinition(TM)
+            .actionPerformerId(TM)
             .actionType(new TransitiveActionType(RM_1))
             .actionLabel("commit")
             .action(TransactionManager::commit)
             .build(),
         ActionTemplate.<TransactionManager, ResourceManager>builder()
-            .actionPerformerDefinition(TM)
+            .actionPerformerId(TM)
             .actionType(new TransitiveActionType(RM_2))
             .actionLabel("abort")
             .action(TransactionManager::abort)
             .build(),
         ActionTemplate.<TransactionManager, ResourceManager>builder()
-            .actionPerformerDefinition(TM)
+            .actionPerformerId(TM)
             .actionType(new TransitiveActionType(RM_2))
             .actionLabel("commit")
             .action(TransactionManager::commit)
@@ -168,16 +168,16 @@ class ModelVerifier {
   }
 
   private static ImmutableSet<ActionTemplate<?, ?>> resourceManagerActionTemplates(
-      Actor actionPerformerDefinition) {
+      ActorId actionPerformerId) {
     return ImmutableSet.of(
         ActionTemplate.<ResourceManager, TransactionManager>builder()
-            .actionPerformerDefinition(actionPerformerDefinition)
+            .actionPerformerId(actionPerformerId)
             .actionType(new TransitiveActionType(TM))
             .actionLabel("abort")
             .action(ResourceManager::abort)
             .build(),
         ActionTemplate.<ResourceManager, TransactionManager>builder()
-            .actionPerformerDefinition(actionPerformerDefinition)
+            .actionPerformerId(actionPerformerId)
             .actionType(new TransitiveActionType(TM))
             .actionLabel("prepare")
             .action(ResourceManager::prepare)

@@ -2,6 +2,7 @@ package overcooked.analysis;
 
 import lombok.Builder;
 import lombok.Value;
+import overcooked.core.actor.ActorId;
 
 /**
  * An object representing an arc from one {@link overcooked.core.GlobalState} to another.
@@ -9,7 +10,7 @@ import lombok.Value;
 @Builder
 @Value
 public class Arc {
-  String actionPerformerId;
+  ActorId actionPerformerId;
   String label;
-  String actionReceiverId;
+  ActorId actionReceiverId;
 }

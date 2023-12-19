@@ -10,6 +10,6 @@ import lombok.Value;
 @Value
 @Builder
 public class ActorStateTransformerConfig {
-  ImmutableMap<Actor, ActorFactory<?>> actorFactories;
-  ImmutableMap<Actor, LocalStateExtractor<?>> localStateExtractors;
+  ImmutableMap<ActorId, ActorFactory<?>> actorFactories;
+  ImmutableMap<ActorId, LocalStateExtractor<?>> localStateExtractors;
 }

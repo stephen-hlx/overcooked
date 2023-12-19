@@ -17,7 +17,7 @@ import overcooked.core.StateMachineFactory;
 import overcooked.core.action.ActionTemplate;
 import overcooked.core.action.IntransitiveActionType;
 import overcooked.core.action.TransitiveActionType;
-import overcooked.core.actor.Actor;
+import overcooked.core.actor.ActorId;
 import overcooked.core.actor.ActorStateTransformerConfig;
 import overcooked.sample.diehard.model.Jar3;
 import overcooked.sample.diehard.model.Jar5;
@@ -28,10 +28,10 @@ import overcooked.visual.DotGraphExporterFactory;
  */
 @Slf4j
 class ModelVerifier {
-  private static final Actor JAR3 = Actor.builder()
+  private static final ActorId JAR3 = ActorId.builder()
       .id("jar3")
       .build();
-  private static final Actor JAR5 = Actor.builder()
+  private static final ActorId JAR5 = ActorId.builder()
       .id("jar5")
       .build();
 
@@ -42,19 +42,19 @@ class ModelVerifier {
 
     Set<ActionTemplate<?, ?>> jar3Templates = ImmutableSet.of(
         ActionTemplate.<Jar3, Void>builder()
-            .actionPerformerDefinition(JAR3)
+            .actionPerformerId(JAR3)
             .actionType(new IntransitiveActionType())
             .actionLabel("empty")
             .action(((jar3, unused) -> jar3.empty()))
             .build(),
         ActionTemplate.<Jar3, Void>builder()
-            .actionPerformerDefinition(JAR3)
+            .actionPerformerId(JAR3)
             .actionType(new IntransitiveActionType())
             .actionLabel("fill")
             .action(((jar3, unused) -> jar3.fill()))
             .build(),
         ActionTemplate.<Jar3, Jar5>builder()
-            .actionPerformerDefinition(JAR3)
+            .actionPerformerId(JAR3)
             .actionType(new TransitiveActionType(JAR5))
             .actionLabel("addTo")
             .action((Jar3::addTo))
@@ -63,19 +63,19 @@ class ModelVerifier {
 
     Set<ActionTemplate<?, ?>> jar5Templates = ImmutableSet.of(
         ActionTemplate.<Jar5, Void>builder()
-            .actionPerformerDefinition(JAR5)
+            .actionPerformerId(JAR5)
             .actionType(new IntransitiveActionType())
             .actionLabel("empty")
             .action((jar5, unused) -> jar5.empty())
             .build(),
         ActionTemplate.<Jar5, Void>builder()
-            .actionPerformerDefinition(JAR5)
+            .actionPerformerId(JAR5)
             .actionType(new IntransitiveActionType())
             .actionLabel("fill")
             .action((jar5, unused) -> jar5.fill())
             .build(),
         ActionTemplate.<Jar5, Jar3>builder()
-            .actionPerformerDefinition(JAR5)
+            .actionPerformerId(JAR5)
             .actionType(new TransitiveActionType(JAR3))
             .actionLabel("addTo")
             .action(Jar5::addTo)

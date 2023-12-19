@@ -7,7 +7,7 @@ import lombok.Builder;
 import overcooked.core.action.ExecutionResult;
 import overcooked.core.action.IntransitiveActionTemplateExecutor;
 import overcooked.core.action.TransitiveActionTemplateExecutor;
-import overcooked.core.actor.Actor;
+import overcooked.core.actor.ActorId;
 
 
 /**
@@ -37,23 +37,23 @@ class StateMachineDriver {
       StateMachineExecutionContext stateMachineExecutionContext) {
     Set<GlobalState> nextStates = new HashSet<>();
 
-    from.getActorDefinitions().forEach(actorDefinition ->
-        actorActionConfig.getActionDefinitionTemplates()
-            .getOrDefault(actorDefinition, Collections.emptySet())
+    from.getActorIds().forEach(actorId ->
+        actorActionConfig.getActionTemplates()
+            .getOrDefault(actorId, Collections.emptySet())
             .forEach(actionTemplate -> {
               ExecutionResult executionResult;
 
               if (actionTemplate.getActionType().isTransitive()) {
-                Actor actionReceiverDefinition =
-                    actionTemplate.getActionType().getActionReceiverDefinition();
+                ActorId actionReceiverId =
+                    actionTemplate.getActionType().getActionReceiverId();
                 executionResult = transitiveActionTemplateExecutor.execute(
                     actionTemplate,
-                    from.getCopyOfLocalState(actorDefinition),
-                    from.getCopyOfLocalState(actionReceiverDefinition));
+                    from.getCopyOfLocalState(actorId),
+                    from.getCopyOfLocalState(actionReceiverId));
               } else {
                 executionResult = intransitiveActionTemplateExecutor.execute(
                     actionTemplate,
-                    from.getCopyOfLocalState(actorDefinition));
+                    from.getCopyOfLocalState(actorId));
               }
 
               GlobalState to = stateMachineExecutionContext.registerOrGetDuplicate(

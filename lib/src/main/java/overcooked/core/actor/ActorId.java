@@ -6,11 +6,15 @@ import lombok.Value;
 
 
 /**
- * Definition of an actor of the system to be model verified.
+ * Represents the ID of an actor in the system to be model verified.
  */
 @Value
 @Builder
-public class Actor {
+public class ActorId {
   @NonNull
   String id;
+
+  public String toString() {
+    return id;
+  }
 }

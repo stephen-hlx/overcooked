@@ -8,6 +8,7 @@ import overcooked.analysis.Transition;
 import overcooked.core.action.ActionResult;
 import overcooked.core.action.ActionTemplate;
 import overcooked.core.action.ActionType;
+import overcooked.core.actor.ActorId;
 
 /**
  * A class that captures the context of a state machine execution,
@@ -43,7 +44,7 @@ public class StateMachineExecutionContext {
     transitions.add(Transition.builder()
         .from(from)
         .arc(Arc.builder()
-            .actionPerformerId(actionTemplate.getActionPerformerDefinition().getId())
+            .actionPerformerId(actionTemplate.getActionPerformerId())
             .actionReceiverId(getActionReceiverId(actionTemplate.getActionType()))
             .label(actionTemplate.getActionLabel())
             .build())
@@ -52,8 +53,8 @@ public class StateMachineExecutionContext {
         .build());
   }
 
-  private static String getActionReceiverId(ActionType actionType) {
-    return actionType.isTransitive() ? actionType.getActionReceiverDefinition().getId() : null;
+  private static ActorId getActionReceiverId(ActionType actionType) {
+    return actionType.isTransitive() ? actionType.getActionReceiverId() : null;
   }
 
   public void addValidationFailingNode(GlobalState globalState) {

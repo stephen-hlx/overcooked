@@ -5,8 +5,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import lombok.Builder;
-import overcooked.core.actor.Actor;
 import overcooked.core.actor.ActorFactory;
+import overcooked.core.actor.ActorId;
 import overcooked.core.actor.ActorStateTransformerConfig;
 import overcooked.core.actor.LocalState;
 import overcooked.core.actor.LocalStateExtractor;
@@ -21,7 +21,7 @@ public class TransitiveActionTemplateExecutor {
 
   /**
    * Executes the action defined in the {@link ActionTemplate} object on behalf of the actor that
-   * is defined in the {@link Actor} object. The actor will be initialised from the
+   * is defined in the {@link ActorId} object. The actor will be initialised from the
    * {@link LocalState} object.
    *
    * @param actionTemplate            the template of the action that is going to be performed
@@ -36,16 +36,15 @@ public class TransitiveActionTemplateExecutor {
     Preconditions.checkArgument(actionTemplate.getActionType().isTransitive(),
         "Expecting a transitive action template but it was intransitive {}", actionTemplate);
 
-    Actor actionPerformerDefinition = actionTemplate.getActionPerformerDefinition();
+    ActorId actionPerformerId = actionTemplate.getActionPerformerId();
 
     PerformerT actionPerformer =
-        this.<PerformerT>getActorFactory(actionTemplate.getActionPerformerDefinition())
+        this.<PerformerT>getActorFactory(actionTemplate.getActionPerformerId())
             .restoreFromLocalState(actionPerformerLocalState);
 
-    Actor actionReceiverDefinition =
-        actionTemplate.getActionType().getActionReceiverDefinition();
+    ActorId actionReceiverId = actionTemplate.getActionType().getActionReceiverId();
 
-    ReceiverT actionReceiver = this.<ReceiverT>getActorFactory(actionReceiverDefinition)
+    ReceiverT actionReceiver = this.<ReceiverT>getActorFactory(actionReceiverId)
         .restoreFromLocalState(actionReceiverLocalState);
 
     ActionResult actionResult = actionTaker.take(ActionDefinition.<PerformerT, ReceiverT>builder()
@@ -57,12 +56,12 @@ public class TransitiveActionTemplateExecutor {
 
     return ExecutionResult.builder()
         .actionResult(actionResult)
-        .localStates(ImmutableMap.<Actor, LocalState>builder()
-            .put(actionPerformerDefinition,
-                getLocalStateExtractor(actionPerformerDefinition)
+        .localStates(ImmutableMap.<ActorId, LocalState>builder()
+            .put(actionPerformerId,
+                getLocalStateExtractor(actionPerformerId)
                     .extract(actionPerformer))
-            .put(actionReceiverDefinition,
-                getLocalStateExtractor(actionReceiverDefinition)
+            .put(actionReceiverId,
+                getLocalStateExtractor(actionReceiverId)
                     .extract(actionReceiver))
             .build())
         .build();
@@ -70,17 +69,16 @@ public class TransitiveActionTemplateExecutor {
 
   @SuppressWarnings("unchecked")
   private <ActorT> LocalStateExtractor<ActorT> getLocalStateExtractor(
-      Actor actionPerformerDefinition) {
+      ActorId actionPerformerId) {
     return (LocalStateExtractor<ActorT>) checkNotNull(
-        config.getLocalStateExtractors().get(actionPerformerDefinition),
-        "No LocalStateExtractor found for actor {}",
-        actionPerformerDefinition);
+        config.getLocalStateExtractors().get(actionPerformerId),
+        "No LocalStateExtractor found for actor {}", actionPerformerId);
   }
 
   @SuppressWarnings("unchecked")
-  private <ActorT> ActorFactory<ActorT> getActorFactory(Actor actionReceiverDefinition) {
+  private <ActorT> ActorFactory<ActorT> getActorFactory(ActorId actionReceiverId) {
     return (ActorFactory<ActorT>) checkNotNull(
-        config.getActorFactories().get(actionReceiverDefinition),
-        "No ActorFactory found for actor {}", actionReceiverDefinition);
+        config.getActorFactories().get(actionReceiverId),
+        "No ActorFactory found for actor {}", actionReceiverId);
   }
 }

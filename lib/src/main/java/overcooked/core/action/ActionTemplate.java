@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Value;
-import overcooked.core.actor.Actor;
+import overcooked.core.actor.ActorId;
 
 /**
  * The template of an action to be performed by an actor in the system to be model verified.
@@ -15,7 +15,7 @@ import overcooked.core.actor.Actor;
 @Value
 public class ActionTemplate<ActionPerformerT, ActionReceiverT> {
   @NonNull
-  Actor actionPerformerDefinition;
+  ActorId actionPerformerId;
   @NonNull
   ActionType actionType;
   @NonNull

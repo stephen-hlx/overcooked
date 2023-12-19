@@ -9,8 +9,8 @@ import com.google.common.collect.ImmutableMap;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
-import overcooked.core.actor.Actor;
 import overcooked.core.actor.ActorFactory;
+import overcooked.core.actor.ActorId;
 import overcooked.core.actor.ActorStateTransformerConfig;
 import overcooked.core.actor.LocalState;
 import overcooked.core.actor.LocalStateExtractor;
@@ -34,8 +34,8 @@ class IntransitiveActionTemplateExecutorTest {
     assertThatThrownBy(
         () -> executor.execute(
             ActionTemplate.builder()
-                .actionType(new TransitiveActionType(Actor.builder().id("notUsed").build()))
-                .actionPerformerDefinition(Actor.builder().id("notUsed").build())
+                .actionType(new TransitiveActionType(ActorId.builder().id("notUsed").build()))
+                .actionPerformerId(ActorId.builder().id("notUsed").build())
                 .actionLabel("not used")
                 .action((notUsed1, notUsed2) -> {})
                 .build(),
@@ -49,10 +49,10 @@ class IntransitiveActionTemplateExecutorTest {
   void execute_calls_intransitive_action_taker_and_converts_actor_back_to_local_state() {
     LocalState actorLocalState = new TestLocalState(0, 0);
     LocalState newActorLocalState = new TestLocalState(1, 1);
-    Actor actionPerformerDefinition = Actor.builder().id("actor").build();
+    ActorId actionPerformerId = ActorId.builder().id("actor").build();
 
     ActionTemplate<Integer, Void> actionTemplate = ActionTemplate.<Integer, Void>builder()
-        .actionPerformerDefinition(actionPerformerDefinition)
+        .actionPerformerId(actionPerformerId)
         .actionType(new IntransitiveActionType())
         .actionLabel("not used")
         .action((notUsed1, notUsed2) -> {})
@@ -71,9 +71,9 @@ class IntransitiveActionTemplateExecutorTest {
 
     IntransitiveActionTemplateExecutor executor = IntransitiveActionTemplateExecutor.builder()
         .config(ActorStateTransformerConfig.builder()
-            .actorFactories(ImmutableMap.of(actionPerformerDefinition, actorFactory))
+            .actorFactories(ImmutableMap.of(actionPerformerId, actorFactory))
             .localStateExtractors(ImmutableMap.of(
-                actionPerformerDefinition, actorLocalStateExtractor))
+                actionPerformerId, actorLocalStateExtractor))
             .build())
         .actionTaker(actionTaker)
         .build();
@@ -83,7 +83,7 @@ class IntransitiveActionTemplateExecutorTest {
         actorLocalState))
         .isEqualTo(ExecutionResult.builder()
             .actionResult(ActionResult.success())
-            .localStates(ImmutableMap.of(actionPerformerDefinition, newActorLocalState))
+            .localStates(ImmutableMap.of(actionPerformerId, newActorLocalState))
             .build());
 
     inOrder.verify(actorFactory).restoreFromLocalState(actorLocalState);

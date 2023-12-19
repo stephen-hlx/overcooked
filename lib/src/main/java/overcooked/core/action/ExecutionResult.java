@@ -4,7 +4,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Map;
 import lombok.Builder;
 import lombok.Value;
-import overcooked.core.actor.Actor;
+import overcooked.core.actor.ActorId;
 import overcooked.core.actor.LocalState;
 
 /**
@@ -17,5 +17,5 @@ import overcooked.core.actor.LocalState;
     justification = "this is merely an internal structure")
 public class ExecutionResult {
   ActionResult actionResult;
-  Map<Actor, LocalState> localStates;
+  Map<ActorId, LocalState> localStates;
 }
