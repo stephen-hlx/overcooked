@@ -55,9 +55,7 @@ class ModelVerifier {
             .build(),
         ActionTemplate.<Jar3, Jar5>builder()
             .actionPerformerDefinition(JAR3)
-            .actionType(new TransitiveActionType(Actor.builder()
-                .id("jar5")
-                .build()))
+            .actionType(new TransitiveActionType(JAR5))
             .actionLabel("addTo")
             .action((Jar3::addTo))
             .build()
@@ -78,9 +76,7 @@ class ModelVerifier {
             .build(),
         ActionTemplate.<Jar5, Jar3>builder()
             .actionPerformerDefinition(JAR5)
-            .actionType(new TransitiveActionType(Actor.builder()
-                .id("jar3")
-                .build()))
+            .actionType(new TransitiveActionType(JAR3))
             .actionLabel("addTo")
             .action(Jar5::addTo)
             .build()
