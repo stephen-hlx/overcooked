@@ -21,12 +21,12 @@ import overcooked.core.actor.LocalState;
  * </pre>
  */
 public class StateMachineTestSetup {
-  public static final String ACTOR_1_METHOD = "actor1.method1";
-  public static final String ACTOR_2_METHOD = "actor2.method1";
-  public static final String ACTOR_2_METHOD_2 = "actor2.method2";
-  public static final String ACTOR_3_METHOD = "actor3.method1";
-  public static final String ACTOR_3_METHOD_2 = "actor3.method2";
-  public static final String ACTOR_4_METHOD = "actor4.method1";
+  public static final String ACTOR_1_METHOD = "actor1method1";
+  public static final String ACTOR_2_METHOD = "actor2method1";
+  public static final String ACTOR_2_METHOD_2 = "actor2method2";
+  public static final String ACTOR_3_METHOD = "actor3method1";
+  public static final String ACTOR_3_METHOD_2 = "actor3method2";
+  public static final String ACTOR_4_METHOD = "actor4method1";
   public static final ActorId ACTOR_ID_1 = ActorId.builder()
       .id("actor1")
       .build();
