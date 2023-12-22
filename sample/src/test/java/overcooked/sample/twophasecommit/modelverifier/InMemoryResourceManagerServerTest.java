@@ -1,4 +1,4 @@
-package overcooked.sample.twophasecommit.model;
+package overcooked.sample.twophasecommit.modelverifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -12,42 +12,13 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
+import overcooked.sample.twophasecommit.model.ResourceManagerServer;
+import overcooked.sample.twophasecommit.model.ResourceManagerState;
+import overcooked.sample.twophasecommit.model.TransactionManagerClient;
 
-class SimpleResourceManagerServerTest {
+class InMemoryResourceManagerServerTest {
 
   private static final String RESOURCE_MANAGER_ID = "0";
-
-  static Object[][] passive_action_cases() {
-    return new Object[][] {
-        // current,   action,        success, expected
-        {  WORKING,   Action.ABORT,  true,    ABORTED  },
-        {  WORKING,   Action.COMMIT, false,   WORKING  },
-        {  PREPARED,  Action.ABORT,  true,    ABORTED  },
-        {  PREPARED,  Action.COMMIT, true,    COMMITTED},
-        {  COMMITTED, Action.ABORT,  false,   COMMITTED},
-        {  COMMITTED, Action.COMMIT, true,    COMMITTED},
-        {  ABORTED,   Action.ABORT,  true,    ABORTED  },
-        {  ABORTED,   Action.COMMIT, false,   ABORTED  },
-    };
-  }
-
-  @ParameterizedTest
-  @MethodSource("passive_action_cases")
-  void passive_action_works(ResourceManagerState currentState,
-                            Action action,
-                            boolean success,
-                            ResourceManagerState expectedState) {
-    SimpleResourceManagerServer resourceManagerServer =
-        new SimpleResourceManagerServer(RESOURCE_MANAGER_ID, currentState);
-
-    if (success) {
-      doAction(resourceManagerServer, action);
-    } else {
-      assertThatThrownBy(() -> doAction(resourceManagerServer, action))
-          .isInstanceOf(IllegalStateException.class);
-    }
-    assertThat(resourceManagerServer.getState()).isEqualTo(expectedState);
-  }
 
   static Object[][] proactive_action_cases() {
     return new Object[][] {
@@ -69,8 +40,8 @@ class SimpleResourceManagerServerTest {
                               Action action,
                               boolean success,
                               ResourceManagerState expectedState) {
-    SimpleResourceManagerServer resourceManager =
-        new SimpleResourceManagerServer(RESOURCE_MANAGER_ID, currentState);
+    InMemoryResourceManagerServer resourceManager =
+        new InMemoryResourceManagerServer(RESOURCE_MANAGER_ID, new RefCell<>(currentState));
 
     TransactionManagerClient transactionManagerClient = mock(TransactionManagerClient.class);
 
@@ -80,15 +51,7 @@ class SimpleResourceManagerServerTest {
       assertThatThrownBy(() -> doAction(resourceManager, action, transactionManagerClient))
           .isInstanceOf(IllegalStateException.class);
     }
-    assertThat(resourceManager.getState()).isEqualTo(expectedState);
-  }
-
-  private void doAction(ResourceManagerServer resourceManagerServer, Action action) {
-    switch (action) {
-      case COMMIT -> resourceManagerServer.commit();
-      case ABORT -> resourceManagerServer.abort();
-      default -> throw new RuntimeException("Unexpected new state: {}" + action);
-    }
+    assertThat(resourceManager.getState().getData()).isEqualTo(expectedState);
   }
 
   private void doAction(ResourceManagerServer resourceManagerServer,
@@ -111,7 +74,6 @@ class SimpleResourceManagerServerTest {
       justification = "this is just a sample")
   private enum Action {
     ABORT,
-    COMMIT,
     PREPARE,
   }
 }

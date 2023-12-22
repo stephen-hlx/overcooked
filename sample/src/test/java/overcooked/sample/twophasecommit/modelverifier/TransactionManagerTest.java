@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static overcooked.sample.twophasecommit.model.ResourceManagerState.ABORTED;
 import static overcooked.sample.twophasecommit.model.ResourceManagerState.COMMITTED;
@@ -18,7 +19,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import overcooked.sample.twophasecommit.model.ResourceManagerClient;
 import overcooked.sample.twophasecommit.model.ResourceManagerState;
-import overcooked.sample.twophasecommit.model.SimpleTransactionManagerServer;
 
 class TransactionManagerTest {
 
@@ -78,10 +78,9 @@ class TransactionManagerTest {
     Map<String, ResourceManagerState> resourceManagerStates = new HashMap<>();
     resourceManagerStates.put(RESOURCE_MANAGER_0, rm0State);
     resourceManagerStates.put(RESOURCE_MANAGER_1, rm1State);
-    SimpleTransactionManagerServer transactionManagerServer =
-        new SimpleTransactionManagerServer(resourceManagerStates);
+    RefCell<Map<String, ResourceManagerState>> stateRefCell = new RefCell<>(resourceManagerStates);
 
-    TransactionManager transactionManager = new TransactionManager(transactionManagerServer);
+    TransactionManager transactionManager = new TransactionManager(stateRefCell);
 
     if (success) {
       doAction(transactionManager, action);
@@ -89,8 +88,7 @@ class TransactionManagerTest {
       assertThatThrownBy(() -> doAction(transactionManager, action))
           .isInstanceOf(IllegalStateException.class);
     }
-    assertThat(transactionManagerServer.getResourceManagerStates())
-        .isEqualTo(ImmutableMap.of(
+    assertThat(stateRefCell.getData()).isEqualTo(ImmutableMap.of(
             RESOURCE_MANAGER_0, expectedRm0State,
             RESOURCE_MANAGER_1, expectedRm1State));
   }
@@ -149,9 +147,9 @@ class TransactionManagerTest {
     Map<String, ResourceManagerState> resourceManagerStates = new HashMap<>();
     resourceManagerStates.put(RESOURCE_MANAGER_0, rm0State);
     resourceManagerStates.put(RESOURCE_MANAGER_1, rm1State);
+    RefCell<Map<String, ResourceManagerState>> stateRefCell = new RefCell<>(resourceManagerStates);
 
-    TransactionManager transactionManager = new TransactionManager(
-        new SimpleTransactionManagerServer(resourceManagerStates));
+    TransactionManager transactionManager = new TransactionManager(stateRefCell);
 
     ResourceManagerClient rm1 = mock(ResourceManagerClient.class);
     when(rm1.getId()).thenReturn(RESOURCE_MANAGER_1);
@@ -161,10 +159,12 @@ class TransactionManagerTest {
         case COMMIT -> {
           transactionManager.commit(rm1);
           verify(rm1).commit();
+          verify(rm1).getId();
         }
         case ABORT -> {
           transactionManager.abort(rm1);
           verify(rm1).abort();
+          verify(rm1).getId();
         }
         default -> throw new RuntimeException("Unexpected action: {}" + action);
       }
@@ -177,10 +177,10 @@ class TransactionManagerTest {
         }
       }).isInstanceOf(IllegalStateException.class);
     }
-    assertThat(new SimpleTransactionManagerServer(resourceManagerStates).getResourceManagerStates())
-        .isEqualTo(ImmutableMap.of(
-            RESOURCE_MANAGER_0, expectedRm0State,
-            RESOURCE_MANAGER_1, expectedRm1State));
+    assertThat(stateRefCell.getData()).isEqualTo(ImmutableMap.of(
+        RESOURCE_MANAGER_0, expectedRm0State,
+        RESOURCE_MANAGER_1, expectedRm1State));
+    verifyNoMoreInteractions(rm1);
   }
 
   private void doAction(TransactionManager transactionManager, Action action) {

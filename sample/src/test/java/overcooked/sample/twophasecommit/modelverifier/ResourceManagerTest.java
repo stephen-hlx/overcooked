@@ -13,7 +13,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import overcooked.sample.twophasecommit.model.ResourceManagerState;
-import overcooked.sample.twophasecommit.model.SimpleResourceManagerServer;
 
 class ResourceManagerTest {
   private static final String RESOURCE_MANAGER_ID = "0";
@@ -38,11 +37,8 @@ class ResourceManagerTest {
                             Action action,
                             boolean success,
                             ResourceManagerState expectedState) {
-    SimpleResourceManagerServer resourceManagerServer =
-        new SimpleResourceManagerServer(RESOURCE_MANAGER_ID, currentState);
-
-    ResourceManager resourceManager =
-        new ResourceManager(resourceManagerServer);
+    RefCell<ResourceManagerState> stateRefCell = new RefCell<>(currentState);
+    ResourceManager resourceManager = new ResourceManager(RESOURCE_MANAGER_ID, stateRefCell);
 
     if (success) {
       doAction(resourceManager, action);
@@ -50,7 +46,7 @@ class ResourceManagerTest {
       assertThatThrownBy(() -> doAction(resourceManager, action))
           .isInstanceOf(IllegalStateException.class);
     }
-    assertThat(resourceManagerServer.getState()).isEqualTo(expectedState);
+    assertThat(stateRefCell.getData()).isEqualTo(expectedState);
   }
 
   static Object[][] proactive_action_cases() {
@@ -73,11 +69,8 @@ class ResourceManagerTest {
                               Action action,
                               boolean success,
                               ResourceManagerState expectedState) {
-    SimpleResourceManagerServer resourceManagerServer =
-        new SimpleResourceManagerServer(RESOURCE_MANAGER_ID, currentState);
-
-    ResourceManager resourceManager =
-        new ResourceManager(resourceManagerServer);
+    RefCell<ResourceManagerState> stateRefCell = new RefCell<>(currentState);
+    ResourceManager resourceManager = new ResourceManager(RESOURCE_MANAGER_ID, stateRefCell);
 
     TransactionManager transactionManager = mock(TransactionManager.class);
 
@@ -87,7 +80,7 @@ class ResourceManagerTest {
       assertThatThrownBy(() -> doAction(resourceManager, action, transactionManager))
           .isInstanceOf(IllegalStateException.class);
     }
-    assertThat(resourceManagerServer.getState()).isEqualTo(expectedState);
+    assertThat(stateRefCell.getData()).isEqualTo(expectedState);
   }
 
   private void doAction(ResourceManager resourceManager, Action action) {

@@ -4,7 +4,7 @@ package overcooked.sample.twophasecommit.model;
  * A resource manager that can be in several states defined by {@link ResourceManagerState},
  * representing a real entity that can coordinate in a two phase commit scenario.
  */
-public interface ResourceManagerServer extends ResourceManagerClient {
+public interface ResourceManagerServer {
 
   /**
    * Prepares for committing the transaction.
