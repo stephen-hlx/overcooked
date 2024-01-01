@@ -40,8 +40,9 @@ class InMemoryResourceManagerServerTest {
                               Action action,
                               boolean success,
                               ResourceManagerState expectedState) {
+    RefCell<ResourceManagerState> stateRefCell = new RefCell<>(currentState);
     InMemoryResourceManagerServer resourceManager =
-        new InMemoryResourceManagerServer(RESOURCE_MANAGER_ID, new RefCell<>(currentState));
+        new InMemoryResourceManagerServer(RESOURCE_MANAGER_ID, stateRefCell);
 
     TransactionManagerClient transactionManagerClient = mock(TransactionManagerClient.class);
 
@@ -51,7 +52,7 @@ class InMemoryResourceManagerServerTest {
       assertThatThrownBy(() -> doAction(resourceManager, action, transactionManagerClient))
           .isInstanceOf(IllegalStateException.class);
     }
-    assertThat(resourceManager.getState().getData()).isEqualTo(expectedState);
+    assertThat(stateRefCell.getData()).isEqualTo(expectedState);
   }
 
   private void doAction(ResourceManagerServer resourceManagerServer,

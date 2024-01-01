@@ -78,8 +78,10 @@ class InMemoryTransactionManagerServerTest {
     Map<String, ResourceManagerState> resourceManagerStates = new HashMap<>();
     resourceManagerStates.put(RESOURCE_MANAGER_0, rm0State);
     resourceManagerStates.put(RESOURCE_MANAGER_1, rm1State);
+    RefCell<Map<String, ResourceManagerState>> resourceManagerStatesRefCell =
+        new RefCell<>(resourceManagerStates);
     InMemoryTransactionManagerServer inMemoryTransactionManagerServer =
-        new InMemoryTransactionManagerServer(new RefCell<>(resourceManagerStates));
+        new InMemoryTransactionManagerServer(resourceManagerStatesRefCell);
 
     ResourceManagerClient rm1 = mock(ResourceManagerClient.class);
     when(rm1.getId()).thenReturn(RESOURCE_MANAGER_1);
@@ -105,7 +107,7 @@ class InMemoryTransactionManagerServerTest {
         }
       }).isInstanceOf(IllegalStateException.class);
     }
-    assertThat(inMemoryTransactionManagerServer.getResourceManagerStates().getData())
+    assertThat(resourceManagerStatesRefCell.getData())
         .isEqualTo(ImmutableMap.of(
             RESOURCE_MANAGER_0, expectedRm0State,
             RESOURCE_MANAGER_1, expectedRm1State

@@ -37,8 +37,9 @@ class InMemoryResourceManagerClientTest {
              Action action,
              boolean success,
              ResourceManagerState expectedState) {
+    RefCell<ResourceManagerState> stateRefCell = new RefCell<>(currentState);
     InMemoryResourceManagerClient resourceManagerClient =
-        new InMemoryResourceManagerClient(RESOURCE_MANAGER_ID, new RefCell<>(currentState));
+        new InMemoryResourceManagerClient(RESOURCE_MANAGER_ID, stateRefCell);
 
     if (success) {
       doAction(resourceManagerClient, action);
@@ -46,7 +47,7 @@ class InMemoryResourceManagerClientTest {
       assertThatThrownBy(() -> doAction(resourceManagerClient, action))
           .isInstanceOf(IllegalStateException.class);
     }
-    assertThat(resourceManagerClient.getState().getData()).isEqualTo(expectedState);
+    assertThat(stateRefCell.getData()).isEqualTo(expectedState);
   }
 
   private void doAction(ResourceManagerClient resourceManagerClient, Action action) {

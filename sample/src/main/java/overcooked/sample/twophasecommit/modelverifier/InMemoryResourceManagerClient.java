@@ -13,7 +13,6 @@ import overcooked.sample.twophasecommit.model.ResourceManagerState;
 class InMemoryResourceManagerClient implements ResourceManagerClient {
   @Getter
   private final String id;
-  @Getter
   private final RefCell<ResourceManagerState> state;
 
   @Override

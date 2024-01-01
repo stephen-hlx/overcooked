@@ -74,8 +74,10 @@ class InMemoryTransactionManagerClientTest {
     Map<String, ResourceManagerState> resourceManagerStates = new HashMap<>();
     resourceManagerStates.put(RESOURCE_MANAGER_0, rm0State);
     resourceManagerStates.put(RESOURCE_MANAGER_1, rm1State);
+    RefCell<Map<String, ResourceManagerState>> resourceManagerStatesRefCell =
+        new RefCell<>(resourceManagerStates);
     InMemoryTransactionManagerClient inMemoryTransactionManagerClient =
-        new InMemoryTransactionManagerClient(new RefCell<>(resourceManagerStates));
+        new InMemoryTransactionManagerClient(resourceManagerStatesRefCell);
 
     if (success) {
       doAction(inMemoryTransactionManagerClient, action);
@@ -83,7 +85,7 @@ class InMemoryTransactionManagerClientTest {
       assertThatThrownBy(() -> doAction(inMemoryTransactionManagerClient, action))
           .isInstanceOf(IllegalStateException.class);
     }
-    assertThat(inMemoryTransactionManagerClient.getResourceManagerStates().getData())
+    assertThat(resourceManagerStatesRefCell.getData())
         .isEqualTo(ImmutableMap.of(
             RESOURCE_MANAGER_0, expectedRm0State,
             RESOURCE_MANAGER_1, expectedRm1State));

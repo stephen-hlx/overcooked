@@ -8,7 +8,6 @@ import com.google.common.base.Preconditions;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Map;
 import java.util.Set;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import overcooked.sample.twophasecommit.model.ResourceManagerState;
 import overcooked.sample.twophasecommit.model.TransactionManagerClient;
@@ -22,7 +21,6 @@ import overcooked.sample.twophasecommit.model.TransactionManagerServer;
 @SuppressFBWarnings(value = { "EI_EXPOSE_REP" },
     justification = "this is just an example, making it immutable is over engineering")
 public class InMemoryTransactionManagerClient implements TransactionManagerClient {
-  @Getter
   private final RefCell<Map<String, ResourceManagerState>> resourceManagerStates;
 
   @Override

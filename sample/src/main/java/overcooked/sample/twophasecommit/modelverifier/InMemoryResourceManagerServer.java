@@ -8,7 +8,6 @@ import static overcooked.sample.twophasecommit.model.ResourceManagerState.PREPAR
 import com.google.common.base.Preconditions;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import overcooked.sample.twophasecommit.model.ResourceManagerServer;
 import overcooked.sample.twophasecommit.model.ResourceManagerState;
 import overcooked.sample.twophasecommit.model.TransactionManagerClient;
@@ -19,9 +18,7 @@ import overcooked.sample.twophasecommit.model.TransactionManagerClient;
  */
 @AllArgsConstructor
 public class InMemoryResourceManagerServer implements ResourceManagerServer {
-  @Getter
   private final String id;
-  @Getter
   @SuppressFBWarnings(value = { "EI_EXPOSE_REP" },
       justification = "this is for model verification only")
   private final RefCell<ResourceManagerState> state;
