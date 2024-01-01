@@ -127,44 +127,28 @@ class ModelVerifier {
   }
 
   private static Set<ActionTemplate<?, ?>> transactionManagerActionTemplates() {
+    return ImmutableSet.<ActionTemplate<?, ?>>builder()
+        .addAll(transactionManagerActions(RM_0))
+        .addAll(transactionManagerActions(RM_1))
+        .addAll(transactionManagerActions(RM_2))
+        .build();
+  }
+
+  private static Set<ActionTemplate<TransactionManager, ResourceManager>> transactionManagerActions(
+      ActorId resourceManagerId) {
     return ImmutableSet.of(
         ActionTemplate.<TransactionManager, ResourceManager>builder()
             .actionPerformerId(TM)
-            .actionType(new TransitiveActionType(RM_0))
+            .actionType(new TransitiveActionType(resourceManagerId))
             .actionLabel("abort")
             .action(TransactionManager::abort)
             .build(),
         ActionTemplate.<TransactionManager, ResourceManager>builder()
             .actionPerformerId(TM)
-            .actionType(new TransitiveActionType(RM_0))
+            .actionType(new TransitiveActionType(resourceManagerId))
             .actionLabel("commit")
             .action(TransactionManager::commit)
-            .build(),
-        ActionTemplate.<TransactionManager, ResourceManager>builder()
-            .actionPerformerId(TM)
-            .actionType(new TransitiveActionType(RM_1))
-            .actionLabel("abort")
-            .action(TransactionManager::abort)
-            .build(),
-        ActionTemplate.<TransactionManager, ResourceManager>builder()
-            .actionPerformerId(TM)
-            .actionType(new TransitiveActionType(RM_1))
-            .actionLabel("commit")
-            .action(TransactionManager::commit)
-            .build(),
-        ActionTemplate.<TransactionManager, ResourceManager>builder()
-            .actionPerformerId(TM)
-            .actionType(new TransitiveActionType(RM_2))
-            .actionLabel("abort")
-            .action(TransactionManager::abort)
-            .build(),
-        ActionTemplate.<TransactionManager, ResourceManager>builder()
-            .actionPerformerId(TM)
-            .actionType(new TransitiveActionType(RM_2))
-            .actionLabel("commit")
-            .action(TransactionManager::commit)
-            .build()
-    );
+            .build());
   }
 
   private static ImmutableSet<ActionTemplate<?, ?>> resourceManagerActionTemplates(
