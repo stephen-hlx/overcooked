@@ -7,7 +7,7 @@ import overcooked.sample.diehard.model.Jar5;
 /**
  * A {@link ActorFactory} implementation for {@link Jar5}.
  */
-class Jar5Factory implements ActorFactory<Jar5> {
+public class Jar5Factory implements ActorFactory<Jar5> {
   @Override
   public Jar5 restoreFromLocalState(LocalState localState) {
     Jar5State jar5State = (Jar5State) localState;

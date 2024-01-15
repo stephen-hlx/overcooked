@@ -4,7 +4,10 @@ import overcooked.core.GlobalState;
 import overcooked.core.GlobalStateVerifier;
 import overcooked.core.actor.LocalState;
 
-class FourLiterVerifier implements GlobalStateVerifier {
+/**
+ * The {@link GlobalStateVerifier} of the Jar sample.
+ */
+public class FourLiterVerifier implements GlobalStateVerifier {
   @Override
   public boolean validate(GlobalState globalState) {
     for (LocalState localState : globalState.getCopyOfLocalStates().values()) {

@@ -1,11 +1,13 @@
-package overcooked.sample.diehard.modelverifier;
+package overcooked;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.io.File;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Test;
+import overcooked.analysis.ExecutionSummary;
 import overcooked.analysis.JgraphtAnalyser;
 import overcooked.analysis.Report;
 import overcooked.analysis.ReportGenerator;
@@ -21,13 +23,17 @@ import overcooked.core.actor.ActorId;
 import overcooked.core.actor.ActorStateTransformerConfig;
 import overcooked.sample.diehard.model.Jar3;
 import overcooked.sample.diehard.model.Jar5;
+import overcooked.sample.diehard.modelverifier.FourLiterVerifier;
+import overcooked.sample.diehard.modelverifier.Jar3Factory;
+import overcooked.sample.diehard.modelverifier.Jar3LocalStateExtractor;
+import overcooked.sample.diehard.modelverifier.Jar3State;
+import overcooked.sample.diehard.modelverifier.Jar5Factory;
+import overcooked.sample.diehard.modelverifier.Jar5LocalStateExtractor;
+import overcooked.sample.diehard.modelverifier.Jar5State;
 import overcooked.visual.DotGraphExporterFactory;
 
-/**
- * The ModelVerifier of example diehard.
- */
 @Slf4j
-class ModelVerifier {
+class ModelVerificationTest {
   private static final ActorId JAR3 = ActorId.builder()
       .id("jar3")
       .build();
@@ -35,7 +41,8 @@ class ModelVerifier {
       .id("jar5")
       .build();
 
-  Report run() {
+  @Test
+  void sample_verification_works() {
     GlobalState initialState = new GlobalState(ImmutableMap.of(
         JAR3, new Jar3State(0),
         JAR5, new Jar5State(0)));
@@ -49,14 +56,20 @@ class ModelVerifier {
 
     stateMachine.run(initialState, actorActionConfig, stateMachineExecutionContext);
 
-    String outputDirName = "/tmp/diehard/" + System.currentTimeMillis();
-    mkdir(outputDirName);
-    ReportGenerator reportGenerator = ReportGenerator.builder()
+    Report report = ReportGenerator.builder()
         .analyser(new JgraphtAnalyser())
         .dotGraphExporter(DotGraphExporterFactory.create())
-        .outputDirName(outputDirName)
-        .build();
-    return reportGenerator.generate(stateMachineExecutionContext.getData());
+        .outputDirName("/tmp")
+        .build()
+        .generate(stateMachineExecutionContext.getData());
+
+    log.info(report.toString());
+    assertThat(report.getExecutionSummary()).isEqualTo(ExecutionSummary.builder()
+        .numOfValidationFailingStates(2)
+        .numOfNonSelfTransitions(50)
+        .numOfStates(16)
+        .numOfTransitions(84)
+        .build());
   }
 
   private static ActorStateTransformerConfig createActorStateTransformerConfig() {
@@ -123,11 +136,5 @@ class ModelVerifier {
             .action(Jar5::addTo)
             .build()
     );
-  }
-
-  @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED")
-  private static void mkdir(String dirName) {
-    log.info("Making dir " + dirName);
-    new File(dirName).mkdirs();
   }
 }

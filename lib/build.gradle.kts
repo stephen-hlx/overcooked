@@ -37,5 +37,7 @@ dependencies {
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-jdk14
     testImplementation("org.slf4j:slf4j-jdk14:2.0.9")
 
+    testImplementation(project(":sample"))
+
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
