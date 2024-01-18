@@ -1,15 +1,15 @@
 package overcooked.sample.diehard.modelverifier;
 
 import overcooked.core.GlobalState;
-import overcooked.core.GlobalStateVerifier;
+import overcooked.core.InvariantVerifier;
 import overcooked.core.actor.LocalState;
 
 /**
- * The {@link GlobalStateVerifier} of the Jar sample.
+ * The {@link InvariantVerifier} of the Jar sample.
  */
-public class FourLiterVerifier implements GlobalStateVerifier {
+public class FourLiterVerifier implements InvariantVerifier {
   @Override
-  public boolean validate(GlobalState globalState) {
+  public boolean verify(GlobalState globalState) {
     for (LocalState localState : globalState.getCopyOfLocalStates().values()) {
       if (localState instanceof Jar5State) {
         if (((Jar5State) localState).getOccupancy() == 4) {

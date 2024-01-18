@@ -10,12 +10,12 @@ public class StateMachineFactory {
   /**
    * Creates a {@link StateMachine} object.
    *
-   * @param globalStateVerifier the {@link GlobalStateVerifier} object
+   * @param invariantVerifier the {@link InvariantVerifier} object
    * @param actorStateTransformerConfig the config providing the transformer implementation between
    *                                    actor and {@link overcooked.core.actor.LocalState}.
    * @return a {@link StateMachine} object
    */
-  public static StateMachine create(GlobalStateVerifier globalStateVerifier,
+  public static StateMachine create(InvariantVerifier invariantVerifier,
                                     ActorStateTransformerConfig actorStateTransformerConfig) {
     return StateMachine.builder()
         .stateMachineDriver(StateMachineDriver.builder()
@@ -27,7 +27,7 @@ public class StateMachineFactory {
                 ActionExecutorFactory.createTransitiveActionTemplateExecutor(
                     actorStateTransformerConfig))
             .build())
-        .globalStateVerifier(globalStateVerifier)
+        .invariantVerifier(invariantVerifier)
         .build();
   }
 }

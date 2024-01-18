@@ -9,15 +9,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import overcooked.core.GlobalState;
-import overcooked.core.GlobalStateVerifier;
+import overcooked.core.InvariantVerifier;
 import overcooked.sample.twophasecommit.model.ResourceManagerState;
 
 @RequiredArgsConstructor
-class TransactionStateVerifier implements GlobalStateVerifier {
+class TransactionStateVerifier implements InvariantVerifier {
   private final String transactionManagerId;
 
   @Override
-  public boolean validate(GlobalState globalState) {
+  public boolean verify(GlobalState globalState) {
     return verifyResourceManagerState(getResourceManagerStatesFromTransactionManager(globalState))
         && verifyResourceManagerState(getResourceManagerStatesFromResourceManagers(globalState));
   }

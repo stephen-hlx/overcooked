@@ -13,7 +13,7 @@ import lombok.Builder;
 @Builder
 public class StateMachine {
   private final StateMachineDriver stateMachineDriver;
-  private final GlobalStateVerifier globalStateVerifier;
+  private final InvariantVerifier invariantVerifier;
 
   public void run(GlobalState initialState,
                   ActorActionConfig actorActionConfig,
@@ -33,7 +33,7 @@ public class StateMachine {
       if (visited.contains(current)) {
         continue;
       }
-      if (!globalStateVerifier.validate(current)) {
+      if (!invariantVerifier.verify(current)) {
         stateMachineExecutionContext.addValidationFailingNode(current);
         visited.add(current);
         continue;
