@@ -1,0 +1,3 @@
+digraph G {
+    S_85 [ label="RM0(ABORTED), RM1(COMMITTED), TM({RM0=ABORTED, RM1=COMMITTED})" ];
+}

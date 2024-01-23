@@ -1,0 +1,5 @@
+digraph G {
+    S_85 [ label="RM0(WORKING), RM1(WORKING), TM({RM0=WORKING, RM1=WORKING})" ];
+    S_90 [ label="RM0(WORKING), RM1(ABORTED), TM({RM0=WORKING, RM1=ABORTED})" ];
+    S_85 -> S_90 [ label="RM1.selfAbort(TM)" ];
+}

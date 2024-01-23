@@ -1,0 +1,6 @@
+digraph G {
+    S_0 [ label="TransactionManager" ];
+    S_1 [ label="ResourceManager" ];
+    S_0 -> S_1 [ label="commit, abort" ];
+    S_1 -> S_0 [ label="prepare, selfAbort" ];
+}
