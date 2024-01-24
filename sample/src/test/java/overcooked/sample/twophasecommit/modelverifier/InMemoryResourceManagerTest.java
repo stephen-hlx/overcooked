@@ -12,11 +12,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
-import overcooked.sample.twophasecommit.model.ResourceManagerServer;
+import overcooked.sample.twophasecommit.model.ResourceManager;
 import overcooked.sample.twophasecommit.model.ResourceManagerState;
 import overcooked.sample.twophasecommit.model.TransactionManagerClient;
 
-class InMemoryResourceManagerServerTest {
+class InMemoryResourceManagerTest {
 
   private static final String RESOURCE_MANAGER_ID = "0";
 
@@ -41,8 +41,8 @@ class InMemoryResourceManagerServerTest {
                               boolean success,
                               ResourceManagerState expectedState) {
     RefCell<ResourceManagerState> stateRefCell = new RefCell<>(currentState);
-    InMemoryResourceManagerServer resourceManager =
-        new InMemoryResourceManagerServer(RESOURCE_MANAGER_ID, stateRefCell);
+    InMemoryResourceManager resourceManager =
+        new InMemoryResourceManager(RESOURCE_MANAGER_ID, stateRefCell);
 
     TransactionManagerClient transactionManagerClient = mock(TransactionManagerClient.class);
 
@@ -55,16 +55,16 @@ class InMemoryResourceManagerServerTest {
     assertThat(stateRefCell.getData()).isEqualTo(expectedState);
   }
 
-  private void doAction(ResourceManagerServer resourceManagerServer,
+  private void doAction(ResourceManager resourceManager,
                         Action action,
                         TransactionManagerClient transactionManagerClient) {
     switch (action) {
       case PREPARE -> {
-        resourceManagerServer.prepare(transactionManagerClient);
+        resourceManager.prepare(transactionManagerClient);
         Mockito.verify(transactionManagerClient).prepare(RESOURCE_MANAGER_ID);
       }
       case ABORT -> {
-        resourceManagerServer.abort(transactionManagerClient);
+        resourceManager.abort(transactionManagerClient);
         Mockito.verify(transactionManagerClient).abort(RESOURCE_MANAGER_ID);
       }
       default -> throw new RuntimeException("Unexpected new state: {}" + action);

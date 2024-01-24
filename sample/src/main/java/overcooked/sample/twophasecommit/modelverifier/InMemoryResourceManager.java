@@ -8,7 +8,7 @@ import static overcooked.sample.twophasecommit.model.ResourceManagerState.PREPAR
 import com.google.common.base.Preconditions;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AllArgsConstructor;
-import overcooked.sample.twophasecommit.model.ResourceManagerServer;
+import overcooked.sample.twophasecommit.model.ResourceManager;
 import overcooked.sample.twophasecommit.model.ResourceManagerState;
 import overcooked.sample.twophasecommit.model.TransactionManagerClient;
 
@@ -17,7 +17,7 @@ import overcooked.sample.twophasecommit.model.TransactionManagerClient;
  * representing a real entity that can coordinate in a two phase commit scenario.
  */
 @AllArgsConstructor
-public class InMemoryResourceManagerServer implements ResourceManagerServer {
+public class InMemoryResourceManager implements ResourceManager {
   private final String id;
   @SuppressFBWarnings(value = { "EI_EXPOSE_REP" },
       justification = "this is for model verification only")

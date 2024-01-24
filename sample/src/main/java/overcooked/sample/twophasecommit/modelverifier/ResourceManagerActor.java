@@ -2,21 +2,19 @@ package overcooked.sample.twophasecommit.modelverifier;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
+import overcooked.sample.twophasecommit.model.ResourceManager;
 import overcooked.sample.twophasecommit.model.ResourceManagerClient;
-import overcooked.sample.twophasecommit.model.ResourceManagerServer;
 import overcooked.sample.twophasecommit.model.ResourceManagerState;
 import overcooked.sample.twophasecommit.model.TransactionManagerClient;
 
 /**
- * The actor that represents both {@link ResourceManagerClient} and {@link ResourceManagerServer}
+ * The actor that represents both {@link ResourceManagerClient} and {@link ResourceManager}
  * for model checking.
  */
-@SuppressFBWarnings(value = "PI_DO_NOT_REUSE_PUBLIC_IDENTIFIERS_CLASS_NAMES",
-    justification = "this is just a sample")
-public class ResourceManager implements ResourceManagerClient, ResourceManagerServer {
+public class ResourceManagerActor implements ResourceManagerClient, ResourceManager {
   @Getter
   private final String id;
-  private final ResourceManagerServer resourceManagerServer;
+  private final ResourceManager resourceManager;
   private final ResourceManagerClient resourceManagerClient;
   @Getter
   @SuppressFBWarnings(value = { "EI_EXPOSE_REP" },
@@ -26,14 +24,14 @@ public class ResourceManager implements ResourceManagerClient, ResourceManagerSe
   /**
    * Constructor.
    *
-   * @param id the ID of the {@link ResourceManager}
-   * @param state the state of the {@link ResourceManager}
+   * @param id the ID of the {@link ResourceManagerActor}
+   * @param state the state of the {@link ResourceManagerActor}
    */
-  public ResourceManager(String id, RefCell<ResourceManagerState> state) {
+  public ResourceManagerActor(String id, RefCell<ResourceManagerState> state) {
     this.id = id;
     this.state = state;
     this.resourceManagerClient = new InMemoryResourceManagerClient(id, state);
-    this.resourceManagerServer = new InMemoryResourceManagerServer(id, state);
+    this.resourceManager = new InMemoryResourceManager(id, state);
   }
 
   @Override
@@ -48,11 +46,11 @@ public class ResourceManager implements ResourceManagerClient, ResourceManagerSe
 
   @Override
   public void abort(TransactionManagerClient transactionManagerClient) {
-    resourceManagerServer.abort(transactionManagerClient);
+    resourceManager.abort(transactionManagerClient);
   }
 
   @Override
   public void prepare(TransactionManagerClient transactionManagerClient) {
-    resourceManagerServer.prepare(transactionManagerClient);
+    resourceManager.prepare(transactionManagerClient);
   }
 }

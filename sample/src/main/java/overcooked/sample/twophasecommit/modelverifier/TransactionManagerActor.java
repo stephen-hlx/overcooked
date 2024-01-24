@@ -5,19 +5,19 @@ import java.util.Map;
 import lombok.Getter;
 import overcooked.sample.twophasecommit.model.ResourceManagerClient;
 import overcooked.sample.twophasecommit.model.ResourceManagerState;
+import overcooked.sample.twophasecommit.model.TransactionManager;
 import overcooked.sample.twophasecommit.model.TransactionManagerClient;
-import overcooked.sample.twophasecommit.model.TransactionManagerServer;
 
 /**
  * The actor that represents both the {@link TransactionManagerClient} and
- * {@link TransactionManagerServer} for model checking.
+ * {@link TransactionManager} for model checking.
  */
-public class TransactionManager implements TransactionManagerClient, TransactionManagerServer {
+public class TransactionManagerActor implements TransactionManagerClient, TransactionManager {
   @Getter
   @SuppressFBWarnings(value = { "EI_EXPOSE_REP" },
       justification = "this is just an example, making it immutable is over engineering")
   private final RefCell<Map<String, ResourceManagerState>> states;
-  private final TransactionManagerServer transactionManagerServer;
+  private final TransactionManager transactionManager;
   private final TransactionManagerClient transactionManagerClient;
 
   /**
@@ -25,10 +25,10 @@ public class TransactionManager implements TransactionManagerClient, Transaction
    *
    * @param states the {@link RefCell} object that containing the {@link ResourceManagerState}s
    */
-  public TransactionManager(RefCell<Map<String, ResourceManagerState>> states) {
+  public TransactionManagerActor(RefCell<Map<String, ResourceManagerState>> states) {
     this.states = states;
     this.transactionManagerClient = new InMemoryTransactionManagerClient(states);
-    this.transactionManagerServer = new InMemoryTransactionManagerServer(states);
+    this.transactionManager = new InMemoryTransactionManager(states);
   }
 
   @Override
@@ -43,11 +43,11 @@ public class TransactionManager implements TransactionManagerClient, Transaction
 
   @Override
   public void abort(ResourceManagerClient resourceManagerClient) {
-    transactionManagerServer.abort(resourceManagerClient);
+    transactionManager.abort(resourceManagerClient);
   }
 
   @Override
   public void commit(ResourceManagerClient resourceManagerClient) {
-    transactionManagerServer.commit(resourceManagerClient);
+    transactionManager.commit(resourceManagerClient);
   }
 }

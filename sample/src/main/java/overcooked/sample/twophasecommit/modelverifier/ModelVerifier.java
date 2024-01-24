@@ -108,8 +108,8 @@ class ModelVerifier {
 
   private static ActorStateTransformerConfig actorStateTransformerConfig() {
     ResourceManagerFactory resourceManagerFactory = new ResourceManagerFactory();
-    ResourceManagerLocalStateExtractor resourceManagerLocalStateExtractor =
-        new ResourceManagerLocalStateExtractor();
+    ResourceManagerActorLocalStateExtractor resourceManagerActorLocalStateExtractor =
+        new ResourceManagerActorLocalStateExtractor();
     return ActorStateTransformerConfig.builder()
         .actorFactories(ImmutableMap.of(
             TM, new TransactionManagerFactory(),
@@ -118,10 +118,10 @@ class ModelVerifier {
             RM_2, resourceManagerFactory
         ))
         .localStateExtractors(ImmutableMap.of(
-            TM, new TransactionManagerLocalStateExtractor(),
-            RM_0, resourceManagerLocalStateExtractor,
-            RM_1, resourceManagerLocalStateExtractor,
-            RM_2, resourceManagerLocalStateExtractor
+            TM, new TransactionManagerActorLocalStateExtractor(),
+            RM_0, resourceManagerActorLocalStateExtractor,
+            RM_1, resourceManagerActorLocalStateExtractor,
+            RM_2, resourceManagerActorLocalStateExtractor
         ))
         .build();
   }
@@ -134,37 +134,38 @@ class ModelVerifier {
         .build();
   }
 
-  private static Set<ActionTemplate<TransactionManager, ResourceManager>> transactionManagerActions(
-      ActorId resourceManagerId) {
+  private static Set<ActionTemplate<TransactionManagerActor, ResourceManagerActor>>
+      transactionManagerActions(
+          ActorId resourceManagerId) {
     return ImmutableSet.of(
-        ActionTemplate.<TransactionManager, ResourceManager>builder()
+        ActionTemplate.<TransactionManagerActor, ResourceManagerActor>builder()
             .actionPerformerId(TM)
             .actionType(new TransitiveActionType(resourceManagerId))
             .actionLabel("abort")
-            .action(TransactionManager::abort)
+            .action(TransactionManagerActor::abort)
             .build(),
-        ActionTemplate.<TransactionManager, ResourceManager>builder()
+        ActionTemplate.<TransactionManagerActor, ResourceManagerActor>builder()
             .actionPerformerId(TM)
             .actionType(new TransitiveActionType(resourceManagerId))
             .actionLabel("commit")
-            .action(TransactionManager::commit)
+            .action(TransactionManagerActor::commit)
             .build());
   }
 
   private static ImmutableSet<ActionTemplate<?, ?>> resourceManagerActionTemplates(
       ActorId actionPerformerId) {
     return ImmutableSet.of(
-        ActionTemplate.<ResourceManager, TransactionManager>builder()
+        ActionTemplate.<ResourceManagerActor, TransactionManagerActor>builder()
             .actionPerformerId(actionPerformerId)
             .actionType(new TransitiveActionType(TM))
             .actionLabel("abort")
-            .action(ResourceManager::abort)
+            .action(ResourceManagerActor::abort)
             .build(),
-        ActionTemplate.<ResourceManager, TransactionManager>builder()
+        ActionTemplate.<ResourceManagerActor, TransactionManagerActor>builder()
             .actionPerformerId(actionPerformerId)
             .actionType(new TransitiveActionType(TM))
             .actionLabel("prepare")
-            .action(ResourceManager::prepare)
+            .action(ResourceManagerActor::prepare)
             .build()
     );
   }

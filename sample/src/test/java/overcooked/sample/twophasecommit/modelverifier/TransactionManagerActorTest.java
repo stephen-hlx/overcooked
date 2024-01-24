@@ -20,7 +20,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import overcooked.sample.twophasecommit.model.ResourceManagerClient;
 import overcooked.sample.twophasecommit.model.ResourceManagerState;
 
-class TransactionManagerTest {
+class TransactionManagerActorTest {
 
   private static final String RESOURCE_MANAGER_0 = "0";
   private static final String RESOURCE_MANAGER_1 = "1";
@@ -80,12 +80,12 @@ class TransactionManagerTest {
     resourceManagerStates.put(RESOURCE_MANAGER_1, rm1State);
     RefCell<Map<String, ResourceManagerState>> stateRefCell = new RefCell<>(resourceManagerStates);
 
-    TransactionManager transactionManager = new TransactionManager(stateRefCell);
+    TransactionManagerActor transactionManagerActor = new TransactionManagerActor(stateRefCell);
 
     if (success) {
-      doAction(transactionManager, action);
+      doAction(transactionManagerActor, action);
     } else {
-      assertThatThrownBy(() -> doAction(transactionManager, action))
+      assertThatThrownBy(() -> doAction(transactionManagerActor, action))
           .isInstanceOf(IllegalStateException.class);
     }
     assertThat(stateRefCell.getData()).isEqualTo(ImmutableMap.of(
@@ -149,7 +149,7 @@ class TransactionManagerTest {
     resourceManagerStates.put(RESOURCE_MANAGER_1, rm1State);
     RefCell<Map<String, ResourceManagerState>> stateRefCell = new RefCell<>(resourceManagerStates);
 
-    TransactionManager transactionManager = new TransactionManager(stateRefCell);
+    TransactionManagerActor transactionManagerActor = new TransactionManagerActor(stateRefCell);
 
     ResourceManagerClient rm1 = mock(ResourceManagerClient.class);
     when(rm1.getId()).thenReturn(RESOURCE_MANAGER_1);
@@ -157,12 +157,12 @@ class TransactionManagerTest {
     if (success) {
       switch (action) {
         case COMMIT -> {
-          transactionManager.commit(rm1);
+          transactionManagerActor.commit(rm1);
           verify(rm1).commit();
           verify(rm1).getId();
         }
         case ABORT -> {
-          transactionManager.abort(rm1);
+          transactionManagerActor.abort(rm1);
           verify(rm1).abort();
           verify(rm1).getId();
         }
@@ -171,8 +171,8 @@ class TransactionManagerTest {
     } else {
       assertThatThrownBy(() -> {
         switch (action) {
-          case COMMIT -> transactionManager.commit(rm1);
-          case ABORT -> transactionManager.abort(rm1);
+          case COMMIT -> transactionManagerActor.commit(rm1);
+          case ABORT -> transactionManagerActor.abort(rm1);
           default -> throw new RuntimeException("Unexpected action: {}" + action);
         }
       }).isInstanceOf(IllegalStateException.class);
@@ -183,10 +183,10 @@ class TransactionManagerTest {
     verifyNoMoreInteractions(rm1);
   }
 
-  private void doAction(TransactionManager transactionManager, Action action) {
+  private void doAction(TransactionManagerActor transactionManagerActor, Action action) {
     switch (action) {
-      case ABORT -> transactionManager.abort(RESOURCE_MANAGER_1);
-      case PREPARE -> transactionManager.prepare(RESOURCE_MANAGER_1);
+      case ABORT -> transactionManagerActor.abort(RESOURCE_MANAGER_1);
+      case PREPARE -> transactionManagerActor.prepare(RESOURCE_MANAGER_1);
       default -> throw new RuntimeException("Unexpected new state: {}" + action);
     }
   }

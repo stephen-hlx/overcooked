@@ -19,7 +19,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import overcooked.sample.twophasecommit.model.ResourceManagerClient;
 import overcooked.sample.twophasecommit.model.ResourceManagerState;
 
-class InMemoryTransactionManagerServerTest {
+class InMemoryTransactionManagerTest {
 
   private static final String RESOURCE_MANAGER_0 = "0";
   private static final String RESOURCE_MANAGER_1 = "1";
@@ -80,8 +80,8 @@ class InMemoryTransactionManagerServerTest {
     resourceManagerStates.put(RESOURCE_MANAGER_1, rm1State);
     RefCell<Map<String, ResourceManagerState>> resourceManagerStatesRefCell =
         new RefCell<>(resourceManagerStates);
-    InMemoryTransactionManagerServer inMemoryTransactionManagerServer =
-        new InMemoryTransactionManagerServer(resourceManagerStatesRefCell);
+    InMemoryTransactionManager inMemoryTransactionManagerServer =
+        new InMemoryTransactionManager(resourceManagerStatesRefCell);
 
     ResourceManagerClient rm1 = mock(ResourceManagerClient.class);
     when(rm1.getId()).thenReturn(RESOURCE_MANAGER_1);

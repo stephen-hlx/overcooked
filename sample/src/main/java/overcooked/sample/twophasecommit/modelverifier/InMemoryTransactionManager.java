@@ -10,16 +10,16 @@ import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import overcooked.sample.twophasecommit.model.ResourceManagerClient;
 import overcooked.sample.twophasecommit.model.ResourceManagerState;
-import overcooked.sample.twophasecommit.model.TransactionManagerServer;
+import overcooked.sample.twophasecommit.model.TransactionManager;
 
 /**
- * An implementation of {@link TransactionManagerServer} that is purely for model tracking.
+ * An implementation of {@link TransactionManager} that is purely for model tracking.
  * TODO: could this be an actual implementation, and if not, how close can it be?
  */
 @RequiredArgsConstructor
 @SuppressFBWarnings(value = { "EI_EXPOSE_REP" },
     justification = "this is just an example, making it immutable is over engineering")
-public class InMemoryTransactionManagerServer implements TransactionManagerServer {
+public class InMemoryTransactionManager implements TransactionManager {
   private final RefCell<Map<String, ResourceManagerState>> resourceManagerStates;
 
   @Override

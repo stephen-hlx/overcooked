@@ -10,11 +10,11 @@ import java.util.Map;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import overcooked.sample.twophasecommit.model.ResourceManagerState;
+import overcooked.sample.twophasecommit.model.TransactionManager;
 import overcooked.sample.twophasecommit.model.TransactionManagerClient;
-import overcooked.sample.twophasecommit.model.TransactionManagerServer;
 
 /**
- * An implementation of {@link TransactionManagerServer} that is purely for model tracking.
+ * An implementation of {@link TransactionManager} that is purely for model tracking.
  * TODO: could this be an actual implementation, and if not, how close can it be?
  */
 @RequiredArgsConstructor

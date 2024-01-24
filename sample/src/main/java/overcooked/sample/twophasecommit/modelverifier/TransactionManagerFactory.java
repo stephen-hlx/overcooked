@@ -5,12 +5,12 @@ import overcooked.core.actor.ActorFactory;
 import overcooked.core.actor.LocalState;
 import overcooked.sample.twophasecommit.model.ResourceManagerState;
 
-class TransactionManagerFactory implements ActorFactory<TransactionManager> {
+class TransactionManagerFactory implements ActorFactory<TransactionManagerActor> {
   @Override
-  public TransactionManager restoreFromLocalState(LocalState localState) {
+  public TransactionManagerActor restoreFromLocalState(LocalState localState) {
     TransactionManagerLocalState state = (TransactionManagerLocalState) localState;
     RefCell<Map<String, ResourceManagerState>> refCellState =
         new RefCell<>(state.getResourceManagerStates());
-    return new TransactionManager(refCellState);
+    return new TransactionManagerActor(refCellState);
   }
 }
