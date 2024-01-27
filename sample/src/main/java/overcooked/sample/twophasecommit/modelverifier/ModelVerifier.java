@@ -158,8 +158,8 @@ class ModelVerifier {
         ActionTemplate.<ResourceManagerActor, TransactionManagerActor>builder()
             .actionPerformerId(actionPerformerId)
             .actionType(new TransitiveActionType(TM))
-            .actionLabel("abort")
-            .action(ResourceManagerActor::abort)
+            .actionLabel("selfAbort")
+            .action(ResourceManagerActor::selfAbort)
             .build(),
         ActionTemplate.<ResourceManagerActor, TransactionManagerActor>builder()
             .actionPerformerId(actionPerformerId)

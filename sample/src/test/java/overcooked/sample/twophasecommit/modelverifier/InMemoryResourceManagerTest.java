@@ -20,26 +20,26 @@ class InMemoryResourceManagerTest {
 
   private static final String RESOURCE_MANAGER_ID = "0";
 
-  static Object[][] proactive_action_cases() {
+  static Object[][] test_cases() {
     return new Object[][] {
-        // current,   action,         success, expected
-        {  WORKING,   Action.ABORT,   true,    ABORTED  },
-        {  WORKING,   Action.PREPARE, true,    PREPARED },
-        {  PREPARED,  Action.ABORT,   false,   PREPARED },
-        {  PREPARED,  Action.PREPARE, true,    PREPARED },
-        {  COMMITTED, Action.ABORT,   false,   COMMITTED},
-        {  COMMITTED, Action.PREPARE, false,   COMMITTED},
-        {  ABORTED,   Action.ABORT,   false,   ABORTED  },
-        {  ABORTED,   Action.PREPARE, false,   ABORTED  },
+        // current,   action,            success, expected
+        {  WORKING,   Action.SELF_ABORT, true,    ABORTED  },
+        {  WORKING,   Action.PREPARE,    true,    PREPARED },
+        {  PREPARED,  Action.SELF_ABORT, false,   PREPARED },
+        {  PREPARED,  Action.PREPARE,    true,    PREPARED },
+        {  COMMITTED, Action.SELF_ABORT, false,   COMMITTED},
+        {  COMMITTED, Action.PREPARE,    false,   COMMITTED},
+        {  ABORTED,   Action.SELF_ABORT, false,   ABORTED  },
+        {  ABORTED,   Action.PREPARE,    false,   ABORTED  },
     };
   }
 
   @ParameterizedTest
-  @MethodSource("proactive_action_cases")
-  void proactive_action_works(ResourceManagerState currentState,
-                              Action action,
-                              boolean success,
-                              ResourceManagerState expectedState) {
+  @MethodSource("test_cases")
+  void works(ResourceManagerState currentState,
+             Action action,
+             boolean success,
+             ResourceManagerState expectedState) {
     RefCell<ResourceManagerState> stateRefCell = new RefCell<>(currentState);
     InMemoryResourceManager resourceManager =
         new InMemoryResourceManager(RESOURCE_MANAGER_ID, stateRefCell);
@@ -63,8 +63,8 @@ class InMemoryResourceManagerTest {
         resourceManager.prepare(transactionManagerClient);
         Mockito.verify(transactionManagerClient).prepare(RESOURCE_MANAGER_ID);
       }
-      case ABORT -> {
-        resourceManager.abort(transactionManagerClient);
+      case SELF_ABORT -> {
+        resourceManager.selfAbort(transactionManagerClient);
         Mockito.verify(transactionManagerClient).abort(RESOURCE_MANAGER_ID);
       }
       default -> throw new RuntimeException("Unexpected new state: {}" + action);
@@ -74,7 +74,7 @@ class InMemoryResourceManagerTest {
   @SuppressFBWarnings(value = "PI_DO_NOT_REUSE_PUBLIC_IDENTIFIERS_CLASS_NAMES",
       justification = "this is just a sample")
   private enum Action {
-    ABORT,
+    SELF_ABORT,
     PREPARE,
   }
 }

@@ -16,7 +16,7 @@ public interface ResourceManager {
   void prepare(TransactionManagerClient transactionManagerClient);
 
   /**
-   * Aborts the transaction.
+   * Proactively aborts the transaction.
    */
-  void abort(TransactionManagerClient transactionManagerClient);
+  void selfAbort(TransactionManagerClient transactionManagerClient);
 }

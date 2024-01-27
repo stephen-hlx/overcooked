@@ -19,22 +19,22 @@ class ResourceManagerActorTest {
 
   static Object[][] passive_action_cases() {
     return new Object[][] {
-        // current,   action,        success, expected
-        {  WORKING,   Action.ABORT,  true,    ABORTED  },
-        {  WORKING,   Action.COMMIT, false,   WORKING  },
-        {  PREPARED,  Action.ABORT,  true,    ABORTED  },
-        {  PREPARED,  Action.COMMIT, true,    COMMITTED},
-        {  COMMITTED, Action.ABORT,  false,   COMMITTED},
-        {  COMMITTED, Action.COMMIT, true,    COMMITTED},
-        {  ABORTED,   Action.ABORT,  true,    ABORTED  },
-        {  ABORTED,   Action.COMMIT, false,   ABORTED  },
+        // current,   action,               success, expected
+        {  WORKING,   PassiveAction.ABORT,  true,    ABORTED  },
+        {  WORKING,   PassiveAction.COMMIT, false,   WORKING  },
+        {  PREPARED,  PassiveAction.ABORT,  true,    ABORTED  },
+        {  PREPARED,  PassiveAction.COMMIT, true,    COMMITTED},
+        {  COMMITTED, PassiveAction.ABORT,  false,   COMMITTED},
+        {  COMMITTED, PassiveAction.COMMIT, true,    COMMITTED},
+        {  ABORTED,   PassiveAction.ABORT,  true,    ABORTED  },
+        {  ABORTED,   PassiveAction.COMMIT, false,   ABORTED  },
     };
   }
 
   @ParameterizedTest
   @MethodSource("passive_action_cases")
   void passive_action_works(ResourceManagerState currentState,
-                            Action action,
+                            PassiveAction action,
                             boolean success,
                             ResourceManagerState expectedState) {
     RefCell<ResourceManagerState> stateRefCell = new RefCell<>(currentState);
@@ -52,22 +52,22 @@ class ResourceManagerActorTest {
 
   static Object[][] proactive_action_cases() {
     return new Object[][] {
-        // current,   action,         success, expected
-        {  WORKING,   Action.ABORT,   true,    ABORTED  },
-        {  WORKING,   Action.PREPARE, true,    PREPARED },
-        {  PREPARED,  Action.ABORT,   false,   PREPARED },
-        {  PREPARED,  Action.PREPARE, true,    PREPARED },
-        {  COMMITTED, Action.ABORT,   false,   COMMITTED},
-        {  COMMITTED, Action.PREPARE, false,   COMMITTED},
-        {  ABORTED,   Action.ABORT,   false,   ABORTED  },
-        {  ABORTED,   Action.PREPARE, false,   ABORTED  },
+        // current,   action,                     success, expected
+        {  WORKING,   ProactiveAction.SELF_ABORT, true,    ABORTED  },
+        {  WORKING,   ProactiveAction.PREPARE,    true,    PREPARED },
+        {  PREPARED,  ProactiveAction.SELF_ABORT, false,   PREPARED },
+        {  PREPARED,  ProactiveAction.PREPARE,    true,    PREPARED },
+        {  COMMITTED, ProactiveAction.SELF_ABORT, false,   COMMITTED},
+        {  COMMITTED, ProactiveAction.PREPARE,    false,   COMMITTED},
+        {  ABORTED,   ProactiveAction.SELF_ABORT, false,   ABORTED  },
+        {  ABORTED,   ProactiveAction.PREPARE,    false,   ABORTED  },
     };
   }
 
   @ParameterizedTest
   @MethodSource("proactive_action_cases")
   void proactive_action_works(ResourceManagerState currentState,
-                              Action action,
+                              ProactiveAction action,
                               boolean success,
                               ResourceManagerState expectedState) {
     RefCell<ResourceManagerState> stateRefCell = new RefCell<>(currentState);
@@ -85,7 +85,7 @@ class ResourceManagerActorTest {
     assertThat(stateRefCell.getData()).isEqualTo(expectedState);
   }
 
-  private void doAction(ResourceManagerActor resourceManagerActor, Action action) {
+  private void doAction(ResourceManagerActor resourceManagerActor, PassiveAction action) {
     switch (action) {
       case COMMIT -> resourceManagerActor.commit();
       case ABORT -> resourceManagerActor.abort();
@@ -94,15 +94,15 @@ class ResourceManagerActorTest {
   }
 
   private void doAction(ResourceManagerActor resourceManagerActor,
-                        Action action,
+                        ProactiveAction action,
                         TransactionManagerActor transactionManagerActor) {
     switch (action) {
       case PREPARE -> {
         resourceManagerActor.prepare(transactionManagerActor);
         verify(transactionManagerActor).prepare(RESOURCE_MANAGER_ID);
       }
-      case ABORT -> {
-        resourceManagerActor.abort(transactionManagerActor);
+      case SELF_ABORT -> {
+        resourceManagerActor.selfAbort(transactionManagerActor);
         verify(transactionManagerActor).abort(RESOURCE_MANAGER_ID);
       }
       default -> throw new RuntimeException("Unexpected new state: {}" + action);
@@ -111,9 +111,15 @@ class ResourceManagerActorTest {
 
   @SuppressFBWarnings(value = "PI_DO_NOT_REUSE_PUBLIC_IDENTIFIERS_CLASS_NAMES",
       justification = "this is just a sample")
-  private enum Action {
+  private enum PassiveAction {
     ABORT,
     COMMIT,
+  }
+
+  @SuppressFBWarnings(value = "PI_DO_NOT_REUSE_PUBLIC_IDENTIFIERS_CLASS_NAMES",
+      justification = "this is just a sample")
+  private enum ProactiveAction {
+    SELF_ABORT,
     PREPARE,
   }
 }

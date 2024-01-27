@@ -45,8 +45,8 @@ public class ResourceManagerActor implements ResourceManagerClient, ResourceMana
   }
 
   @Override
-  public void abort(TransactionManagerClient transactionManagerClient) {
-    resourceManager.abort(transactionManagerClient);
+  public void selfAbort(TransactionManagerClient transactionManagerClient) {
+    resourceManager.selfAbort(transactionManagerClient);
   }
 
   @Override

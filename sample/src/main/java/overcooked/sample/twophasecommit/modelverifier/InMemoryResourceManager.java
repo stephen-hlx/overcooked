@@ -33,10 +33,10 @@ public class InMemoryResourceManager implements ResourceManager {
   }
 
   @Override
-  public void abort(TransactionManagerClient transactionManagerClient) {
+  public void selfAbort(TransactionManagerClient transactionManagerClient) {
     ResourceManagerState resourceManagerState = this.state.getData();
     Preconditions.checkState(STATES_ALLOWED_FOR_SELF_ABORT.contains(resourceManagerState),
-        "Action abort is not allowed for current state {}", resourceManagerState);
+        "Action selfAbort is not allowed for current state {}", resourceManagerState);
     transactionManagerClient.abort(id);
     this.state.setData(ABORTED);
   }
