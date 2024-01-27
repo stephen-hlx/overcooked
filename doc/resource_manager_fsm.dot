@@ -3,8 +3,8 @@ digraph G {
     S_1 [ label="PREPARED" ];
     S_2 [ label="ABORTED" ];
     S_3 [ label="COMMITTED" ];
-    S_0 -> S_1 [ label="RmActor.prepare(TmActor)" ];
-    S_0 -> S_2 [ label="RmActor.selfAbort(TmActor)" ];
-    S_1 -> S_2 [ label="TmActor.abort(RmActor)" ];
-    S_1 -> S_3 [ label="TmActor.commit(RmActor)" ];
+    S_0 -> S_1 [ label="RM.prepare(TM)" ];
+    S_0 -> S_2 [ label="RM.selfAbort(TM)" ];
+    S_1 -> S_2 [ label="TM.abort(RM)" ];
+    S_1 -> S_3 [ label="TM.commit(RM)" ];
 }

@@ -3,7 +3,7 @@
 ## Overview
 Overcooked is a library that provides a way to run formal verification 
 against a distributed system. It currently supports only JAVA, and it also 
-requires the server and client of the system's applications to have an 
+requires the service and client of the system's applications to have an 
 in-memory version of its implementations. It verifies the distributed system 
 by exhausting the entire state space and examining whether the defined 
 invariants are honoured by each of the states.
@@ -20,12 +20,12 @@ interface ResourceManagerClient {
   void abort();
 }
 
-interface ResourceManager {
+interface ResourceManagerService {
   void prepare(TransactionManagerClient transactionManagerClient);
   void abort(TransactionManagerClient transactionManagerClient);
 }
 
-class ResourceManagerActor implements ResourceManagerClient, ResourceManagerServer {
+class ResourceManager implements ResourceManagerClient, ResourceManagerService {
   // ...
 }
 
@@ -35,12 +35,12 @@ interface TransactionManagerClient {
   void abort(String resourceManagerId);
 }
 
-interface TransactionManager {
+interface TransactionManagerService {
   void abort(ResourceManagerClient resourceManagerClient);
   void commit(ResourceManagerClient resourceManagerClient);
 }
 
-class TransactionManagerActor implements TransactionManagerClient, TransactionManagerServer {
+class TransactionManager implements TransactionManagerClient, TransactionManagerService {
   // ...
 }
 ```
@@ -60,7 +60,7 @@ And on top of that, you will:
 - specify the invariants of the system using the schema of the local states
 
 Take the Two Phase Commit sample above, it has an in-memory implementation for
-both the client and server of the `ResourceManager`
+both the client and service of the `ResourceManager`
 - [InMemoryResourceManagerClient](sample/src/main/java/overcooked/sample/twophasecommit/modelverifier/InMemoryResourceManagerClient.java)
 - [InMemoryResourceManager](sample/src/main/java/overcooked/sample/twophasecommit/modelverifier/InMemoryResourceManager.java)
 
@@ -133,18 +133,52 @@ simulating their interactions.
 
 It is easy to understand that the client can have an interface because an
 in-memory implementation makes it easy to test the usage of the client, e.g.
-using it as an in-memory mock. However, the in-memory server implementation,
-like the TransactionManager, makes it easy for the model verification to
-restore the state of the server using local states.
+using it as an in-memory mock. On the other hand, the in-memory service
+implementation, like the `TransactionManagerService`, makes it easy for the
+model verification to restore the state of the service using local states.
 
-Both the participants, `ResourceManager` and `TransactionManager`, have their
-server and client interfaces. In production code, these interfaces will have
-the implementations that are usually integrated with other services,
+Both the participants, `ResourceManager` and `TransactionManager`, implement
+their service and client interfaces. In production code, these interfaces
+will have the implementations that are usually integrated with other services,
 e.g. storage. However, for model verification, an in-memory implementation
 representing its state is required as that allows the reconstruction of the
 actors.
 
 ![OvercookedCodeStructure](doc/overcooked.svg)
+
+For example, in production code, `ResourceManagerService` would use the
+`TransactionManagerClient` to let `TransactionManagerService` know that it is
+prepared for commit:
+```java
+class ResourceManagerService {
+  private final ResourceManager resourceManager;
+  private final TransactionManagerClient transactionManagerClient;
+  void processRequest(Request request) {
+    if (shouldPrepareForCommit(request)) {
+      resourceManager.prepare(transactionManagerClient);
+    }
+  }
+}
+```
+But in model verification, both the service and the client are encapsulated
+in an Actor persona:
+```java
+class ResourceManagerActor implements ResourceManagerClient, ResourceManager { }
+class TransactionManagerActor implements TransactionManagerClient, TransactionManager { }
+```
+and the interaction can be represented as:
+```
+resourceManagerActor.prepare(transactionManagerActor);
+```
+or more specifically:
+```
+ActionTemplate.<ResourceManagerActor, TransactionManagerActor>builder()
+    .actionPerformerId(actionPerformerId)
+    .actionType(new TransitiveActionType(TM))
+    .actionLabel("prepare")
+    .action(ResourceManagerActor::prepare)
+    .build()
+```
 
 ## Async vs Sync
 
