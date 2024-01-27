@@ -78,10 +78,8 @@ class InMemoryTransactionManagerTest {
     Map<String, ResourceManagerState> resourceManagerStates = new HashMap<>();
     resourceManagerStates.put(RESOURCE_MANAGER_0, rm0State);
     resourceManagerStates.put(RESOURCE_MANAGER_1, rm1State);
-    RefCell<Map<String, ResourceManagerState>> resourceManagerStatesRefCell =
-        new RefCell<>(resourceManagerStates);
     InMemoryTransactionManager inMemoryTransactionManagerServer =
-        new InMemoryTransactionManager(resourceManagerStatesRefCell);
+        new InMemoryTransactionManager(resourceManagerStates);
 
     ResourceManagerClient rm1 = mock(ResourceManagerClient.class);
     when(rm1.getId()).thenReturn(RESOURCE_MANAGER_1);
@@ -107,11 +105,9 @@ class InMemoryTransactionManagerTest {
         }
       }).isInstanceOf(IllegalStateException.class);
     }
-    assertThat(resourceManagerStatesRefCell.getData())
-        .isEqualTo(ImmutableMap.of(
-            RESOURCE_MANAGER_0, expectedRm0State,
-            RESOURCE_MANAGER_1, expectedRm1State
-        ));
+    assertThat(resourceManagerStates).isEqualTo(ImmutableMap.of(
+        RESOURCE_MANAGER_0, expectedRm0State,
+        RESOURCE_MANAGER_1, expectedRm1State));
   }
 
   @SuppressFBWarnings(value = "PI_DO_NOT_REUSE_PUBLIC_IDENTIFIERS_CLASS_NAMES",

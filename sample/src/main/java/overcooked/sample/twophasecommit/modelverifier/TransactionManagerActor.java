@@ -16,19 +16,19 @@ public class TransactionManagerActor implements TransactionManagerClient, Transa
   @Getter
   @SuppressFBWarnings(value = { "EI_EXPOSE_REP" },
       justification = "this is just an example, making it immutable is over engineering")
-  private final RefCell<Map<String, ResourceManagerState>> states;
+  private final Map<String, ResourceManagerState> resourceManagerStates;
   private final TransactionManager transactionManager;
   private final TransactionManagerClient transactionManagerClient;
 
   /**
    * Constructor.
    *
-   * @param states the {@link RefCell} object that containing the {@link ResourceManagerState}s
+   * @param resourceManagerStates the {@link ResourceManagerState}s
    */
-  public TransactionManagerActor(RefCell<Map<String, ResourceManagerState>> states) {
-    this.states = states;
-    this.transactionManagerClient = new InMemoryTransactionManagerClient(states);
-    this.transactionManager = new InMemoryTransactionManager(states);
+  public TransactionManagerActor(Map<String, ResourceManagerState> resourceManagerStates) {
+    this.resourceManagerStates = resourceManagerStates;
+    this.transactionManagerClient = new InMemoryTransactionManagerClient(resourceManagerStates);
+    this.transactionManager = new InMemoryTransactionManager(resourceManagerStates);
   }
 
   @Override

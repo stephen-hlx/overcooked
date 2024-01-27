@@ -7,6 +7,6 @@ class TransactionManagerActorLocalStateExtractor
     implements LocalStateExtractor<TransactionManagerActor> {
   @Override
   public LocalState extract(TransactionManagerActor transactionManagerActor) {
-    return new TransactionManagerLocalState(transactionManagerActor.getStates().getData());
+    return new TransactionManagerLocalState(transactionManagerActor.getResourceManagerStates());
   }
 }

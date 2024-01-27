@@ -21,36 +21,34 @@ import overcooked.sample.twophasecommit.model.TransactionManagerClient;
 @SuppressFBWarnings(value = { "EI_EXPOSE_REP" },
     justification = "this is just an example, making it immutable is over engineering")
 public class InMemoryTransactionManagerClient implements TransactionManagerClient {
-  private final RefCell<Map<String, ResourceManagerState>> resourceManagerStates;
+  private final Map<String, ResourceManagerState> resourceManagerStates;
 
   @Override
   public void prepare(String resourceManagerId) {
-    Map<String, ResourceManagerState> states = resourceManagerStates.getData();
-    if (states.entrySet().stream()
+    if (resourceManagerStates.entrySet().stream()
         .filter(entry -> !entry.getKey().equals(resourceManagerId))
         .anyMatch(entry -> entry.getValue().equals(COMMITTED))
-        && !states.get(resourceManagerId).equals(PREPARED)) {
+        && !resourceManagerStates.get(resourceManagerId).equals(PREPARED)) {
       throw new IllegalStateException(
           "Commit has started, action PREPARE is no allowed at this stage");
     }
     validateCurrentState(STATES_ALLOWED_FOR_PREPARE, resourceManagerId);
-    states.put(resourceManagerId, PREPARED);
+    resourceManagerStates.put(resourceManagerId, PREPARED);
   }
 
   @Override
   public void abort(String resourceManagerId) {
-    Map<String, ResourceManagerState> states = resourceManagerStates.getData();
-    if (states.containsValue(COMMITTED)) {
+    if (resourceManagerStates.containsValue(COMMITTED)) {
       throw new IllegalStateException("Abort is not allowed when commit has started");
     }
     validateCurrentState(STATES_ALLOWED_FOR_SELF_ABORT, resourceManagerId);
-    states.put(resourceManagerId, ABORTED);
+    resourceManagerStates.put(resourceManagerId, ABORTED);
   }
 
   private void validateCurrentState(Set<ResourceManagerState> validStates,
                                     String resourceManagerId) {
     ResourceManagerState currentState =
-        Preconditions.checkNotNull(resourceManagerStates.getData().get(resourceManagerId));
+        Preconditions.checkNotNull(resourceManagerStates.get(resourceManagerId));
     Preconditions.checkState(validStates.contains(currentState),
         "Current state %s of ResourceManager(%s) is not allowed for the action",
         currentState, resourceManagerId);

@@ -78,9 +78,9 @@ class TransactionManagerActorTest {
     Map<String, ResourceManagerState> resourceManagerStates = new HashMap<>();
     resourceManagerStates.put(RESOURCE_MANAGER_0, rm0State);
     resourceManagerStates.put(RESOURCE_MANAGER_1, rm1State);
-    RefCell<Map<String, ResourceManagerState>> stateRefCell = new RefCell<>(resourceManagerStates);
 
-    TransactionManagerActor transactionManagerActor = new TransactionManagerActor(stateRefCell);
+    TransactionManagerActor transactionManagerActor =
+        new TransactionManagerActor(resourceManagerStates);
 
     if (success) {
       doAction(transactionManagerActor, action);
@@ -88,7 +88,7 @@ class TransactionManagerActorTest {
       assertThatThrownBy(() -> doAction(transactionManagerActor, action))
           .isInstanceOf(IllegalStateException.class);
     }
-    assertThat(stateRefCell.getData()).isEqualTo(ImmutableMap.of(
+    assertThat(resourceManagerStates).isEqualTo(ImmutableMap.of(
             RESOURCE_MANAGER_0, expectedRm0State,
             RESOURCE_MANAGER_1, expectedRm1State));
   }
@@ -147,9 +147,9 @@ class TransactionManagerActorTest {
     Map<String, ResourceManagerState> resourceManagerStates = new HashMap<>();
     resourceManagerStates.put(RESOURCE_MANAGER_0, rm0State);
     resourceManagerStates.put(RESOURCE_MANAGER_1, rm1State);
-    RefCell<Map<String, ResourceManagerState>> stateRefCell = new RefCell<>(resourceManagerStates);
 
-    TransactionManagerActor transactionManagerActor = new TransactionManagerActor(stateRefCell);
+    TransactionManagerActor transactionManagerActor =
+        new TransactionManagerActor(resourceManagerStates);
 
     ResourceManagerClient rm1 = mock(ResourceManagerClient.class);
     when(rm1.getId()).thenReturn(RESOURCE_MANAGER_1);
@@ -177,7 +177,7 @@ class TransactionManagerActorTest {
         }
       }).isInstanceOf(IllegalStateException.class);
     }
-    assertThat(stateRefCell.getData()).isEqualTo(ImmutableMap.of(
+    assertThat(resourceManagerStates).isEqualTo(ImmutableMap.of(
         RESOURCE_MANAGER_0, expectedRm0State,
         RESOURCE_MANAGER_1, expectedRm1State));
     verifyNoMoreInteractions(rm1);

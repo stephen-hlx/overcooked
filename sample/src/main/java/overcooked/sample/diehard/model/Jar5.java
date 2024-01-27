@@ -14,10 +14,6 @@ public class Jar5 extends Jar {
     Preconditions.checkArgument(occupancy <= CAPACITY);
   }
 
-  public Jar5() {
-    super(CAPACITY);
-  }
-
   public void addTo(Jar3 other) {
     super.addTo(other);
   }
