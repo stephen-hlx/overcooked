@@ -9,23 +9,22 @@ by exhausting the entire state space and examining whether the defined
 invariants are honoured by each of the states.
 
 ### Example
-This is a simple specification of the
+This is a the specification of the
 [Two Phase Commit](https://en.wikipedia.org/wiki/Two-phase_commit_protocol).
 
 ```java
 // Resource Manager
 interface ResourceManagerClient {
-  String getId();
   void commit();
   void abort();
 }
 
-interface ResourceManagerService {
+interface ResourceManager {
   void prepare(TransactionManagerClient transactionManagerClient);
   void abort(TransactionManagerClient transactionManagerClient);
 }
 
-class ResourceManager implements ResourceManagerClient, ResourceManagerService {
+class ResourceManagerActor implements ResourceManagerClient, ResourceManager {
   // ...
 }
 
@@ -35,12 +34,12 @@ interface TransactionManagerClient {
   void abort(String resourceManagerId);
 }
 
-interface TransactionManagerService {
+interface TransactionManager {
   void abort(ResourceManagerClient resourceManagerClient);
   void commit(ResourceManagerClient resourceManagerClient);
 }
 
-class TransactionManager implements TransactionManagerClient, TransactionManagerService {
+class TransactionManagerActor implements TransactionManagerClient, TransactionManager {
   // ...
 }
 ```
@@ -57,9 +56,9 @@ More specifically, you will need:
 
 And on top of that, you will:
 - specify the actions that are going to take place between these actors
-- specify the invariants of the system using the schema of the local states
+- specify the invariants of the system using the local states
 
-Take the Two Phase Commit sample above, it has an in-memory implementation for
+In the Two Phase Commit sample above, it has an in-memory implementation for
 both the client and service of the `ResourceManager`
 - [InMemoryResourceManagerClient](sample/src/main/java/overcooked/sample/twophasecommit/modelverifier/InMemoryResourceManagerClient.java)
 - [InMemoryResourceManager](sample/src/main/java/overcooked/sample/twophasecommit/modelverifier/InMemoryResourceManager.java)
@@ -68,9 +67,22 @@ as well as the `TransactionManager`:
 - [InMemoryTransactionManagerClient](sample/src/main/java/overcooked/sample/twophasecommit/modelverifier/InMemoryTransactionManagerClient.java)
 - [InMemoryTransactionManager](sample/src/main/java/overcooked/sample/twophasecommit/modelverifier/InMemoryTransactionManager.java)
 
-For examples of the specifications of actions and invariants of the Two Phase
-Commit sample, please see
+For examples of the action specifications and invariants of the Two Phase
+Commit, please see
 [modelverifier package](sample/src/main/java/overcooked/sample/twophasecommit/modelverifier).
+
+The output of the verification is a report consists of:
+- number of global states
+- number of global states violating the invariants
+- the shortest paths from the initial state to each of the invariant violating
+states
+
+For instance, the [diehard](sample/src/main/java/overcooked/sample/diehard)
+sample (compared to "Two Phase Commit", the "diehard" sample has invariant
+violating states and a relatively smaller state space) has 2 states violating
+the invariant. And the shortest path from the initial state to one of the
+violating states is \
+![diehard_shortest_path](doc/diehard_failure_0.svg)
 
 ## How does it work?
 A distributed system is said to be in a correct state if all its invariants
@@ -80,6 +92,14 @@ In a distributed system, there are usually multiple actors. Their interactions
 form a number of interleaving. This library exhausts all possible interleaving
 and verify that all of them leave the system in a state that with all its
 invariants honoured.
+
+This library has a couple of key components:
+
+- [Actor and Action](#actor-and-action)
+- [Local State](#local-state)
+- [Global State](#global-state)
+- [Invariant](#invariant)
+- [In-Memory Implementation](#in-memory-implementation)
 
 In the rest of this section, the Two Phase Commit is frequently used as an
 example.
@@ -125,7 +145,7 @@ Other invariant examples are like, TransactionManager should always have a
 view of the ResourceManager's states that is consistent with all
 ResourceManagers' states.
 
-### In-Memory Implementations
+### In-Memory Implementation
 The actors in the system interact with each other via the counterpart's
 client, of which the implementation could be REST, gRPC, etc. The model
 verification however, needs an in-memory implementation of these clients for
@@ -134,20 +154,20 @@ simulating their interactions.
 It is easy to understand that the client can have an interface because an
 in-memory implementation makes it easy to test the usage of the client, e.g.
 using it as an in-memory mock. On the other hand, the in-memory service
-implementation, like the `TransactionManagerService`, makes it easy for the
-model verification to restore the state of the service using local states.
+implementation, like the `TransactionManager`, makes it easy for the model
+verification to restore the state of the service using local states.
 
-Both the participants, `ResourceManager` and `TransactionManager`, implement
-their service and client interfaces. In production code, these interfaces
-will have the implementations that are usually integrated with other services,
-e.g. storage. However, for model verification, an in-memory implementation
-representing its state is required as that allows the reconstruction of the
-actors.
+Both the participants, `ResourceManagerActor` and `TransactionManagerActor`,
+implement their service and client interfaces. In production code, these
+interfaces will have the implementations that are usually integrated with
+other services, e.g. storage. However, for model verification, an in-memory
+implementation representing its state is required as that allows the
+reconstruction of the actors.
 
 ![OvercookedCodeStructure](doc/overcooked.svg)
 
-For example, in production code, `ResourceManagerService` would use the
-`TransactionManagerClient` to let `TransactionManagerService` know that it is
+For example, in production code, `ResourceManager` would use the
+`TransactionManagerClient` to let `TransactionManager` know that it is
 prepared for commit:
 ```java
 class ResourceManagerService {
@@ -179,8 +199,6 @@ ActionTemplate.<ResourceManagerActor, TransactionManagerActor>builder()
     .action(ResourceManagerActor::prepare)
     .build()
 ```
-
-## Async vs Sync
 
 ## Why is the name "Overcooked"?
 When I finally got around doing this, I needed a name for it. I asked my 

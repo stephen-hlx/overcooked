@@ -1,0 +1,15 @@
+digraph G {
+  S_0 [ label="jar3(occupancy=0), jar5(occupancy=0)" ];
+  S_5 [ label="jar3(occupancy=0), jar5(occupancy=5)" ];
+  S_18 [ label="jar3(occupancy=3), jar5(occupancy=2)" ];
+  S_34 [ label="jar3(occupancy=0), jar5(occupancy=2)" ];
+  S_48 [ label="jar3(occupancy=2), jar5(occupancy=0)" ];
+  S_56 [ label="jar3(occupancy=2), jar5(occupancy=5)" ];
+  S_72 [ label="jar3(occupancy=3), jar5(occupancy=4)" ];
+  S_0 -> S_5 [ label="jar5.fill()" ];
+  S_5 -> S_18 [ label="jar5.addTo(jar3)" ];
+  S_18 -> S_34 [ label="jar3.empty()" ];
+  S_34 -> S_48 [ label="jar5.addTo(jar3)" ];
+  S_48 -> S_56 [ label="jar5.fill()" ];
+  S_56 -> S_72 [ label="jar5.addTo(jar3)" ];
+}
