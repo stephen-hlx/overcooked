@@ -4,49 +4,54 @@ import static overcooked.sample.twophasecommit.model.ResourceManagerState.ABORTE
 import static overcooked.sample.twophasecommit.model.ResourceManagerState.COMMITTED;
 import static overcooked.sample.twophasecommit.model.ResourceManagerState.WORKING;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import overcooked.core.GlobalState;
 import overcooked.core.InvariantVerifier;
+import overcooked.core.actor.ActorId;
 import overcooked.sample.twophasecommit.model.ResourceManagerState;
 
 @RequiredArgsConstructor
 class TransactionStateVerifier implements InvariantVerifier {
-  private final String transactionManagerId;
+  private final ActorId transactionManagerId;
 
   @Override
   public boolean verify(GlobalState globalState) {
-    return verifyResourceManagerState(getResourceManagerStatesFromTransactionManager(globalState))
-        && verifyResourceManagerState(getResourceManagerStatesFromResourceManagers(globalState));
+    Map<String, ResourceManagerState> transactionManagerView =
+        getResourceManagerStatesFromTransactionManager(globalState);
+    Map<String, ResourceManagerState> resourceManagerStates =
+        getResourceManagerStatesFromResourceManagers(globalState);
+    return verifyResourceManagerState(transactionManagerView)
+        && verifyResourceManagerState(resourceManagerStates)
+        && transactionManagerView.equals(resourceManagerStates);
   }
 
-  private Collection<ResourceManagerState> getResourceManagerStatesFromTransactionManager(
+  private Map<String, ResourceManagerState> getResourceManagerStatesFromTransactionManager(
       GlobalState globalState) {
     return ((TransactionManagerLocalState) (globalState.getCopyOfLocalStates().entrySet().stream()
-        .filter(entry -> entry.getKey().getId().equals(transactionManagerId))
+        .filter(entry -> entry.getKey().equals(transactionManagerId))
         .findFirst()
         .orElseThrow(() -> new RuntimeException("Could not find TransactionManagerLocalState"))
-        .getValue())).getResourceManagerStates().values();
+        .getValue())).getResourceManagerStates();
   }
 
-  private Collection<ResourceManagerState> getResourceManagerStatesFromResourceManagers(
+  private Map<String, ResourceManagerState> getResourceManagerStatesFromResourceManagers(
       GlobalState globalState) {
     return globalState.getCopyOfLocalStates().entrySet().stream()
-        .filter(entry -> !entry.getKey().getId().equals(transactionManagerId))
-        .map(Map.Entry::getValue)
-        .map(o -> ((ResourceManagerLocalState) o).getState())
-        .collect(Collectors.toSet());
+        .filter(entry -> !entry.getKey().equals(transactionManagerId))
+        .collect(Collectors.toMap(
+            e -> e.getKey().getId(),
+            e -> ((ResourceManagerLocalState) e.getValue()).getState()));
   }
 
   private static boolean verifyResourceManagerState(
-      Collection<ResourceManagerState> resourceManagerStates) {
-    if (resourceManagerStates.contains(ABORTED)) {
-      return !resourceManagerStates.contains(COMMITTED);
-    } else if (resourceManagerStates.contains(COMMITTED)) {
-      return !(resourceManagerStates.contains(ABORTED)
-          || resourceManagerStates.contains(WORKING));
+      Map<String, ResourceManagerState> resourceManagerStates) {
+    if (resourceManagerStates.containsValue(ABORTED)) {
+      return !resourceManagerStates.containsValue(COMMITTED);
+    } else if (resourceManagerStates.containsValue(COMMITTED)) {
+      return !(resourceManagerStates.containsValue(ABORTED)
+          || resourceManagerStates.containsValue(WORKING));
     }
     return true;
   }

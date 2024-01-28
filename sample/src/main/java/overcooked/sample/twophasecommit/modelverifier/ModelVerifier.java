@@ -53,7 +53,7 @@ class ModelVerifier {
     StateMachineExecutionContext stateMachineExecutionContext =
         new StateMachineExecutionContext(initialGlobalState);
     StateMachine stateMachine = StateMachineFactory
-        .create(new TransactionStateVerifier(TM_ID), actorStateTransformerConfig);
+        .create(new TransactionStateVerifier(TM), actorStateTransformerConfig);
 
     stateMachine.run(initialGlobalState, actorActionConfig, stateMachineExecutionContext);
 
