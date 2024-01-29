@@ -11,7 +11,7 @@ import lombok.Builder;
  * The state machine of the model verification.
  */
 @Builder
-public class StateMachine {
+class StateMachine {
   private final StateMachineDriver stateMachineDriver;
   private final InvariantVerifier invariantVerifier;
 

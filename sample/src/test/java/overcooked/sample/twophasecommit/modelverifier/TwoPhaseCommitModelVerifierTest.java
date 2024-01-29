@@ -1,5 +1,6 @@
 package overcooked.sample.twophasecommit.modelverifier;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static overcooked.sample.twophasecommit.model.ResourceManagerState.WORKING;
 
 import com.google.common.collect.ImmutableMap;
@@ -10,15 +11,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Test;
+import overcooked.analysis.ExecutionSummary;
 import overcooked.analysis.JgraphtAnalyser;
 import overcooked.analysis.Report;
 import overcooked.analysis.ReportGenerator;
 import overcooked.analysis.TransitionFilter;
 import overcooked.core.ActorActionConfig;
 import overcooked.core.GlobalState;
-import overcooked.core.StateMachine;
+import overcooked.core.ModelVerifier;
 import overcooked.core.StateMachineExecutionContext;
-import overcooked.core.StateMachineFactory;
 import overcooked.core.action.ActionTemplate;
 import overcooked.core.action.TransitiveActionType;
 import overcooked.core.actor.ActorId;
@@ -27,7 +29,7 @@ import overcooked.sample.twophasecommit.model.ResourceManagerState;
 import overcooked.visual.DotGraphExporterFactory;
 
 @Slf4j
-class ModelVerifier {
+class TwoPhaseCommitModelVerifierTest {
   private static final String TM_ID = "TM";
   private static final ActorId TM = ActorId.builder().id(TM_ID).build();
 
@@ -38,24 +40,16 @@ class ModelVerifier {
   private static final ActorId RM_1 = ActorId.builder().id(RM_ID_1).build();
   private static final ActorId RM_2 = ActorId.builder().id(RM_ID_2).build();
 
-  private final GlobalState initialGlobalState;
-  private final ActorActionConfig actorActionConfig;
+  @Test
+  void can_run_without_error() {
+    ModelVerifier modelVerifier = ModelVerifier.builder()
+        .actorActionConfig(actorActionConfig())
+        .actorStateTransformerConfig(actorStateTransformerConfig())
+        .invariantVerifier(new TransactionStateVerifier(TM))
+        .build();
 
-  private final ActorStateTransformerConfig actorStateTransformerConfig;
-
-  ModelVerifier() {
-    initialGlobalState = initialGlobalState();
-    actorActionConfig = actorActionConfig();
-    actorStateTransformerConfig = actorStateTransformerConfig();
-  }
-
-  public Report run() {
     StateMachineExecutionContext stateMachineExecutionContext =
-        new StateMachineExecutionContext(initialGlobalState);
-    StateMachine stateMachine = StateMachineFactory
-        .create(new TransactionStateVerifier(TM), actorStateTransformerConfig);
-
-    stateMachine.run(initialGlobalState, actorActionConfig, stateMachineExecutionContext);
+        modelVerifier.runWith(initialGlobalState());
 
     String outputDirName = "/tmp/twophasecommit/" + System.currentTimeMillis();
     mkdir(outputDirName);
@@ -65,7 +59,14 @@ class ModelVerifier {
         .outputDirName(outputDirName)
         .transitionFilter(TransitionFilter.EXCEPTION_FREE.and(TransitionFilter.NON_SELF_LOOP))
         .build();
-    return reportGenerator.generate(stateMachineExecutionContext.getData());
+    Report report = reportGenerator.generate(stateMachineExecutionContext.getData());
+    log.info(report.toString());
+    assertThat(report.getExecutionSummary()).isEqualTo(ExecutionSummary.builder()
+            .numOfValidationFailingStates(0)
+            .numOfNonSelfTransitions(120)
+            .numOfStates(34)
+            .numOfTransitions(408)
+        .build());
   }
 
   @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED")
@@ -125,8 +126,7 @@ class ModelVerifier {
   }
 
   private static Set<ActionTemplate<TransactionManagerActor, ResourceManagerActor>>
-      transactionManagerActions(
-          ActorId resourceManagerId) {
+      transactionManagerActions(ActorId resourceManagerId) {
     return ImmutableSet.of(
         ActionTemplate.<TransactionManagerActor, ResourceManagerActor>builder()
             .actionPerformerId(TM)

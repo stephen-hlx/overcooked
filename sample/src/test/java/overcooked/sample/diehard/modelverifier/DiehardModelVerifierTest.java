@@ -1,19 +1,22 @@
 package overcooked.sample.diehard.modelverifier;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Test;
+import overcooked.analysis.ExecutionSummary;
 import overcooked.analysis.JgraphtAnalyser;
 import overcooked.analysis.Report;
 import overcooked.analysis.ReportGenerator;
 import overcooked.core.ActorActionConfig;
 import overcooked.core.GlobalState;
-import overcooked.core.StateMachine;
+import overcooked.core.ModelVerifier;
 import overcooked.core.StateMachineExecutionContext;
-import overcooked.core.StateMachineFactory;
 import overcooked.core.action.ActionTemplate;
 import overcooked.core.action.IntransitiveActionType;
 import overcooked.core.action.TransitiveActionType;
@@ -23,31 +26,23 @@ import overcooked.sample.diehard.model.Jar3;
 import overcooked.sample.diehard.model.Jar5;
 import overcooked.visual.DotGraphExporterFactory;
 
-/**
- * The ModelVerifier of example diehard.
- */
 @Slf4j
-class ModelVerifier {
-  private static final ActorId JAR3 = ActorId.builder()
-      .id("jar3")
-      .build();
-  private static final ActorId JAR5 = ActorId.builder()
-      .id("jar5")
-      .build();
+class DiehardModelVerifierTest {
+  private static final ActorId JAR3 = ActorId.builder().id("jar3").build();
+  private static final ActorId JAR5 = ActorId.builder().id("jar5").build();
 
-  Report run() {
-    GlobalState initialState = new GlobalState(ImmutableMap.of(
-        JAR3, new Jar3State(0),
-        JAR5, new Jar5State(0)));
+  @Test
+  void can_run_without_error() {
+    ModelVerifier modelVerifier = ModelVerifier.builder()
+        .actorActionConfig(createActorActionConfig())
+        .actorStateTransformerConfig(createActorStateTransformerConfig())
+        .invariantVerifier(new FourLiterVerifier())
+        .build();
 
-    ActorActionConfig actorActionConfig = createActorActionConfig();
-
-    StateMachineExecutionContext
-        stateMachineExecutionContext = new StateMachineExecutionContext(initialState);
-    StateMachine stateMachine =
-        StateMachineFactory.create(new FourLiterVerifier(), createActorStateTransformerConfig());
-
-    stateMachine.run(initialState, actorActionConfig, stateMachineExecutionContext);
+    StateMachineExecutionContext stateMachineExecutionContext =
+        modelVerifier.runWith(new GlobalState(ImmutableMap.of(
+            JAR3, new Jar3State(0),
+            JAR5, new Jar5State(0))));
 
     String outputDirName = "/tmp/diehard/" + System.currentTimeMillis();
     mkdir(outputDirName);
@@ -56,7 +51,14 @@ class ModelVerifier {
         .dotGraphExporter(DotGraphExporterFactory.create())
         .outputDirName(outputDirName)
         .build();
-    return reportGenerator.generate(stateMachineExecutionContext.getData());
+    Report report = reportGenerator.generate(stateMachineExecutionContext.getData());
+    log.info(report.toString());
+    assertThat(report.getExecutionSummary()).isEqualTo(ExecutionSummary.builder()
+        .numOfValidationFailingStates(2)
+        .numOfNonSelfTransitions(50)
+        .numOfStates(16)
+        .numOfTransitions(84)
+        .build());
   }
 
   private static ActorStateTransformerConfig createActorStateTransformerConfig() {

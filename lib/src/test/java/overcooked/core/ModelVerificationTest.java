@@ -1,4 +1,4 @@
-package overcooked;
+package overcooked.core;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -11,11 +11,6 @@ import overcooked.analysis.ExecutionSummary;
 import overcooked.analysis.JgraphtAnalyser;
 import overcooked.analysis.Report;
 import overcooked.analysis.ReportGenerator;
-import overcooked.core.ActorActionConfig;
-import overcooked.core.GlobalState;
-import overcooked.core.StateMachine;
-import overcooked.core.StateMachineExecutionContext;
-import overcooked.core.StateMachineFactory;
 import overcooked.core.action.ActionTemplate;
 import overcooked.core.action.IntransitiveActionType;
 import overcooked.core.action.TransitiveActionType;

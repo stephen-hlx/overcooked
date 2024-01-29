@@ -6,7 +6,7 @@ import overcooked.core.actor.ActorStateTransformerConfig;
 /**
  * The factory class of {@link StateMachine}.
  */
-public class StateMachineFactory {
+class StateMachineFactory {
   /**
    * Creates a {@link StateMachine} object.
    *
