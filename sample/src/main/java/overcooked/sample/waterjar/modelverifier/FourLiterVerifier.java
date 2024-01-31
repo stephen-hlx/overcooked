@@ -1,4 +1,4 @@
-package overcooked.sample.diehard.modelverifier;
+package overcooked.sample.waterjar.modelverifier;
 
 import overcooked.core.GlobalState;
 import overcooked.core.InvariantVerifier;

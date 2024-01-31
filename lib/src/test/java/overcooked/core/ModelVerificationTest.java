@@ -16,15 +16,15 @@ import overcooked.core.action.IntransitiveActionType;
 import overcooked.core.action.TransitiveActionType;
 import overcooked.core.actor.ActorId;
 import overcooked.core.actor.ActorStateTransformerConfig;
-import overcooked.sample.diehard.model.Jar3;
-import overcooked.sample.diehard.model.Jar5;
-import overcooked.sample.diehard.modelverifier.FourLiterVerifier;
-import overcooked.sample.diehard.modelverifier.Jar3Factory;
-import overcooked.sample.diehard.modelverifier.Jar3LocalStateExtractor;
-import overcooked.sample.diehard.modelverifier.Jar3State;
-import overcooked.sample.diehard.modelverifier.Jar5Factory;
-import overcooked.sample.diehard.modelverifier.Jar5LocalStateExtractor;
-import overcooked.sample.diehard.modelverifier.Jar5State;
+import overcooked.sample.waterjar.model.Jar3;
+import overcooked.sample.waterjar.model.Jar5;
+import overcooked.sample.waterjar.modelverifier.FourLiterVerifier;
+import overcooked.sample.waterjar.modelverifier.Jar3Factory;
+import overcooked.sample.waterjar.modelverifier.Jar3LocalStateExtractor;
+import overcooked.sample.waterjar.modelverifier.Jar3State;
+import overcooked.sample.waterjar.modelverifier.Jar5Factory;
+import overcooked.sample.waterjar.modelverifier.Jar5LocalStateExtractor;
+import overcooked.sample.waterjar.modelverifier.Jar5State;
 import overcooked.visual.DotGraphExporterFactory;
 
 @Slf4j

@@ -1,4 +1,4 @@
-package overcooked.sample.diehard.model;
+package overcooked.sample.waterjar.model;
 
 import com.google.common.base.Preconditions;
 

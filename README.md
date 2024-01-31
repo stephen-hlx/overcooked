@@ -77,12 +77,12 @@ The output of the verification is a report consists of:
 - the shortest paths from the initial state to each of the invariant violating
 states
 
-For instance, the [diehard](sample/src/main/java/overcooked/sample/diehard)
-sample (compared to "Two Phase Commit", the "diehard" sample has invariant
+For instance, the [waterjar](sample/src/main/java/overcooked/sample/waterjar)
+sample (compared to "Two Phase Commit", the "waterjar" sample has invariant
 violating states and a relatively smaller state space) has 2 states violating
 the invariant. And the shortest path from the initial state to one of the
 violating states is \
-![diehard_shortest_path](doc/diehard_failure_0.svg)
+![waterjar_shortest_path](doc/waterjar_failure_0.svg)
 
 ## How does it work?
 A distributed system is said to be in a correct state if all its invariants

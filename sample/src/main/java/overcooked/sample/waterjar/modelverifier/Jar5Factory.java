@@ -1,8 +1,8 @@
-package overcooked.sample.diehard.modelverifier;
+package overcooked.sample.waterjar.modelverifier;
 
 import overcooked.core.actor.ActorFactory;
 import overcooked.core.actor.LocalState;
-import overcooked.sample.diehard.model.Jar5;
+import overcooked.sample.waterjar.model.Jar5;
 
 /**
  * A {@link ActorFactory} implementation for {@link Jar5}.

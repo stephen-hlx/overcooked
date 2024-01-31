@@ -1,4 +1,4 @@
-package overcooked.sample.diehard.model;
+package overcooked.sample.waterjar.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

@@ -1,4 +1,4 @@
-package overcooked.sample.diehard.modelverifier;
+package overcooked.sample.waterjar.modelverifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -22,12 +22,12 @@ import overcooked.core.action.IntransitiveActionType;
 import overcooked.core.action.TransitiveActionType;
 import overcooked.core.actor.ActorId;
 import overcooked.core.actor.ActorStateTransformerConfig;
-import overcooked.sample.diehard.model.Jar3;
-import overcooked.sample.diehard.model.Jar5;
+import overcooked.sample.waterjar.model.Jar3;
+import overcooked.sample.waterjar.model.Jar5;
 import overcooked.visual.DotGraphExporterFactory;
 
 @Slf4j
-class DiehardModelVerifierTest {
+class WaterJarModelVerifierTest {
   private static final ActorId JAR3 = ActorId.builder().id("jar3").build();
   private static final ActorId JAR5 = ActorId.builder().id("jar5").build();
 
@@ -44,7 +44,7 @@ class DiehardModelVerifierTest {
             JAR3, new Jar3State(0),
             JAR5, new Jar5State(0))));
 
-    String outputDirName = "/tmp/diehard/" + System.currentTimeMillis();
+    String outputDirName = "/tmp/waterjar/" + System.currentTimeMillis();
     mkdir(outputDirName);
     ReportGenerator reportGenerator = ReportGenerator.builder()
         .analyser(new JgraphtAnalyser())
