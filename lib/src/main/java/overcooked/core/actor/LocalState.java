@@ -11,4 +11,6 @@ public abstract class LocalState {
   public LocalState deepCopy() {
     return GSON.fromJson(GSON.toJson(this), this.getClass());
   }
+
+  public abstract boolean equals(Object other);
 }
