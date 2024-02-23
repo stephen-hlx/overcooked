@@ -3,7 +3,7 @@
 ## Overview
 
 Overcooked is a tool that provides a way to run formal verification against 
-a distributed system. 
+a distributed system, in the CI/CD pipeline, using the real code. 
 
 In a distributed system, there are usually multiple actors. The distributed
 system works by these actors interacting with each other. Their interactions
@@ -12,12 +12,12 @@ these sequences grows rapidly as the number of actors and actions increase. It
 may not be easy to reach a conclusion that all these sequences are allowed, or
 in other words, the system does not break after each of all these sequences.
 
-By exhausting all possible sequences, this tool verifies whether or not the
-distributed system's invariants are honoured during and after the sequences
-of action, in which case we can be confident that the system's correctness
+By exhausting all possible sequences, Overcooked verifies whether or not the
+distributed system's invariants are honoured during and after these sequences
+of actions, in which case we can be confident that the system's correctness
 is guaranteed.
 
-The tool currently supports only JAVA, and it also requires the service and
+Overcooked currently supports only JAVA, and it also requires the service and
 the client of the system's applications to have an in-memory version of its
 implementations.
 
@@ -31,7 +31,7 @@ The remaining of this document comprises 2 main parts:
 are honoured
 - A distributed system's invariants are defined by its states satisfying a set
 of conditions
-- A distributed system's state comprises the states of each of the actors
+- A distributed system's state comprises the states of each of its actors
 - A state transition of the distributed system is the result of a single
 action taken by one of its actors
 
@@ -91,7 +91,7 @@ be violating such an invariant:
 ![GlobalStateExample2](doc/global_state_example_2.svg)
 
 Another invariant example is that, TransactionManager should always have a
-view of the ResourceManager's states that is consistent with all
+view of the ResourceManagers' states that is consistent with all
 ResourceManagers' states.
 
 ### In-Memory Implementation
