@@ -21,6 +21,10 @@ The tool currently supports only JAVA, and it also requires the service and
 the client of the system's applications to have an in-memory version of its
 implementations.
 
+The remaining of this document comprises 2 main parts:
+- [How does it work?](#how-does-it-work)
+- [How to use it?](#how-to-use-it)
+
 ## How does it work?
 
 - A distributed system is said to be in a correct state if all its invariants
