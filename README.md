@@ -243,6 +243,10 @@ conception of this library.
 The samples included in this library were inspired by the
 [examples of TLA+](https://lamport.azurewebsites.net/video/videos.html).
 
+## License
+
+This project is licensed under the [MIT license](LICENSE).
+
 ## Why is the name "Overcooked"?
 When I finally got around doing this, I needed a name for it. I asked my 
 wife for a name after describing what it does, "a tool that verifies that 
