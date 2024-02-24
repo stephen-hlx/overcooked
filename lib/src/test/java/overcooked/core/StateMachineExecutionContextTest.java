@@ -10,15 +10,16 @@ import overcooked.core.actor.ActorId;
 import overcooked.core.actor.LocalState;
 
 class StateMachineExecutionContextTest {
+  // TODO - split the two cases
   @Test
   void registerOrGetDuplicate_works() {
     final String actor1 = "actor1";
     final int stateData1 = 1;
     GlobalState initialState = new GlobalState(ImmutableMap.of(
-        ActorId.builder().id("actor0").build(),
+        new ActorId("actor0"),
         new TestLocalState(0)));
     GlobalState state1 = new GlobalState(ImmutableMap.of(
-        ActorId.builder().id(actor1).build(),
+        new ActorId(actor1),
         new TestLocalState(stateData1)));
     StateMachineExecutionContext context = new StateMachineExecutionContext(initialState);
 
@@ -28,7 +29,7 @@ class StateMachineExecutionContextTest {
     assertThat(actual.getId()).isEqualTo(state1.getId());
 
     GlobalState state1Duplicate = new GlobalState(ImmutableMap.of(
-        ActorId.builder().id(actor1).build(),
+        new ActorId(actor1),
         new TestLocalState(stateData1)));
     assertThat(state1Duplicate).isEqualTo(state1);
     assertThat(state1Duplicate).isNotSameAs(state1);
@@ -45,12 +46,12 @@ class StateMachineExecutionContextTest {
     final String actor0 = "actor0";
     final int stateData = 0;
     GlobalState initialState = new GlobalState(ImmutableMap.of(
-        ActorId.builder().id(actor0).build(),
+        new ActorId(actor0),
         new TestLocalState(stateData)));
     StateMachineExecutionContext context = new StateMachineExecutionContext(initialState);
 
     GlobalState initialStateDuplicate = new GlobalState(ImmutableMap.of(
-        ActorId.builder().id(actor0).build(),
+        new ActorId(actor0),
         new TestLocalState(stateData)));
     assertThat(initialStateDuplicate).isEqualTo(initialState);
     assertThat(initialStateDuplicate).isNotSameAs(initialState);

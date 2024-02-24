@@ -9,5 +9,4 @@ class IntransitiveActionTypeTest {
   void isTransitive_returns_false() {
     assertThat(new IntransitiveActionType().isTransitive()).isFalse();
   }
-
 }

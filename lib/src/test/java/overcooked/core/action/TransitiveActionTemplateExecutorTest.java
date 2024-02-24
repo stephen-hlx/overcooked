@@ -38,7 +38,7 @@ class TransitiveActionTemplateExecutorTest {
         () -> executor.execute(
             ActionTemplate.builder()
                 .actionType(new IntransitiveActionType())
-                .actionPerformerId(ActorId.builder().id("notUsed").build())
+                .actionPerformerId(new ActorId("notUsed"))
                 .actionLabel("not used")
                 .action((notUsed1, notUsed2) -> {})
                 .build(),
@@ -52,11 +52,11 @@ class TransitiveActionTemplateExecutorTest {
   void execute_calls_transitive_action_taker_and_converts_actors_back_to_local_state() {
     LocalState actionPerformerLocalState = new TestLocalState(0, 0);
     LocalState newActionPerformerLocalState = new TestLocalState(0, 1);
-    ActorId actionPerformerId = ActorId.builder().id("actionPerformer").build();
+    ActorId actionPerformerId = new ActorId("actionPerformer");
 
     LocalState actionReceiverLocalState = new TestLocalState(1, 0);
     LocalState newActionReceiverLocalState = new TestLocalState(1, 1);
-    ActorId actionReceiverId = ActorId.builder().id("actionReceiver").build();
+    ActorId actionReceiverId = new ActorId("actionReceiver");
 
     ActionTemplate<String, String> actionTemplate = ActionTemplate.<String, String>builder()
         .actionPerformerId(actionPerformerId)

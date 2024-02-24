@@ -29,12 +29,8 @@ import overcooked.visual.DotGraphExporterFactory;
 
 @Slf4j
 class ModelVerificationTest {
-  private static final ActorId JAR3 = ActorId.builder()
-      .id("jar3")
-      .build();
-  private static final ActorId JAR5 = ActorId.builder()
-      .id("jar5")
-      .build();
+  private static final ActorId JAR3 = new ActorId("jar3");
+  private static final ActorId JAR5 = new ActorId("jar5");
 
   @Test
   void sample_verification_works() {

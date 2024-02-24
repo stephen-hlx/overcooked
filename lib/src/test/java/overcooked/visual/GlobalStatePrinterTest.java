@@ -13,9 +13,8 @@ import overcooked.core.actor.LocalState;
 class GlobalStatePrinterTest {
   @Test
   void works() {
-
-    ActorId actorId1 = ActorId.builder().id("actor1").build();
-    ActorId actorId2 = ActorId.builder().id("actor2").build();
+    ActorId actorId1 = new ActorId("actor1");
+    ActorId actorId2 = new ActorId("actor2");
 
     LocalState actor1LocalState = new TestLocalState(1, 0);
     LocalState actor2LocalState = new TestLocalState(2, 0);

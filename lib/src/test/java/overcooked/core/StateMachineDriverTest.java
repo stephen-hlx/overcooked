@@ -30,10 +30,10 @@ import overcooked.util.TestLocalState;
 class StateMachineDriverTest {
   private static final String ACTOR_1_METHOD_1 = "actor1.method1";
   private static final String ACTOR_2_METHOD_1 = "actor2.method1";
-  private static final ActorId ACTOR_ID_1 = ActorId.builder().id("actor1").build();
-  private static final ActorId ACTOR_ID_2 = ActorId.builder().id("actor2").build();
-  private static final ActorId ACTOR_ID_3 = ActorId.builder().id("actor3").build();
-  private static final ActorId ACTOR_ID_4 = ActorId.builder().id("actor4").build();
+  private static final ActorId ACTOR_ID_1 = new ActorId("actor1");
+  private static final ActorId ACTOR_ID_2 = new ActorId("actor2");
+  private static final ActorId ACTOR_ID_3 = new ActorId("actor3");
+  private static final ActorId ACTOR_ID_4 = new ActorId("actor4");
 
   private static final ActionTemplate<?, ?> ACTOR_1_ACTION_TEMPLATE = ActionTemplate.builder()
       .actionPerformerId(ACTOR_ID_1)

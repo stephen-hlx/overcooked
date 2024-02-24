@@ -14,9 +14,9 @@ import overcooked.core.actor.ActorId;
 import overcooked.sample.twophasecommit.model.ResourceManagerState;
 
 class TransactionStateVerifierTest {
-  private static final ActorId TM = ActorId.builder().id("TM").build();
-  private static final ActorId RM_0 = ActorId.builder().id("RM_0").build();
-  private static final ActorId RM_1 = ActorId.builder().id("RM_1").build();
+  private static final ActorId TM = new ActorId("TM");
+  private static final ActorId RM_0 = new ActorId("RM_0");
+  private static final ActorId RM_1 = new ActorId("RM_1");
 
   private final TransactionStateVerifier verifier = new TransactionStateVerifier(TM);
 

@@ -18,6 +18,8 @@ import overcooked.util.TestLocalState;
 
 class IntransitiveActionTemplateExecutorTest {
   private static final Integer ACTION_PERFORMER = 0;
+  private static final ActorId NOT_USED_ACTOR_ID = new ActorId("notUsed");
+
   private final ActionTaker actionTaker = mock(ActionTaker.class);
   @SuppressWarnings("unchecked")
   private final ActorFactory<Integer> actorFactory = mock(ActorFactory.class);
@@ -34,8 +36,8 @@ class IntransitiveActionTemplateExecutorTest {
     assertThatThrownBy(
         () -> executor.execute(
             ActionTemplate.builder()
-                .actionType(new TransitiveActionType(ActorId.builder().id("notUsed").build()))
-                .actionPerformerId(ActorId.builder().id("notUsed").build())
+                .actionType(new TransitiveActionType(NOT_USED_ACTOR_ID))
+                .actionPerformerId(NOT_USED_ACTOR_ID)
                 .actionLabel("not used")
                 .action((notUsed1, notUsed2) -> {})
                 .build(),
@@ -49,7 +51,7 @@ class IntransitiveActionTemplateExecutorTest {
   void execute_calls_intransitive_action_taker_and_converts_actor_back_to_local_state() {
     LocalState actorLocalState = new TestLocalState(0, 0);
     LocalState newActorLocalState = new TestLocalState(1, 1);
-    ActorId actionPerformerId = ActorId.builder().id("actor").build();
+    ActorId actionPerformerId = new ActorId("actor");
 
     ActionTemplate<Integer, Void> actionTemplate = ActionTemplate.<Integer, Void>builder()
         .actionPerformerId(actionPerformerId)

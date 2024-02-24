@@ -8,13 +8,10 @@ import overcooked.core.actor.ActorId;
 class TransitiveActionTypeTest {
   @Test
   void works() {
-    ActorId actorId = ActorId.builder()
-        .id("doesn't matter")
-        .build();
+    ActorId actorId = new ActorId("doesn't matter");
     ActionType someType = new TransitiveActionType(actorId);
     assertThat(someType.isTransitive()).isTrue();
     assertThat(someType.getActionReceiverId())
         .isEqualTo(actorId);
   }
-
 }

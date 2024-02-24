@@ -31,14 +31,14 @@ import overcooked.visual.DotGraphExporterFactory;
 @Slf4j
 class TwoPhaseCommitModelVerifierTest {
   private static final String TM_ID = "TM";
-  private static final ActorId TM = ActorId.builder().id(TM_ID).build();
+  private static final ActorId TM = new ActorId(TM_ID);
 
   private static final String RM_ID_0 = "RM0";
   private static final String RM_ID_1 = "RM1";
   private static final String RM_ID_2 = "RM2";
-  private static final ActorId RM_0 = ActorId.builder().id(RM_ID_0).build();
-  private static final ActorId RM_1 = ActorId.builder().id(RM_ID_1).build();
-  private static final ActorId RM_2 = ActorId.builder().id(RM_ID_2).build();
+  private static final ActorId RM_0 = new ActorId(RM_ID_0);
+  private static final ActorId RM_1 = new ActorId(RM_ID_1);
+  private static final ActorId RM_2 = new ActorId(RM_ID_2);
 
   @Test
   void can_run_without_error() {

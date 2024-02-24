@@ -27,18 +27,10 @@ public class StateMachineTestSetup {
   public static final String ACTOR_3_METHOD = "actor3method1";
   public static final String ACTOR_3_METHOD_2 = "actor3method2";
   public static final String ACTOR_4_METHOD = "actor4method1";
-  public static final ActorId ACTOR_ID_1 = ActorId.builder()
-      .id("actor1")
-      .build();
-  public static final ActorId ACTOR_ID_2 = ActorId.builder()
-      .id("actor2")
-      .build();
-  public static final ActorId ACTOR_ID_3 = ActorId.builder()
-      .id("actor3")
-      .build();
-  public static final ActorId ACTOR_ID_4 = ActorId.builder()
-      .id("actor4")
-      .build();
+  public static final ActorId ACTOR_ID_1 = new ActorId("actor1");
+  public static final ActorId ACTOR_ID_2 = new ActorId("actor2");
+  public static final ActorId ACTOR_ID_3 = new ActorId("actor3");
+  public static final ActorId ACTOR_ID_4 = new ActorId("actor4");
   public static final LocalState ACTOR_1_LOCAL_STATE = new TestLocalState(1, 0);
   public static final LocalState ACTOR_2_LOCAL_STATE = new TestLocalState(2, 0);
   public static final LocalState ACTOR_3_LOCAL_STATE = new TestLocalState(3, 0);

@@ -13,8 +13,8 @@ import overcooked.core.actor.ActorId;
 import overcooked.core.actor.LocalState;
 
 class StateMergerTest {
-  private static final ActorId ACTOR_ID_0 = ActorId.builder().id("0").build();
-  private static final ActorId ACTOR_ID_1 = ActorId.builder().id("1").build();
+  private static final ActorId ACTOR_ID_0 = new ActorId("0");
+  private static final ActorId ACTOR_ID_1 = new ActorId("1");
 
   @Test
   @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH")

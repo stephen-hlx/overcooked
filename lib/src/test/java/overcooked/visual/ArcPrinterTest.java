@@ -10,9 +10,9 @@ class ArcPrinterTest {
   @Test
   void works_with_action_receiver() {
     assertThat(ArcPrinter.printArc(Arc.builder()
-            .actionPerformerId(ActorId.builder().id("performer").build())
+            .actionPerformerId(new ActorId("performer"))
             .label("method")
-            .actionReceiverId(ActorId.builder().id("receiver").build())
+            .actionReceiverId(new ActorId("receiver"))
         .build()))
         .isEqualTo("performer.method(receiver)");
   }
@@ -20,7 +20,7 @@ class ArcPrinterTest {
   @Test
   void works_without_action_receiver() {
     assertThat(ArcPrinter.printArc(Arc.builder()
-        .actionPerformerId(ActorId.builder().id("performer").build())
+        .actionPerformerId(new ActorId("performer"))
         .label("method")
         .actionReceiverId(null)
         .build()))
