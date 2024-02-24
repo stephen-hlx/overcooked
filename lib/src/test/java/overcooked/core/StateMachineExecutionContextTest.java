@@ -10,18 +10,37 @@ import overcooked.core.actor.ActorId;
 import overcooked.core.actor.LocalState;
 
 class StateMachineExecutionContextTest {
-  // TODO - split the two cases
   @Test
-  void registerOrGetDuplicate_works() {
-    final String actor1 = "actor1";
-    final int stateData1 = 1;
+  void registerOrGetDuplicate_does_register() {
     GlobalState initialState = new GlobalState(ImmutableMap.of(
         new ActorId("actor0"),
         new TestLocalState(0)));
+    StateMachineExecutionContext context = new StateMachineExecutionContext(initialState);
+
+    final String actor1 = "a different actor to distinguish the global state from the initial one";
+    final int stateData1 = 1;
     GlobalState state1 = new GlobalState(ImmutableMap.of(
         new ActorId(actor1),
         new TestLocalState(stateData1)));
+
+    GlobalState actual = context.registerOrGetDuplicate(state1);
+    assertThat(actual).isEqualTo(state1);
+    assertThat(actual).isSameAs(state1);
+    assertThat(actual.getId()).isEqualTo(state1.getId());
+  }
+
+  @Test
+  void registerOrGetDuplicate_does_deduplicate() {
+    GlobalState initialState = new GlobalState(ImmutableMap.of(
+        new ActorId("actor0"),
+        new TestLocalState(0)));
     StateMachineExecutionContext context = new StateMachineExecutionContext(initialState);
+
+    final String actor1 = "a different actor to distinguish the global state from the initial one";
+    final int stateData1 = 1;
+    GlobalState state1 = new GlobalState(ImmutableMap.of(
+        new ActorId(actor1),
+        new TestLocalState(stateData1)));
 
     GlobalState actual = context.registerOrGetDuplicate(state1);
     assertThat(actual).isEqualTo(state1);
@@ -42,7 +61,7 @@ class StateMachineExecutionContextTest {
   }
 
   @Test
-  void registerOrGetDuplicate_works_for_initial_state() {
+  void registerOrGetDuplicate_does_deduplicate_for_initial_state() {
     final String actor0 = "actor0";
     final int stateData = 0;
     GlobalState initialState = new GlobalState(ImmutableMap.of(
