@@ -1,4 +1,4 @@
-package overcooked.visual;
+package overcooked.io;
 
 import overcooked.analysis.Arc;
 

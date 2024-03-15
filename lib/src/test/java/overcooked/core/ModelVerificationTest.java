@@ -16,6 +16,7 @@ import overcooked.core.action.IntransitiveActionType;
 import overcooked.core.action.TransitiveActionType;
 import overcooked.core.actor.ActorId;
 import overcooked.core.actor.ActorStateTransformerConfig;
+import overcooked.io.DotGraphExporterFactory;
 import overcooked.sample.waterjar.model.Jar3;
 import overcooked.sample.waterjar.model.Jar5;
 import overcooked.sample.waterjar.modelverifier.FourLiterVerifier;
@@ -25,7 +26,6 @@ import overcooked.sample.waterjar.modelverifier.Jar3State;
 import overcooked.sample.waterjar.modelverifier.Jar5Factory;
 import overcooked.sample.waterjar.modelverifier.Jar5LocalStateExtractor;
 import overcooked.sample.waterjar.modelverifier.Jar5State;
-import overcooked.visual.DotGraphExporterFactory;
 
 @Slf4j
 class ModelVerificationTest {

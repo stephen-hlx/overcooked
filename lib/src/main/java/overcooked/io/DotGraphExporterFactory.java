@@ -1,4 +1,4 @@
-package overcooked.visual;
+package overcooked.io;
 
 import com.google.common.collect.ImmutableMap;
 import org.jgrapht.nio.DefaultAttribute;

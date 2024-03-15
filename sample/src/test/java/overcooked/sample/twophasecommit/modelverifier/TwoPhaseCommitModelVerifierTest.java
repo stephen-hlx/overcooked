@@ -25,8 +25,8 @@ import overcooked.core.action.ActionTemplate;
 import overcooked.core.action.TransitiveActionType;
 import overcooked.core.actor.ActorId;
 import overcooked.core.actor.ActorStateTransformerConfig;
+import overcooked.io.DotGraphExporterFactory;
 import overcooked.sample.twophasecommit.model.ResourceManagerState;
-import overcooked.visual.DotGraphExporterFactory;
 
 @Slf4j
 class TwoPhaseCommitModelVerifierTest {

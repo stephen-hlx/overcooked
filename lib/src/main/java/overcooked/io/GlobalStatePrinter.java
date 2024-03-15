@@ -1,4 +1,4 @@
-package overcooked.visual;
+package overcooked.io;
 
 import java.util.Comparator;
 import java.util.Map;

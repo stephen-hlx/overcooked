@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.mutable.MutableInt;
-import overcooked.visual.DotGraphExporter;
+import overcooked.io.DotGraphExporter;
 
 /**
  * Generator of the report based on the execution data.

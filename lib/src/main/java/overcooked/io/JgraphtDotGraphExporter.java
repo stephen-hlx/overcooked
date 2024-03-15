@@ -1,4 +1,4 @@
-package overcooked.visual;
+package overcooked.io;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;

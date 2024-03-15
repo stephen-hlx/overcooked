@@ -1,4 +1,4 @@
-package overcooked.visual;
+package overcooked.io;
 
 import java.util.Set;
 import overcooked.analysis.Transition;

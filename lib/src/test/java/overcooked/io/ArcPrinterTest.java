@@ -1,4 +1,4 @@
-package overcooked.visual;
+package overcooked.io;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
