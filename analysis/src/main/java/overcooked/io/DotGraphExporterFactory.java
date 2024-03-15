@@ -8,15 +8,15 @@ import overcooked.analysis.Transition;
 import overcooked.core.GlobalState;
 
 /**
- * Factory of {@link DotGraphExporter}.
+ * Factory of {@link GraphExporter}.
  */
 public class DotGraphExporterFactory {
   /**
-   * Creates a {@link DotGraphExporter} object.
+   * Creates a {@link GraphExporter} object.
    *
-   * @return the {@link DotGraphExporter} object created
+   * @return the {@link GraphExporter} object created
    */
-  public static DotGraphExporter create() {
+  public static GraphExporter create() {
     DOTExporter<GlobalState, Transition> dotExporter = new DOTExporter<>();
 
     dotExporter.setVertexIdProvider(globalState -> "S_" + globalState.getId());

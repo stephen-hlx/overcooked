@@ -55,7 +55,7 @@ class TwoPhaseCommitModelVerifierTest {
     mkdir(outputDirName);
     ReportGenerator reportGenerator = ReportGenerator.builder()
         .analyser(new JgraphtAnalyser())
-        .dotGraphExporter(DotGraphExporterFactory.create())
+        .graphExporter(DotGraphExporterFactory.create())
         .outputDirName(outputDirName)
         .transitionFilter(TransitionFilter.EXCEPTION_FREE.and(TransitionFilter.NON_SELF_LOOP))
         .build();

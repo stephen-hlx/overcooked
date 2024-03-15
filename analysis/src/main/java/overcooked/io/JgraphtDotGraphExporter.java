@@ -11,12 +11,12 @@ import overcooked.analysis.Transition;
 import overcooked.core.GlobalState;
 
 /**
- * A JGraphT based implementation of {@link DotGraphExporter}.
+ * A JGraphT based implementation of {@link GraphExporter}.
  */
 @RequiredArgsConstructor
 @SuppressFBWarnings(value = { "EI_EXPOSE_REP" },
     justification = "this is just for internal use, making it immutable is over engineering")
-class JgraphtDotGraphExporter implements DotGraphExporter {
+class JgraphtDotGraphExporter implements GraphExporter {
   private final JgraphtGraphBuilder jgraphtGraphBuilder;
   private final DOTExporter<GlobalState, Transition> dotExporter;
 

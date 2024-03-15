@@ -49,7 +49,7 @@ class ModelVerificationTest {
 
     Report report = ReportGenerator.builder()
         .analyser(new JgraphtAnalyser())
-        .dotGraphExporter(DotGraphExporterFactory.create())
+        .graphExporter(DotGraphExporterFactory.create())
         .outputDirName("/tmp")
         .build()
         .generate(stateMachineExecutionContext.getData());

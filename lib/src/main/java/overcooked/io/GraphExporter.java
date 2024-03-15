@@ -4,14 +4,14 @@ import java.util.Set;
 import overcooked.analysis.Transition;
 
 /**
- * Builds a DOT string that can be used to create a DOT file.
+ * Exports the graph as a string.
  */
-public interface DotGraphExporter {
+public interface GraphExporter {
   /**
-   * Builds a DOT string using the transitions provided.
+   * Generates a string representation of the graph using the transitions provided.
    *
    * @param transitions the {@link Transition}s of a state machine
-   * @return the string representing the DOT graph
+   * @return the string representing the graph
    */
   String export(Set<Transition> transitions);
 }

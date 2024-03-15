@@ -48,7 +48,7 @@ class WaterJarModelVerifierTest {
     mkdir(outputDirName);
     ReportGenerator reportGenerator = ReportGenerator.builder()
         .analyser(new JgraphtAnalyser())
-        .dotGraphExporter(DotGraphExporterFactory.create())
+        .graphExporter(DotGraphExporterFactory.create())
         .outputDirName(outputDirName)
         .build();
     Report report = reportGenerator.generate(stateMachineExecutionContext.getData());

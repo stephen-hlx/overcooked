@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.mutable.MutableInt;
-import overcooked.io.DotGraphExporter;
+import overcooked.io.GraphExporter;
 
 /**
  * Generator of the report based on the execution data.
@@ -28,7 +28,7 @@ public class ReportGenerator {
   @Builder.Default
   private final Predicate<Transition> transitionFilter = transition -> true;
 
-  private final DotGraphExporter dotGraphExporter;
+  private final GraphExporter graphExporter;
   private final Analyser analyser;
 
   /**
@@ -48,7 +48,7 @@ public class ReportGenerator {
   private void exportGraphs(StateMachineExecutionData data) {
     String allTransitions = String.format("%s/%s", outputDirName, FILENAME_ALL_TRANSITIONS);
     log.info("Exporting full state machine to " + allTransitions);
-    writeToFile(allTransitions, dotGraphExporter.export(data.getTransitions().stream()
+    writeToFile(allTransitions, graphExporter.export(data.getTransitions().stream()
         .filter(transitionFilter)
         .collect(Collectors.toSet())));
 
@@ -57,7 +57,7 @@ public class ReportGenerator {
       String filename = String.format("%s/%s_%d",
           outputDirName, FILENAME_FAILURE_TRANSITION, counter.getAndIncrement());
       log.info("Exporting failure state to " + filename);
-      writeToFile(filename, dotGraphExporter.export(
+      writeToFile(filename, graphExporter.export(
           analyser.findShortestPathToFailureState(data.getInitialState(),
               failingState,
               data.getTransitions())));
