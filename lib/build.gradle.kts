@@ -40,6 +40,7 @@ dependencies {
     testImplementation("org.slf4j:slf4j-jdk14:2.0.9")
 
     testImplementation(project(":sample"))
+    testImplementation(project(":analysis"))
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
