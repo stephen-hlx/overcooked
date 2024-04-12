@@ -67,9 +67,9 @@ class WaterJarModelVerifierTest {
             JAR3, new Jar3Factory(),
             JAR5, new Jar5Factory()
         ))
-        .localStateExtractors(ImmutableMap.of(
-            JAR3, new Jar3LocalStateExtractor(),
-            JAR5, new Jar5LocalStateExtractor()
+        .actorStateExtractors(ImmutableMap.of(
+            JAR3, new Jar3ActorStateExtractor(),
+            JAR5, new Jar5ActorStateExtractor()
         ))
         .build();
   }

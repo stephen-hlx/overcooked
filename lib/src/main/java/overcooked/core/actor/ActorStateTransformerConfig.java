@@ -5,11 +5,11 @@ import lombok.Builder;
 import lombok.Value;
 
 /**
- * The transformers between actors and their {@link LocalState}.
+ * The transformers between actors and their {@link ActorState}.
  */
 @Value
 @Builder
 public class ActorStateTransformerConfig {
   ImmutableMap<ActorId, ActorFactory<?>> actorFactories;
-  ImmutableMap<ActorId, LocalStateExtractor<?>> localStateExtractors;
+  ImmutableMap<ActorId, ActorStateExtractor<?>> actorStateExtractors;
 }

@@ -2,14 +2,14 @@ package overcooked.util;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import overcooked.core.actor.LocalState;
+import overcooked.core.actor.ActorState;
 
 /**
- * A {@link LocalState} implementation for use by tests.
+ * A {@link ActorState} implementation for use by tests.
  */
 @Value
 @EqualsAndHashCode(callSuper = false)
-public class TestLocalState extends LocalState {
+public class TestActorState extends ActorState {
   int f1;
   int f2;
 

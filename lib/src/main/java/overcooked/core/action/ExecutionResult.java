@@ -5,7 +5,7 @@ import java.util.Map;
 import lombok.Builder;
 import lombok.Value;
 import overcooked.core.actor.ActorId;
-import overcooked.core.actor.LocalState;
+import overcooked.core.actor.ActorState;
 
 /**
  * A structure that provides not only the local states that corresponds to the actors involved in
@@ -17,5 +17,5 @@ import overcooked.core.actor.LocalState;
     justification = "this is merely an internal structure")
 public class ExecutionResult {
   ActionResult actionResult;
-  Map<ActorId, LocalState> localStates;
+  Map<ActorId, ActorState> localStates;
 }

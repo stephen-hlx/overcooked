@@ -20,11 +20,11 @@ import overcooked.io.DotGraphExporterFactory;
 import overcooked.sample.waterjar.model.Jar3;
 import overcooked.sample.waterjar.model.Jar5;
 import overcooked.sample.waterjar.modelverifier.FourLiterVerifier;
+import overcooked.sample.waterjar.modelverifier.Jar3ActorStateExtractor;
 import overcooked.sample.waterjar.modelverifier.Jar3Factory;
-import overcooked.sample.waterjar.modelverifier.Jar3LocalStateExtractor;
 import overcooked.sample.waterjar.modelverifier.Jar3State;
+import overcooked.sample.waterjar.modelverifier.Jar5ActorStateExtractor;
 import overcooked.sample.waterjar.modelverifier.Jar5Factory;
-import overcooked.sample.waterjar.modelverifier.Jar5LocalStateExtractor;
 import overcooked.sample.waterjar.modelverifier.Jar5State;
 
 @Slf4j
@@ -69,9 +69,9 @@ class ModelVerificationTest {
             JAR3, new Jar3Factory(),
             JAR5, new Jar5Factory()
         ))
-        .localStateExtractors(ImmutableMap.of(
-            JAR3, new Jar3LocalStateExtractor(),
-            JAR5, new Jar5LocalStateExtractor()
+        .actorStateExtractors(ImmutableMap.of(
+            JAR3, new Jar3ActorStateExtractor(),
+            JAR5, new Jar5ActorStateExtractor()
         ))
         .build();
   }

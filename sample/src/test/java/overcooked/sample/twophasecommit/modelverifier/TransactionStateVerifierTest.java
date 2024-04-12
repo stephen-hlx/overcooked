@@ -49,32 +49,32 @@ class TransactionStateVerifierTest {
     assertThat(verifier.verify(globalState)).isEqualTo(expectedValidity);
   }
 
-  private static GlobalState globalState(TransactionManagerLocalState transactionManagerLocalState,
-                                         ResourceManagerLocalState resourceManager0LocalState,
-                                         ResourceManagerLocalState resourceManager1LocalState) {
+  private static GlobalState globalState(TransactionManagerActorState transactionManagerActorState,
+                                         ResourceManagerActorState resourceManager0ActorState,
+                                         ResourceManagerActorState resourceManager1ActorState) {
     return new GlobalState(ImmutableMap.of(
-        TM, transactionManagerLocalState,
-        RM_0, resourceManager0LocalState,
-        RM_1, resourceManager1LocalState));
+        TM, transactionManagerActorState,
+        RM_0, resourceManager0ActorState,
+        RM_1, resourceManager1ActorState));
   }
 
-  private static TransactionManagerLocalState tm(ResourceManagerState resourceManager0State,
+  private static TransactionManagerActorState tm(ResourceManagerState resourceManager0State,
                                                  ResourceManagerState resourceManager1State) {
-    return new TransactionManagerLocalState(ImmutableMap.of(
+    return new TransactionManagerActorState(ImmutableMap.of(
         RM_0.getId(), resourceManager0State,
         RM_1.getId(), resourceManager1State));
   }
 
-  private static ResourceManagerLocalState rm0(ResourceManagerState resourceManagerState) {
+  private static ResourceManagerActorState rm0(ResourceManagerState resourceManagerState) {
     return rmState(RM_0, resourceManagerState);
   }
 
-  private static ResourceManagerLocalState rm1(ResourceManagerState resourceManagerState) {
+  private static ResourceManagerActorState rm1(ResourceManagerState resourceManagerState) {
     return rmState(RM_1, resourceManagerState);
   }
 
-  private static ResourceManagerLocalState rmState(ActorId resourceManagerId,
+  private static ResourceManagerActorState rmState(ActorId resourceManagerId,
                                                    ResourceManagerState resourceManagerState) {
-    return new ResourceManagerLocalState(resourceManagerId.getId(), resourceManagerState);
+    return new ResourceManagerActorState(resourceManagerId.getId(), resourceManagerState);
   }
 }

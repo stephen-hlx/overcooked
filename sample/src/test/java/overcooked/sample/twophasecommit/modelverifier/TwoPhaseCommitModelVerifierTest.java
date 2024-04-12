@@ -81,10 +81,10 @@ class TwoPhaseCommitModelVerifierTest {
     resourceManagerStates.put(RM_ID_1, WORKING);
     resourceManagerStates.put(RM_ID_2, WORKING);
     return new GlobalState(ImmutableMap.of(
-        TM, new TransactionManagerLocalState(resourceManagerStates),
-        RM_0, new ResourceManagerLocalState(RM_ID_0, WORKING),
-        RM_1, new ResourceManagerLocalState(RM_ID_1, WORKING),
-        RM_2, new ResourceManagerLocalState(RM_ID_2, WORKING)
+        TM, new TransactionManagerActorState(resourceManagerStates),
+        RM_0, new ResourceManagerActorState(RM_ID_0, WORKING),
+        RM_1, new ResourceManagerActorState(RM_ID_1, WORKING),
+        RM_2, new ResourceManagerActorState(RM_ID_2, WORKING)
     ));
   }
 
@@ -99,8 +99,8 @@ class TwoPhaseCommitModelVerifierTest {
 
   private static ActorStateTransformerConfig actorStateTransformerConfig() {
     ResourceManagerFactory resourceManagerFactory = new ResourceManagerFactory();
-    ResourceManagerActorLocalStateExtractor resourceManagerActorLocalStateExtractor =
-        new ResourceManagerActorLocalStateExtractor();
+    ResourceManagerActorStateExtractor resourceManagerActorStateExtractor =
+        new ResourceManagerActorStateExtractor();
     return ActorStateTransformerConfig.builder()
         .actorFactories(ImmutableMap.of(
             TM, new TransactionManagerFactory(),
@@ -108,11 +108,11 @@ class TwoPhaseCommitModelVerifierTest {
             RM_1, resourceManagerFactory,
             RM_2, resourceManagerFactory
         ))
-        .localStateExtractors(ImmutableMap.of(
-            TM, new TransactionManagerActorLocalStateExtractor(),
-            RM_0, resourceManagerActorLocalStateExtractor,
-            RM_1, resourceManagerActorLocalStateExtractor,
-            RM_2, resourceManagerActorLocalStateExtractor
+        .actorStateExtractors(ImmutableMap.of(
+            TM, new TransactionManagerActorStateExtractor(),
+            RM_0, resourceManagerActorStateExtractor,
+            RM_1, resourceManagerActorStateExtractor,
+            RM_2, resourceManagerActorStateExtractor
         ))
         .build();
   }

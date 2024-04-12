@@ -29,10 +29,10 @@ class TransactionStateVerifier implements InvariantVerifier {
 
   private Map<String, ResourceManagerState> getResourceManagerStatesFromTransactionManager(
       GlobalState globalState) {
-    return ((TransactionManagerLocalState) (globalState.getCopyOfLocalStates().entrySet().stream()
+    return ((TransactionManagerActorState) (globalState.getCopyOfLocalStates().entrySet().stream()
         .filter(entry -> entry.getKey().equals(transactionManagerId))
         .findFirst()
-        .orElseThrow(() -> new RuntimeException("Could not find TransactionManagerLocalState"))
+        .orElseThrow(() -> new RuntimeException("Could not find TransactionManagerActorState"))
         .getValue())).getResourceManagerStates();
   }
 
@@ -42,7 +42,7 @@ class TransactionStateVerifier implements InvariantVerifier {
         .filter(entry -> !entry.getKey().equals(transactionManagerId))
         .collect(Collectors.toMap(
             e -> e.getKey().getId(),
-            e -> ((ResourceManagerLocalState) e.getValue()).getState()));
+            e -> ((ResourceManagerActorState) e.getValue()).getState()));
   }
 
   private static boolean verifyResourceManagerState(

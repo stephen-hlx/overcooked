@@ -8,7 +8,7 @@ import lombok.Value;
 import org.junit.jupiter.api.Test;
 import overcooked.core.GlobalState;
 import overcooked.core.actor.ActorId;
-import overcooked.core.actor.LocalState;
+import overcooked.core.actor.ActorState;
 
 class GlobalStatePrinterTest {
   @Test
@@ -16,20 +16,20 @@ class GlobalStatePrinterTest {
     ActorId actorId1 = new ActorId("actor1");
     ActorId actorId2 = new ActorId("actor2");
 
-    LocalState actor1LocalState = new TestLocalState(1, 0);
-    LocalState actor2LocalState = new TestLocalState(2, 0);
+    ActorState actor1ActorState = new TestActorState(1, 0);
+    ActorState actor2ActorState = new TestActorState(2, 0);
 
     assertThat(GlobalStatePrinter.print(new GlobalState(
-        ImmutableMap.<ActorId, LocalState>builder()
-            .put(actorId1, actor1LocalState)
-            .put(actorId2, actor2LocalState)
+        ImmutableMap.<ActorId, ActorState>builder()
+            .put(actorId1, actor1ActorState)
+            .put(actorId2, actor2ActorState)
             .build())))
         .isEqualTo("actor1(f1=1,f2=0), actor2(f1=2,f2=0)");
   }
 
   @Value
   @EqualsAndHashCode(callSuper = false)
-  static class TestLocalState extends LocalState {
+  static class TestActorState extends ActorState {
     int f1;
     int f2;
 

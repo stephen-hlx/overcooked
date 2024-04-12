@@ -2,7 +2,7 @@ package overcooked.sample.waterjar.modelverifier;
 
 import overcooked.core.GlobalState;
 import overcooked.core.InvariantVerifier;
-import overcooked.core.actor.LocalState;
+import overcooked.core.actor.ActorState;
 
 /**
  * The {@link InvariantVerifier} of the Jar sample.
@@ -10,9 +10,9 @@ import overcooked.core.actor.LocalState;
 public class FourLiterVerifier implements InvariantVerifier {
   @Override
   public boolean verify(GlobalState globalState) {
-    for (LocalState localState : globalState.getCopyOfLocalStates().values()) {
-      if (localState instanceof Jar5State) {
-        if (((Jar5State) localState).getOccupancy() == 4) {
+    for (ActorState actorState : globalState.getCopyOfLocalStates().values()) {
+      if (actorState instanceof Jar5State) {
+        if (((Jar5State) actorState).getOccupancy() == 4) {
           return false;
         }
       }

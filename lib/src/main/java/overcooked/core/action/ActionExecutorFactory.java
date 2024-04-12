@@ -1,5 +1,6 @@
 package overcooked.core.action;
 
+import overcooked.core.actor.ActorState;
 import overcooked.core.actor.ActorStateTransformerConfig;
 
 /**
@@ -13,7 +14,7 @@ public class ActionExecutorFactory {
    * Creates an {@link IntransitiveActionTemplateExecutor} object.
    *
    * @param actorStateTransformerConfig the config providing the transformer implementation between
-   *                                    actor and {@link overcooked.core.actor.LocalState}.
+   *                                    actor and {@link ActorState}.
    * @return the {@link IntransitiveActionTemplateExecutor} object created
    */
   public static IntransitiveActionTemplateExecutor createIntransitiveActionTemplateExecutor(
@@ -28,7 +29,7 @@ public class ActionExecutorFactory {
    * Creates an {@link TransitiveActionTemplateExecutor} object.
    *
    * @param actorStateTransformerConfig the config providing the transformer implementation between
-   *                                    actor and {@link overcooked.core.actor.LocalState}.
+   *                                    actor and {@link ActorState}.
    * @return the {@link TransitiveActionTemplateExecutor} object created
    */
   public static TransitiveActionTemplateExecutor createTransitiveActionTemplateExecutor(

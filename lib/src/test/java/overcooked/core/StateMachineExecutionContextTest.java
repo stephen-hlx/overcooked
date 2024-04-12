@@ -7,21 +7,21 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
 import overcooked.core.actor.ActorId;
-import overcooked.core.actor.LocalState;
+import overcooked.core.actor.ActorState;
 
 class StateMachineExecutionContextTest {
   @Test
   void registerOrGetDuplicate_does_register() {
     GlobalState initialState = new GlobalState(ImmutableMap.of(
         new ActorId("actor0"),
-        new TestLocalState(0)));
+        new TestActorState(0)));
     StateMachineExecutionContext context = new StateMachineExecutionContext(initialState);
 
     final String actor1 = "a different actor to distinguish the global state from the initial one";
     final int stateData1 = 1;
     GlobalState state1 = new GlobalState(ImmutableMap.of(
         new ActorId(actor1),
-        new TestLocalState(stateData1)));
+        new TestActorState(stateData1)));
 
     GlobalState actual = context.registerOrGetDuplicate(state1);
     assertThat(actual).isEqualTo(state1);
@@ -33,14 +33,14 @@ class StateMachineExecutionContextTest {
   void registerOrGetDuplicate_does_deduplicate() {
     GlobalState initialState = new GlobalState(ImmutableMap.of(
         new ActorId("actor0"),
-        new TestLocalState(0)));
+        new TestActorState(0)));
     StateMachineExecutionContext context = new StateMachineExecutionContext(initialState);
 
     final String actor1 = "a different actor to distinguish the global state from the initial one";
     final int stateData1 = 1;
     GlobalState state1 = new GlobalState(ImmutableMap.of(
         new ActorId(actor1),
-        new TestLocalState(stateData1)));
+        new TestActorState(stateData1)));
 
     GlobalState actual = context.registerOrGetDuplicate(state1);
     assertThat(actual).isEqualTo(state1);
@@ -49,7 +49,7 @@ class StateMachineExecutionContextTest {
 
     GlobalState state1Duplicate = new GlobalState(ImmutableMap.of(
         new ActorId(actor1),
-        new TestLocalState(stateData1)));
+        new TestActorState(stateData1)));
     assertThat(state1Duplicate).isEqualTo(state1);
     assertThat(state1Duplicate).isNotSameAs(state1);
     assertThat(state1Duplicate.getId()).isNotEqualTo(state1.getId());
@@ -66,12 +66,12 @@ class StateMachineExecutionContextTest {
     final int stateData = 0;
     GlobalState initialState = new GlobalState(ImmutableMap.of(
         new ActorId(actor0),
-        new TestLocalState(stateData)));
+        new TestActorState(stateData)));
     StateMachineExecutionContext context = new StateMachineExecutionContext(initialState);
 
     GlobalState initialStateDuplicate = new GlobalState(ImmutableMap.of(
         new ActorId(actor0),
-        new TestLocalState(stateData)));
+        new TestActorState(stateData)));
     assertThat(initialStateDuplicate).isEqualTo(initialState);
     assertThat(initialStateDuplicate).isNotSameAs(initialState);
     assertThat(initialStateDuplicate.getId()).isNotEqualTo(initialState.getId());
@@ -84,7 +84,7 @@ class StateMachineExecutionContextTest {
 
   @Value
   @EqualsAndHashCode(callSuper = false)
-  private static class TestLocalState extends LocalState {
+  private static class TestActorState extends ActorState {
     int data;
   }
 }

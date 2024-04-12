@@ -11,10 +11,10 @@ import org.mockito.InOrder;
 import org.mockito.Mockito;
 import overcooked.core.actor.ActorFactory;
 import overcooked.core.actor.ActorId;
+import overcooked.core.actor.ActorState;
+import overcooked.core.actor.ActorStateExtractor;
 import overcooked.core.actor.ActorStateTransformerConfig;
-import overcooked.core.actor.LocalState;
-import overcooked.core.actor.LocalStateExtractor;
-import overcooked.util.TestLocalState;
+import overcooked.util.TestActorState;
 
 class IntransitiveActionTemplateExecutorTest {
   private static final Integer ACTION_PERFORMER = 0;
@@ -24,10 +24,10 @@ class IntransitiveActionTemplateExecutorTest {
   @SuppressWarnings("unchecked")
   private final ActorFactory<Integer> actorFactory = mock(ActorFactory.class);
   @SuppressWarnings("unchecked")
-  private final LocalStateExtractor<Integer> actorLocalStateExtractor =
-      mock(LocalStateExtractor.class);
+  private final ActorStateExtractor<Integer> actorStateExtractor =
+      mock(ActorStateExtractor.class);
   private final InOrder inOrder = Mockito.inOrder(actionTaker, actorFactory,
-      actorLocalStateExtractor);
+      actorStateExtractor);
 
   @Test
   void when_provided_with_a_transitive_action_then_throws_illegalArgumentException() {
@@ -49,8 +49,8 @@ class IntransitiveActionTemplateExecutorTest {
 
   @Test
   void execute_calls_intransitive_action_taker_and_converts_actor_back_to_local_state() {
-    LocalState actorLocalState = new TestLocalState(0, 0);
-    LocalState newActorLocalState = new TestLocalState(1, 1);
+    ActorState actorState = new TestActorState(0, 0);
+    ActorState newActorState = new TestActorState(1, 1);
     ActorId actionPerformerId = new ActorId("actor");
 
     ActionTemplate<Integer, Void> actionTemplate = ActionTemplate.<Integer, Void>builder()
@@ -66,31 +66,31 @@ class IntransitiveActionTemplateExecutorTest {
         .actionLabel("not used")
         .build();
 
-    when(actorFactory.restoreFromLocalState(actorLocalState)).thenReturn(ACTION_PERFORMER);
+    when(actorFactory.restoreFromActorState(actorState)).thenReturn(ACTION_PERFORMER);
 
-    when(actorLocalStateExtractor.extract(ACTION_PERFORMER)).thenReturn(newActorLocalState);
+    when(actorStateExtractor.extract(ACTION_PERFORMER)).thenReturn(newActorState);
     when(actionTaker.take(actionDefinition)).thenReturn(ActionResult.success());
 
     IntransitiveActionTemplateExecutor executor = IntransitiveActionTemplateExecutor.builder()
         .config(ActorStateTransformerConfig.builder()
             .actorFactories(ImmutableMap.of(actionPerformerId, actorFactory))
-            .localStateExtractors(ImmutableMap.of(
-                actionPerformerId, actorLocalStateExtractor))
+            .actorStateExtractors(ImmutableMap.of(
+                actionPerformerId, actorStateExtractor))
             .build())
         .actionTaker(actionTaker)
         .build();
 
     assertThat(executor.execute(
         actionTemplate,
-        actorLocalState))
+        actorState))
         .isEqualTo(ExecutionResult.builder()
             .actionResult(ActionResult.success())
-            .localStates(ImmutableMap.of(actionPerformerId, newActorLocalState))
+            .localStates(ImmutableMap.of(actionPerformerId, newActorState))
             .build());
 
-    inOrder.verify(actorFactory).restoreFromLocalState(actorLocalState);
+    inOrder.verify(actorFactory).restoreFromActorState(actorState);
     inOrder.verify(actionTaker).take(actionDefinition);
-    inOrder.verify(actorLocalStateExtractor).extract(ACTION_PERFORMER);
+    inOrder.verify(actorStateExtractor).extract(ACTION_PERFORMER);
 
     inOrder.verifyNoMoreInteractions();
   }

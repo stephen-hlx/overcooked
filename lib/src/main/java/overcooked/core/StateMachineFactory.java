@@ -1,6 +1,7 @@
 package overcooked.core;
 
 import overcooked.core.action.ActionExecutorFactory;
+import overcooked.core.actor.ActorState;
 import overcooked.core.actor.ActorStateTransformerConfig;
 
 /**
@@ -12,7 +13,7 @@ class StateMachineFactory {
    *
    * @param invariantVerifier the {@link InvariantVerifier} object
    * @param actorStateTransformerConfig the config providing the transformer implementation between
-   *                                    actor and {@link overcooked.core.actor.LocalState}.
+   *                                    actor and {@link ActorState}.
    * @return a {@link StateMachine} object
    */
   public static StateMachine create(InvariantVerifier invariantVerifier,

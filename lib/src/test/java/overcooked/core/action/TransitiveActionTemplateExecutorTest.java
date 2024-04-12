@@ -11,10 +11,10 @@ import com.google.common.collect.ImmutableMap;
 import org.junit.jupiter.api.Test;
 import overcooked.core.actor.ActorFactory;
 import overcooked.core.actor.ActorId;
+import overcooked.core.actor.ActorState;
+import overcooked.core.actor.ActorStateExtractor;
 import overcooked.core.actor.ActorStateTransformerConfig;
-import overcooked.core.actor.LocalState;
-import overcooked.core.actor.LocalStateExtractor;
-import overcooked.util.TestLocalState;
+import overcooked.util.TestActorState;
 
 class TransitiveActionTemplateExecutorTest {
   private static final String ACTION_PERFORMER = "actionPerformerObject";
@@ -25,11 +25,11 @@ class TransitiveActionTemplateExecutorTest {
   @SuppressWarnings("unchecked")
   private final ActorFactory<String> actionReceiverFactory = mock(ActorFactory.class);
   @SuppressWarnings("unchecked")
-  private final LocalStateExtractor<String> actionPerformerLocalStateExtractor =
-      mock(LocalStateExtractor.class);
+  private final ActorStateExtractor<String> actionPerformerStateExtractor =
+      mock(ActorStateExtractor.class);
   @SuppressWarnings("unchecked")
-  private final LocalStateExtractor<String> actionReceiverLocalStateExtractor =
-      mock(LocalStateExtractor.class);
+  private final ActorStateExtractor<String> actionReceiverStateExtractor =
+      mock(ActorStateExtractor.class);
 
   @Test
   void when_provided_with_an_intransitive_action_then_throws_illegalArgumentException() {
@@ -50,12 +50,12 @@ class TransitiveActionTemplateExecutorTest {
 
   @Test
   void execute_calls_transitive_action_taker_and_converts_actors_back_to_local_state() {
-    LocalState actionPerformerLocalState = new TestLocalState(0, 0);
-    LocalState newActionPerformerLocalState = new TestLocalState(0, 1);
+    ActorState actionPerformerState = new TestActorState(0, 0);
+    ActorState newActionPerformerState = new TestActorState(0, 1);
     ActorId actionPerformerId = new ActorId("actionPerformer");
 
-    LocalState actionReceiverLocalState = new TestLocalState(1, 0);
-    LocalState newActionReceiverLocalState = new TestLocalState(1, 1);
+    ActorState actionReceiverState = new TestActorState(1, 0);
+    ActorState newActionReceiverState = new TestActorState(1, 1);
     ActorId actionReceiverId = new ActorId("actionReceiver");
 
     ActionTemplate<String, String> actionTemplate = ActionTemplate.<String, String>builder()
@@ -71,15 +71,15 @@ class TransitiveActionTemplateExecutorTest {
         .actionLabel("not used")
         .build();
 
-    when(actionPerformerFactory.restoreFromLocalState(actionPerformerLocalState))
+    when(actionPerformerFactory.restoreFromActorState(actionPerformerState))
         .thenReturn(ACTION_PERFORMER);
-    when(actionReceiverFactory.restoreFromLocalState(actionReceiverLocalState))
+    when(actionReceiverFactory.restoreFromActorState(actionReceiverState))
         .thenReturn(ACTION_RECEIVER);
 
-    when(actionPerformerLocalStateExtractor.extract(ACTION_PERFORMER))
-        .thenReturn(newActionPerformerLocalState);
-    when(actionReceiverLocalStateExtractor.extract(ACTION_RECEIVER))
-        .thenReturn(newActionReceiverLocalState);
+    when(actionPerformerStateExtractor.extract(ACTION_PERFORMER))
+        .thenReturn(newActionPerformerState);
+    when(actionReceiverStateExtractor.extract(ACTION_RECEIVER))
+        .thenReturn(newActionReceiverState);
     when(actionTaker.take(actionDefinition))
         .thenReturn(ActionResult.success());
 
@@ -89,9 +89,9 @@ class TransitiveActionTemplateExecutorTest {
                 actionPerformerId, actionPerformerFactory,
                 actionReceiverId, actionReceiverFactory
             ))
-            .localStateExtractors(ImmutableMap.of(
-                actionPerformerId, actionPerformerLocalStateExtractor,
-                actionReceiverId, actionReceiverLocalStateExtractor
+            .actorStateExtractors(ImmutableMap.of(
+                actionPerformerId, actionPerformerStateExtractor,
+                actionReceiverId, actionReceiverStateExtractor
             ))
             .build())
         .actionTaker(actionTaker)
@@ -99,26 +99,26 @@ class TransitiveActionTemplateExecutorTest {
 
     assertThat(executor.execute(
         actionTemplate,
-        actionPerformerLocalState,
-        actionReceiverLocalState))
+        actionPerformerState,
+        actionReceiverState))
         .isEqualTo(ExecutionResult.builder()
             .actionResult(ActionResult.success())
             .localStates(ImmutableMap.of(
-                actionPerformerId, newActionPerformerLocalState,
-                actionReceiverId, newActionReceiverLocalState
+                actionPerformerId, newActionPerformerState,
+                actionReceiverId, newActionReceiverState
             )).build());
 
-    verify(actionPerformerFactory).restoreFromLocalState(actionPerformerLocalState);
-    verify(actionReceiverFactory).restoreFromLocalState(actionReceiverLocalState);
+    verify(actionPerformerFactory).restoreFromActorState(actionPerformerState);
+    verify(actionReceiverFactory).restoreFromActorState(actionReceiverState);
     verify(actionTaker).take(actionDefinition);
-    verify(actionPerformerLocalStateExtractor).extract(ACTION_PERFORMER);
-    verify(actionReceiverLocalStateExtractor).extract(ACTION_RECEIVER);
+    verify(actionPerformerStateExtractor).extract(ACTION_PERFORMER);
+    verify(actionReceiverStateExtractor).extract(ACTION_RECEIVER);
 
     verifyNoMoreInteractions(
         actionTaker,
         actionReceiverFactory,
         actionPerformerFactory,
-        actionPerformerLocalStateExtractor,
-        actionReceiverLocalStateExtractor);
+        actionPerformerStateExtractor,
+        actionReceiverStateExtractor);
   }
 }

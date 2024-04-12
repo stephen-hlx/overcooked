@@ -7,9 +7,9 @@ import com.google.common.collect.ImmutableMap;
 import lombok.Builder;
 import overcooked.core.actor.ActorFactory;
 import overcooked.core.actor.ActorId;
+import overcooked.core.actor.ActorState;
+import overcooked.core.actor.ActorStateExtractor;
 import overcooked.core.actor.ActorStateTransformerConfig;
-import overcooked.core.actor.LocalState;
-import overcooked.core.actor.LocalStateExtractor;
 
 /**
  * The object that is responsible for executing a transitive action template.
@@ -22,17 +22,17 @@ public class TransitiveActionTemplateExecutor {
   /**
    * Executes the action defined in the {@link ActionTemplate} object on behalf of the actor that
    * is defined in the {@link ActorId} object. The actor will be initialised from the
-   * {@link LocalState} object.
+   * {@link ActorState} object.
    *
-   * @param actionTemplate            the template of the action that is going to be performed
-   * @param actionPerformerLocalState the local state of the action performer
-   * @param actionReceiverLocalState  the local state of the action receiver
+   * @param actionTemplate the template of the action that is going to be performed
+   * @param actionPerformerState the state of the action performer
+   * @param actionReceiverState  the state of the action receiver
    * @return an {@link ExecutionResult} object
    */
   public <PerformerT, ReceiverT> ExecutionResult execute(
       ActionTemplate<PerformerT, ReceiverT>  actionTemplate,
-      LocalState actionPerformerLocalState,
-      LocalState actionReceiverLocalState) {
+      ActorState actionPerformerState,
+      ActorState actionReceiverState) {
     Preconditions.checkArgument(actionTemplate.getActionType().isTransitive(),
         "Expecting a transitive action template but it was intransitive {}", actionTemplate);
 
@@ -40,12 +40,12 @@ public class TransitiveActionTemplateExecutor {
 
     PerformerT actionPerformer =
         this.<PerformerT>getActorFactory(actionTemplate.getActionPerformerId())
-            .restoreFromLocalState(actionPerformerLocalState);
+            .restoreFromActorState(actionPerformerState);
 
     ActorId actionReceiverId = actionTemplate.getActionType().getActionReceiverId();
 
     ReceiverT actionReceiver = this.<ReceiverT>getActorFactory(actionReceiverId)
-        .restoreFromLocalState(actionReceiverLocalState);
+        .restoreFromActorState(actionReceiverState);
 
     ActionResult actionResult = actionTaker.take(ActionDefinition.<PerformerT, ReceiverT>builder()
         .action(actionTemplate.getAction())
@@ -56,23 +56,23 @@ public class TransitiveActionTemplateExecutor {
 
     return ExecutionResult.builder()
         .actionResult(actionResult)
-        .localStates(ImmutableMap.<ActorId, LocalState>builder()
+        .localStates(ImmutableMap.<ActorId, ActorState>builder()
             .put(actionPerformerId,
-                getLocalStateExtractor(actionPerformerId)
+                getActorStateExtractor(actionPerformerId)
                     .extract(actionPerformer))
             .put(actionReceiverId,
-                getLocalStateExtractor(actionReceiverId)
+                getActorStateExtractor(actionReceiverId)
                     .extract(actionReceiver))
             .build())
         .build();
   }
 
   @SuppressWarnings("unchecked")
-  private <ActorT> LocalStateExtractor<ActorT> getLocalStateExtractor(
+  private <ActorT> ActorStateExtractor<ActorT> getActorStateExtractor(
       ActorId actionPerformerId) {
-    return (LocalStateExtractor<ActorT>) checkNotNull(
-        config.getLocalStateExtractors().get(actionPerformerId),
-        "No LocalStateExtractor found for actor {}", actionPerformerId);
+    return (ActorStateExtractor<ActorT>) checkNotNull(
+        config.getActorStateExtractors().get(actionPerformerId),
+        "No ActorStateExtractor found for actor {}", actionPerformerId);
   }
 
   @SuppressWarnings("unchecked")
