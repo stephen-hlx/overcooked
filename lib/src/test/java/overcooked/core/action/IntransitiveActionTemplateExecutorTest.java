@@ -14,6 +14,7 @@ import overcooked.core.actor.ActorId;
 import overcooked.core.actor.ActorState;
 import overcooked.core.actor.ActorStateExtractor;
 import overcooked.core.actor.ActorStateTransformerConfig;
+import overcooked.core.actor.LocalState;
 import overcooked.util.TestActorState;
 
 class IntransitiveActionTemplateExecutorTest {
@@ -41,7 +42,7 @@ class IntransitiveActionTemplateExecutorTest {
                 .actionLabel("not used")
                 .action((notUsed1, notUsed2) -> {})
                 .build(),
-            null))
+            LocalState.builder().build()))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessageStartingWith("Expecting an intransitive action template but it was transitive");
     inOrder.verifyNoMoreInteractions();
@@ -49,7 +50,10 @@ class IntransitiveActionTemplateExecutorTest {
 
   @Test
   void execute_calls_intransitive_action_taker_and_converts_actor_back_to_local_state() {
-    ActorState actorState = new TestActorState(0, 0);
+    TestActorState actorState = new TestActorState(0, 0);
+    LocalState localState = LocalState.builder()
+        .actorState(actorState)
+        .build();
     ActorState newActorState = new TestActorState(1, 1);
     ActorId actionPerformerId = new ActorId("actor");
 
@@ -82,10 +86,12 @@ class IntransitiveActionTemplateExecutorTest {
 
     assertThat(executor.execute(
         actionTemplate,
-        actorState))
+        localState))
         .isEqualTo(ExecutionResult.builder()
             .actionResult(ActionResult.success())
-            .localStates(ImmutableMap.of(actionPerformerId, newActorState))
+            .localStates(ImmutableMap.of(actionPerformerId, LocalState.builder()
+                .actorState(newActorState)
+                .build()))
             .build());
 
     inOrder.verify(actorFactory).restoreFromActorState(actorState);

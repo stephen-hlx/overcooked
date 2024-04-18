@@ -11,6 +11,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import overcooked.core.GlobalState;
 import overcooked.core.actor.ActorId;
+import overcooked.core.actor.ActorState;
+import overcooked.core.actor.LocalState;
 import overcooked.sample.twophasecommit.model.ResourceManagerState;
 
 class TransactionStateVerifierTest {
@@ -53,9 +55,9 @@ class TransactionStateVerifierTest {
                                          ResourceManagerActorState resourceManager0ActorState,
                                          ResourceManagerActorState resourceManager1ActorState) {
     return new GlobalState(ImmutableMap.of(
-        TM, transactionManagerActorState,
-        RM_0, resourceManager0ActorState,
-        RM_1, resourceManager1ActorState));
+        TM, localStateOf(transactionManagerActorState),
+        RM_0, localStateOf(resourceManager0ActorState),
+        RM_1, localStateOf(resourceManager1ActorState)));
   }
 
   private static TransactionManagerActorState tm(ResourceManagerState resourceManager0State,
@@ -76,5 +78,11 @@ class TransactionStateVerifierTest {
   private static ResourceManagerActorState rmState(ActorId resourceManagerId,
                                                    ResourceManagerState resourceManagerState) {
     return new ResourceManagerActorState(resourceManagerId.getId(), resourceManagerState);
+  }
+
+  private static LocalState localStateOf(ActorState actorState) {
+    return LocalState.builder()
+        .actorState(actorState)
+        .build();
   }
 }

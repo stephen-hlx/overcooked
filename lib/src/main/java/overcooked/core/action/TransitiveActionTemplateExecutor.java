@@ -10,6 +10,7 @@ import overcooked.core.actor.ActorId;
 import overcooked.core.actor.ActorState;
 import overcooked.core.actor.ActorStateExtractor;
 import overcooked.core.actor.ActorStateTransformerConfig;
+import overcooked.core.actor.LocalState;
 
 /**
  * The object that is responsible for executing a transitive action template.
@@ -25,14 +26,14 @@ public class TransitiveActionTemplateExecutor {
    * {@link ActorState} object.
    *
    * @param actionTemplate the template of the action that is going to be performed
-   * @param actionPerformerState the state of the action performer
-   * @param actionReceiverState  the state of the action receiver
+   * @param actionPerformerLocalState the local state of the action performer
+   * @param actionReceiverLocalState  the local state of the action receiver
    * @return an {@link ExecutionResult} object
    */
   public <PerformerT, ReceiverT> ExecutionResult execute(
       ActionTemplate<PerformerT, ReceiverT>  actionTemplate,
-      ActorState actionPerformerState,
-      ActorState actionReceiverState) {
+      LocalState actionPerformerLocalState,
+      LocalState actionReceiverLocalState) {
     Preconditions.checkArgument(actionTemplate.getActionType().isTransitive(),
         "Expecting a transitive action template but it was intransitive {}", actionTemplate);
 
@@ -40,12 +41,12 @@ public class TransitiveActionTemplateExecutor {
 
     PerformerT actionPerformer =
         this.<PerformerT>getActorFactory(actionTemplate.getActionPerformerId())
-            .restoreFromActorState(actionPerformerState);
+            .restoreFromActorState(actionPerformerLocalState.getActorState());
 
     ActorId actionReceiverId = actionTemplate.getActionType().getActionReceiverId();
 
     ReceiverT actionReceiver = this.<ReceiverT>getActorFactory(actionReceiverId)
-        .restoreFromActorState(actionReceiverState);
+        .restoreFromActorState(actionReceiverLocalState.getActorState());
 
     ActionResult actionResult = actionTaker.take(ActionDefinition.<PerformerT, ReceiverT>builder()
         .action(actionTemplate.getAction())
@@ -56,13 +57,15 @@ public class TransitiveActionTemplateExecutor {
 
     return ExecutionResult.builder()
         .actionResult(actionResult)
-        .localStates(ImmutableMap.<ActorId, ActorState>builder()
-            .put(actionPerformerId,
-                getActorStateExtractor(actionPerformerId)
-                    .extract(actionPerformer))
-            .put(actionReceiverId,
-                getActorStateExtractor(actionReceiverId)
-                    .extract(actionReceiver))
+        .localStates(ImmutableMap.<ActorId, LocalState>builder()
+            .put(actionPerformerId, LocalState.builder()
+                .actorState(getActorStateExtractor(actionPerformerId).extract(actionPerformer))
+                .actorEnvState(actionPerformerLocalState.getActorEnvState())
+                .build())
+            .put(actionReceiverId, LocalState.builder()
+                .actorState(getActorStateExtractor(actionReceiverId).extract(actionReceiver))
+                .actorEnvState(actionReceiverLocalState.getActorEnvState())
+                .build())
             .build())
         .build();
   }

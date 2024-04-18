@@ -24,7 +24,9 @@ import overcooked.core.StateMachineExecutionContext;
 import overcooked.core.action.ActionTemplate;
 import overcooked.core.action.TransitiveActionType;
 import overcooked.core.actor.ActorId;
+import overcooked.core.actor.ActorState;
 import overcooked.core.actor.ActorStateTransformerConfig;
+import overcooked.core.actor.LocalState;
 import overcooked.io.DotGraphExporterFactory;
 import overcooked.sample.twophasecommit.model.ResourceManagerState;
 
@@ -81,10 +83,10 @@ class TwoPhaseCommitModelVerifierTest {
     resourceManagerStates.put(RM_ID_1, WORKING);
     resourceManagerStates.put(RM_ID_2, WORKING);
     return new GlobalState(ImmutableMap.of(
-        TM, new TransactionManagerActorState(resourceManagerStates),
-        RM_0, new ResourceManagerActorState(RM_ID_0, WORKING),
-        RM_1, new ResourceManagerActorState(RM_ID_1, WORKING),
-        RM_2, new ResourceManagerActorState(RM_ID_2, WORKING)
+        TM, localStateOf(new TransactionManagerActorState(resourceManagerStates)),
+        RM_0, localStateOf(new ResourceManagerActorState(RM_ID_0, WORKING)),
+        RM_1, localStateOf(new ResourceManagerActorState(RM_ID_1, WORKING)),
+        RM_2, localStateOf(new ResourceManagerActorState(RM_ID_2, WORKING))
     ));
   }
 
@@ -158,5 +160,11 @@ class TwoPhaseCommitModelVerifierTest {
             .action(ResourceManagerActor::prepare)
             .build()
     );
+  }
+
+  private static LocalState localStateOf(ActorState actorState) {
+    return LocalState.builder()
+        .actorState(actorState)
+        .build();
   }
 }

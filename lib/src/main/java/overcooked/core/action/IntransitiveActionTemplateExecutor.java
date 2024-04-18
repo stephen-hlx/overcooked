@@ -7,9 +7,9 @@ import com.google.common.collect.ImmutableMap;
 import lombok.Builder;
 import overcooked.core.actor.ActorFactory;
 import overcooked.core.actor.ActorId;
-import overcooked.core.actor.ActorState;
 import overcooked.core.actor.ActorStateExtractor;
 import overcooked.core.actor.ActorStateTransformerConfig;
+import overcooked.core.actor.LocalState;
 
 /**
  * The object that is responsible for executing an intransitive action.
@@ -22,15 +22,15 @@ public class IntransitiveActionTemplateExecutor {
   /**
    * Executes the action defined in the {@link ActionTemplate} object on behalf of the actor that
    * is defined in the {@link ActorId} object. The actor will be initialised from the
-   * {@link ActorState} object.
+   * {@link LocalState} object.
    *
-   * @param actorState the state of the actor which is going to perform the action
    * @param actionTemplate  the template of the action that is going to be performed
+   * @param localState the state of the actor which is going to perform the action
    * @return an {@link ExecutionResult} object
    */
   public <PerformerT, ReceiverT> ExecutionResult execute(
       ActionTemplate<PerformerT, ReceiverT> actionTemplate,
-      ActorState actorState) {
+      LocalState localState) {
     Preconditions.checkArgument(!actionTemplate.getActionType().isTransitive(),
         "Expecting an intransitive action template but it was transitive {}", actionTemplate);
 
@@ -41,7 +41,7 @@ public class IntransitiveActionTemplateExecutor {
             config.getActorFactories().get(actionPerformerId),
             "No ActorFactory found for actor {}", actionPerformerId);
     PerformerT actionPerformer = actorFactory
-        .restoreFromActorState(actorState);
+        .restoreFromActorState(localState.getActorState());
 
     ActionResult actionResult = actionTaker.take(ActionDefinition.<PerformerT, ReceiverT>builder()
         .action(actionTemplate.getAction())
@@ -58,8 +58,10 @@ public class IntransitiveActionTemplateExecutor {
 
     return ExecutionResult.builder()
         .actionResult(actionResult)
-        .localStates(ImmutableMap.of(
-            actionPerformerId, actorStateExtractor.extract(actionPerformer)))
+        .localStates(ImmutableMap.of(actionPerformerId, LocalState.builder()
+            .actorState(actorStateExtractor.extract(actionPerformer))
+            .actorEnvState(localState.getActorEnvState())
+            .build()))
         .build();
   }
 }

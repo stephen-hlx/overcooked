@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import overcooked.core.actor.ActorId;
-import overcooked.core.actor.ActorState;
+import overcooked.core.actor.LocalState;
 
 /**
  * Represents a state of the global state machine.
@@ -21,9 +21,9 @@ public class GlobalState {
   private final long id;
 
   // <actor, localState>
-  private final ImmutableMap<ActorId, ActorState> localStates;
+  private final ImmutableMap<ActorId, LocalState> localStates;
 
-  public GlobalState(Map<ActorId, ActorState> localStates) {
+  public GlobalState(Map<ActorId, LocalState> localStates) {
     this.localStates = ImmutableMap.copyOf(localStates);
     this.id = SEED.getAndIncrement();
   }
@@ -32,13 +32,12 @@ public class GlobalState {
     return localStates.keySet();
   }
 
-  public ActorState getCopyOfLocalState(ActorId actorId) {
+  public LocalState getCopyOfLocalState(ActorId actorId) {
     return Preconditions.checkNotNull(localStates.get(actorId)).deepCopy();
   }
 
-  public Map<ActorId, ActorState> getCopyOfLocalStates() {
+  public Map<ActorId, LocalState> getCopyOfLocalStates() {
     return localStates.entrySet().stream()
         .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().deepCopy()));
   }
-
 }

@@ -16,6 +16,7 @@ import overcooked.core.action.IntransitiveActionType;
 import overcooked.core.action.TransitiveActionType;
 import overcooked.core.actor.ActorId;
 import overcooked.core.actor.ActorStateTransformerConfig;
+import overcooked.core.actor.LocalState;
 import overcooked.io.DotGraphExporterFactory;
 import overcooked.sample.waterjar.model.Jar3;
 import overcooked.sample.waterjar.model.Jar5;
@@ -35,8 +36,12 @@ class ModelVerificationTest {
   @Test
   void sample_verification_works() {
     GlobalState initialState = new GlobalState(ImmutableMap.of(
-        JAR3, new Jar3State(0),
-        JAR5, new Jar5State(0)));
+        JAR3, LocalState.builder()
+            .actorState(new Jar3State(0))
+            .build(),
+        JAR5, LocalState.builder()
+            .actorState(new Jar5State(0))
+            .build()));
 
     ActorActionConfig actorActionConfig = createActorActionConfig();
 

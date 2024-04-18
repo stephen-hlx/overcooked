@@ -14,6 +14,7 @@ import overcooked.core.actor.ActorId;
 import overcooked.core.actor.ActorState;
 import overcooked.core.actor.ActorStateExtractor;
 import overcooked.core.actor.ActorStateTransformerConfig;
+import overcooked.core.actor.LocalState;
 import overcooked.util.TestActorState;
 
 class TransitiveActionTemplateExecutorTest {
@@ -42,8 +43,8 @@ class TransitiveActionTemplateExecutorTest {
                 .actionLabel("not used")
                 .action((notUsed1, notUsed2) -> {})
                 .build(),
-            null,
-            null))
+            LocalState.builder().build(),
+            LocalState.builder().build()))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessageStartingWith("Expecting a transitive action template but it was intransitive");
   }
@@ -51,10 +52,16 @@ class TransitiveActionTemplateExecutorTest {
   @Test
   void execute_calls_transitive_action_taker_and_converts_actors_back_to_local_state() {
     ActorState actionPerformerState = new TestActorState(0, 0);
+    LocalState actionPerformerLocalState = LocalState.builder()
+        .actorState(actionPerformerState)
+        .build();
     ActorState newActionPerformerState = new TestActorState(0, 1);
     ActorId actionPerformerId = new ActorId("actionPerformer");
 
     ActorState actionReceiverState = new TestActorState(1, 0);
+    LocalState actionReceiverLocalState = LocalState.builder()
+        .actorState(actionReceiverState)
+        .build();
     ActorState newActionReceiverState = new TestActorState(1, 1);
     ActorId actionReceiverId = new ActorId("actionReceiver");
 
@@ -99,13 +106,17 @@ class TransitiveActionTemplateExecutorTest {
 
     assertThat(executor.execute(
         actionTemplate,
-        actionPerformerState,
-        actionReceiverState))
+        actionPerformerLocalState,
+        actionReceiverLocalState))
         .isEqualTo(ExecutionResult.builder()
             .actionResult(ActionResult.success())
             .localStates(ImmutableMap.of(
-                actionPerformerId, newActionPerformerState,
-                actionReceiverId, newActionReceiverState
+                actionPerformerId, LocalState.builder()
+                    .actorState(newActionPerformerState)
+                    .build(),
+                actionReceiverId, LocalState.builder()
+                    .actorState(newActionReceiverState)
+                    .build()
             )).build());
 
     verify(actionPerformerFactory).restoreFromActorState(actionPerformerState);

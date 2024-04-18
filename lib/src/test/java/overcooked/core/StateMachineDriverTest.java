@@ -20,6 +20,7 @@ import overcooked.core.action.TransitiveActionTemplateExecutor;
 import overcooked.core.action.TransitiveActionType;
 import overcooked.core.actor.ActorId;
 import overcooked.core.actor.ActorState;
+import overcooked.core.actor.LocalState;
 import overcooked.util.TestActorState;
 
 /**
@@ -54,13 +55,13 @@ class StateMachineDriverTest {
           .put(ACTOR_ID_2, ImmutableSet.of(ACTOR_2_ACTION_TEMPLATE))
           .build());
 
-  private static final ActorState ACTOR_1_STATE = new TestActorState(1, 0);
-  private static final ActorState ACTOR_2_STATE = new TestActorState(2, 0);
-  private static final ActorState ACTOR_3_STATE = new TestActorState(3, 0);
-  private static final ActorState ACTOR_4_STATE = new TestActorState(4, 0);
-  private static final ActorState NEW_ACTOR_1_STATE = new TestActorState(1, 1);
-  private static final ActorState NEW_ACTOR_2_STATE = new TestActorState(2, 1);
-  private static final ActorState NEW_ACTOR_3_STATE = new TestActorState(3, 1);
+  private static final LocalState ACTOR_1_LOCAL_STATE = localStateOf(new TestActorState(1, 0));
+  private static final LocalState ACTOR_2_LOCAL_STATE = localStateOf(new TestActorState(2, 0));
+  private static final LocalState ACTOR_3_LOCAL_STATE = localStateOf(new TestActorState(3, 0));
+  private static final LocalState ACTOR_4_LOCAL_STATE = localStateOf(new TestActorState(4, 0));
+  private static final LocalState NEW_ACTOR_1_LOCAL_STATE = localStateOf(new TestActorState(1, 1));
+  private static final LocalState NEW_ACTOR_2_LOCAL_STATE = localStateOf(new TestActorState(2, 1));
+  private static final LocalState NEW_ACTOR_3_LOCAL_STATE = localStateOf(new TestActorState(3, 1));
 
   private final IntransitiveActionTemplateExecutor intransitiveActionTemplateExecutor =
       mock(IntransitiveActionTemplateExecutor.class);
@@ -76,42 +77,42 @@ class StateMachineDriverTest {
 
   @Test
   void works() {
-    when(intransitiveActionTemplateExecutor.execute(ACTOR_1_ACTION_TEMPLATE, ACTOR_1_STATE))
+    when(intransitiveActionTemplateExecutor.execute(ACTOR_1_ACTION_TEMPLATE, ACTOR_1_LOCAL_STATE))
         .thenReturn(ExecutionResult.builder()
             .actionResult(ActionResult.success())
-            .localStates(ImmutableMap.of(ACTOR_ID_1, NEW_ACTOR_1_STATE))
+            .localStates(ImmutableMap.of(ACTOR_ID_1, NEW_ACTOR_1_LOCAL_STATE))
             .build());
     when(transitiveActionTemplateExecutor
-        .execute(ACTOR_2_ACTION_TEMPLATE, ACTOR_2_STATE, ACTOR_3_STATE))
+        .execute(ACTOR_2_ACTION_TEMPLATE, ACTOR_2_LOCAL_STATE, ACTOR_3_LOCAL_STATE))
         .thenReturn(ExecutionResult.builder()
             .actionResult(ActionResult.success())
             .localStates(ImmutableMap.of(
-                ACTOR_ID_2, NEW_ACTOR_2_STATE,
-                ACTOR_ID_3, NEW_ACTOR_3_STATE
+                ACTOR_ID_2, NEW_ACTOR_2_LOCAL_STATE,
+                ACTOR_ID_3, NEW_ACTOR_3_LOCAL_STATE
             )).build());
 
     GlobalState initialState = new GlobalState(
-        ImmutableMap.<ActorId, ActorState>builder()
-            .put(ACTOR_ID_1, ACTOR_1_STATE)
-            .put(ACTOR_ID_2, ACTOR_2_STATE)
-            .put(ACTOR_ID_3, ACTOR_3_STATE)
-            .put(ACTOR_ID_4, ACTOR_4_STATE)
+        ImmutableMap.<ActorId, LocalState>builder()
+            .put(ACTOR_ID_1, ACTOR_1_LOCAL_STATE)
+            .put(ACTOR_ID_2, ACTOR_2_LOCAL_STATE)
+            .put(ACTOR_ID_3, ACTOR_3_LOCAL_STATE)
+            .put(ACTOR_ID_4, ACTOR_4_LOCAL_STATE)
             .build());
 
     StateMachineExecutionContext stateMachineExecutionContext =
         spy(new StateMachineExecutionContext(initialState));
 
-    GlobalState globalState1 = new GlobalState(ImmutableMap.<ActorId, ActorState>builder()
-        .put(ACTOR_ID_1, NEW_ACTOR_1_STATE)
-        .put(ACTOR_ID_2, ACTOR_2_STATE)
-        .put(ACTOR_ID_3, ACTOR_3_STATE)
-        .put(ACTOR_ID_4, ACTOR_4_STATE)
+    GlobalState globalState1 = new GlobalState(ImmutableMap.<ActorId, LocalState>builder()
+        .put(ACTOR_ID_1, NEW_ACTOR_1_LOCAL_STATE)
+        .put(ACTOR_ID_2, ACTOR_2_LOCAL_STATE)
+        .put(ACTOR_ID_3, ACTOR_3_LOCAL_STATE)
+        .put(ACTOR_ID_4, ACTOR_4_LOCAL_STATE)
         .build());
-    GlobalState globalState2 = new GlobalState(ImmutableMap.<ActorId, ActorState>builder()
-        .put(ACTOR_ID_1, ACTOR_1_STATE)
-        .put(ACTOR_ID_2, NEW_ACTOR_2_STATE)
-        .put(ACTOR_ID_3, NEW_ACTOR_3_STATE)
-        .put(ACTOR_ID_4, ACTOR_4_STATE)
+    GlobalState globalState2 = new GlobalState(ImmutableMap.<ActorId, LocalState>builder()
+        .put(ACTOR_ID_1, ACTOR_1_LOCAL_STATE)
+        .put(ACTOR_ID_2, NEW_ACTOR_2_LOCAL_STATE)
+        .put(ACTOR_ID_3, NEW_ACTOR_3_LOCAL_STATE)
+        .put(ACTOR_ID_4, ACTOR_4_LOCAL_STATE)
         .build());
 
     assertThat(stateMachineDriver.computeNext(initialState, ACTOR_ACTION_CONFIG,
@@ -119,13 +120,13 @@ class StateMachineDriverTest {
         .isEqualTo(ImmutableSet.of(globalState1, globalState2));
 
     verify(intransitiveActionTemplateExecutor)
-        .execute(ACTOR_1_ACTION_TEMPLATE, ACTOR_1_STATE);
+        .execute(ACTOR_1_ACTION_TEMPLATE, ACTOR_1_LOCAL_STATE);
     verify(transitiveActionTemplateExecutor)
-        .execute(ACTOR_2_ACTION_TEMPLATE, ACTOR_2_STATE, ACTOR_3_STATE);
-    verify(stateMerger).merge(initialState, ImmutableMap.of(ACTOR_ID_1, NEW_ACTOR_1_STATE));
+        .execute(ACTOR_2_ACTION_TEMPLATE, ACTOR_2_LOCAL_STATE, ACTOR_3_LOCAL_STATE);
+    verify(stateMerger).merge(initialState, ImmutableMap.of(ACTOR_ID_1, NEW_ACTOR_1_LOCAL_STATE));
     verify(stateMerger).merge(initialState, ImmutableMap.of(
-        ACTOR_ID_2, NEW_ACTOR_2_STATE,
-        ACTOR_ID_3, NEW_ACTOR_3_STATE));
+        ACTOR_ID_2, NEW_ACTOR_2_LOCAL_STATE,
+        ACTOR_ID_3, NEW_ACTOR_3_LOCAL_STATE));
     verify(stateMachineExecutionContext).registerOrGetDuplicate(globalState1);
     verify(stateMachineExecutionContext).capture(initialState,
         ACTOR_1_ACTION_TEMPLATE,
@@ -140,5 +141,11 @@ class StateMachineDriverTest {
         transitiveActionTemplateExecutor,
         stateMerger,
         stateMachineExecutionContext);
+  }
+
+  private static LocalState localStateOf(ActorState actorState) {
+    return LocalState.builder()
+        .actorState(actorState)
+        .build();
   }
 }

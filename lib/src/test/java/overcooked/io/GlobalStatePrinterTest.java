@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import overcooked.core.GlobalState;
 import overcooked.core.actor.ActorId;
 import overcooked.core.actor.ActorState;
+import overcooked.core.actor.LocalState;
 
 class GlobalStatePrinterTest {
   @Test
@@ -20,11 +21,20 @@ class GlobalStatePrinterTest {
     ActorState actor2ActorState = new TestActorState(2, 0);
 
     assertThat(GlobalStatePrinter.print(new GlobalState(
-        ImmutableMap.<ActorId, ActorState>builder()
-            .put(actorId1, actor1ActorState)
-            .put(actorId2, actor2ActorState)
+        ImmutableMap.<ActorId, LocalState>builder()
+            .put(actorId1, localStateOf(actor1ActorState))
+            .put(actorId2, localStateOf(actor2ActorState))
             .build())))
-        .isEqualTo("actor1(f1=1,f2=0), actor2(f1=2,f2=0)");
+        .isEqualTo("actor1(LocalState(actorState=f1=1,f2=0, "
+            + "actorEnvState=ActorEnvState(rejections={}))), "
+            + "actor2(LocalState(actorState=f1=2,f2=0, "
+            + "actorEnvState=ActorEnvState(rejections={})))");
+  }
+
+  private static LocalState localStateOf(ActorState actorState) {
+    return LocalState.builder()
+        .actorState(actorState)
+        .build();
   }
 
   @Value

@@ -22,11 +22,11 @@ class JgraphtDotGraphExporterTest {
             TRANSITION_3_4)))
         .isEqualTo("""
             digraph G {
-              S_0 [ label="actor1(f1=1,f2=0), actor2(f1=2,f2=0), actor3(f1=3,f2=0), actor4(f1=4,f2=0)" ];
-              S_1 [ label="actor1(f1=1,f2=1), actor2(f1=2,f2=0), actor3(f1=3,f2=0), actor4(f1=4,f2=0)" ];
-              S_2 [ label="actor1(f1=1,f2=0), actor2(f1=2,f2=1), actor3(f1=3,f2=1), actor4(f1=4,f2=0)" ];
-              S_3 [ label="actor1(f1=1,f2=0), actor2(f1=2,f2=1), actor3(f1=3,f2=0), actor4(f1=4,f2=0)" ];
-              S_4 [ label="actor1(f1=1,f2=1), actor2(f1=2,f2=1), actor3(f1=3,f2=0), actor4(f1=4,f2=0)" ];
+              S_0 [ label="actor1(LocalState(actorState=f1=1,f2=0, actorEnvState=ActorEnvState(rejections={}))), actor2(LocalState(actorState=f1=2,f2=0, actorEnvState=ActorEnvState(rejections={}))), actor3(LocalState(actorState=f1=3,f2=0, actorEnvState=ActorEnvState(rejections={}))), actor4(LocalState(actorState=f1=4,f2=0, actorEnvState=ActorEnvState(rejections={})))" ];
+              S_1 [ label="actor1(LocalState(actorState=f1=1,f2=1, actorEnvState=ActorEnvState(rejections={}))), actor2(LocalState(actorState=f1=2,f2=0, actorEnvState=ActorEnvState(rejections={}))), actor3(LocalState(actorState=f1=3,f2=0, actorEnvState=ActorEnvState(rejections={}))), actor4(LocalState(actorState=f1=4,f2=0, actorEnvState=ActorEnvState(rejections={})))" ];
+              S_2 [ label="actor1(LocalState(actorState=f1=1,f2=0, actorEnvState=ActorEnvState(rejections={}))), actor2(LocalState(actorState=f1=2,f2=1, actorEnvState=ActorEnvState(rejections={}))), actor3(LocalState(actorState=f1=3,f2=1, actorEnvState=ActorEnvState(rejections={}))), actor4(LocalState(actorState=f1=4,f2=0, actorEnvState=ActorEnvState(rejections={})))" ];
+              S_3 [ label="actor1(LocalState(actorState=f1=1,f2=0, actorEnvState=ActorEnvState(rejections={}))), actor2(LocalState(actorState=f1=2,f2=1, actorEnvState=ActorEnvState(rejections={}))), actor3(LocalState(actorState=f1=3,f2=0, actorEnvState=ActorEnvState(rejections={}))), actor4(LocalState(actorState=f1=4,f2=0, actorEnvState=ActorEnvState(rejections={})))" ];
+              S_4 [ label="actor1(LocalState(actorState=f1=1,f2=1, actorEnvState=ActorEnvState(rejections={}))), actor2(LocalState(actorState=f1=2,f2=1, actorEnvState=ActorEnvState(rejections={}))), actor3(LocalState(actorState=f1=3,f2=0, actorEnvState=ActorEnvState(rejections={}))), actor4(LocalState(actorState=f1=4,f2=0, actorEnvState=ActorEnvState(rejections={})))" ];
               S_0 -> S_1 [ label="actor1.actor1method1()" ];
               S_2 -> S_3 [ label="actor3.actor3method1()" ];
               S_2 -> S_3 [ label="actor3.actor3method2()" ];
