@@ -18,6 +18,7 @@ import overcooked.core.actor.LocalState;
 @Builder
 public class TransitiveActionTemplateExecutor {
   private final ActorStateTransformerConfig config;
+  private final FailureInjector failureInjector;
   private final ActionTaker actionTaker;
 
   /**
@@ -45,14 +46,17 @@ public class TransitiveActionTemplateExecutor {
 
     ActorId actionReceiverId = actionTemplate.getActionType().getActionReceiverId();
 
-    ReceiverT actionReceiver = this.<ReceiverT>getActorFactory(actionReceiverId)
-        .restoreFromActorState(actionReceiverLocalState.getActorState());
+    ReceiverT actionReceiver =
+        this.<ReceiverT>getActorFactory(actionReceiverId).restoreFromActorState(
+            actionReceiverLocalState.getActorState());
+    ReceiverT failureInjectedActionReceiver = failureInjector.inject(actionReceiver,
+        actionReceiverLocalState.getActorEnvState().getRejections().get(actionPerformerId));
 
     ActionResult actionResult = actionTaker.take(ActionDefinition.<PerformerT, ReceiverT>builder()
         .action(actionTemplate.getAction())
         .actionLabel(actionTemplate.getActionLabel())
         .actionPerformer(actionPerformer)
-        .actionReceiver(actionReceiver)
+        .actionReceiver(failureInjectedActionReceiver)
         .build());
 
     return ExecutionResult.builder()
@@ -63,7 +67,8 @@ public class TransitiveActionTemplateExecutor {
                 .actorEnvState(actionPerformerLocalState.getActorEnvState())
                 .build())
             .put(actionReceiverId, LocalState.builder()
-                .actorState(getActorStateExtractor(actionReceiverId).extract(actionReceiver))
+                .actorState(getActorStateExtractor(actionReceiverId)
+                    .extract(failureInjectedActionReceiver))
                 .actorEnvState(actionReceiverLocalState.getActorEnvState())
                 .build())
             .build())

@@ -6,10 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @Getter
+@Setter
 @EqualsAndHashCode
 class Jar {
   private final int capacity;
@@ -20,8 +22,8 @@ class Jar {
 
     int volumeToMove = Math.min(this.occupancy, other.availableSpace());
 
+    other.setOccupancy(Math.min(other.capacity, other.getOccupancy() + volumeToMove));
     this.occupancy -= volumeToMove;
-    other.occupancy = Math.min(other.capacity, other.occupancy + volumeToMove);
   }
 
   public void empty() {

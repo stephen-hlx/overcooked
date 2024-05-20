@@ -2,13 +2,19 @@ package overcooked.core.action;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.google.common.collect.ImmutableMap;
+import lombok.EqualsAndHashCode;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
+import overcooked.core.actor.ActorBase;
 import overcooked.core.actor.ActorFactory;
 import overcooked.core.actor.ActorId;
 import overcooked.core.actor.ActorState;
@@ -18,16 +24,20 @@ import overcooked.core.actor.LocalState;
 import overcooked.util.TestActorState;
 
 class IntransitiveActionTemplateExecutorTest {
-  private static final Integer ACTION_PERFORMER = 0;
+  private static final TestActor ACTION_PERFORMER = new TestActor();
   private static final ActorId NOT_USED_ACTOR_ID = new ActorId("notUsed");
 
   private final ActionTaker actionTaker = mock(ActionTaker.class);
+  private final FailureRecordingOverrider failureRecordingOverrider =
+      mock(FailureRecordingOverrider.class);
   @SuppressWarnings("unchecked")
-  private final ActorFactory<Integer> actorFactory = mock(ActorFactory.class);
+  private final ActorFactory<TestActor> actorFactory = mock(ActorFactory.class);
   @SuppressWarnings("unchecked")
-  private final ActorStateExtractor<Integer> actorStateExtractor =
+  private final ActorStateExtractor<TestActor> actorStateExtractor =
       mock(ActorStateExtractor.class);
-  private final InOrder inOrder = Mockito.inOrder(actionTaker, actorFactory,
+  private final InOrder inOrder = Mockito.inOrder(actionTaker,
+      actorFactory,
+      failureRecordingOverrider,
       actorStateExtractor);
 
   @Test
@@ -57,13 +67,13 @@ class IntransitiveActionTemplateExecutorTest {
     ActorState newActorState = new TestActorState(1, 1);
     ActorId actionPerformerId = new ActorId("actor");
 
-    ActionTemplate<Integer, Void> actionTemplate = ActionTemplate.<Integer, Void>builder()
+    ActionTemplate<TestActor, Void> actionTemplate = ActionTemplate.<TestActor, Void>builder()
         .actionPerformerId(actionPerformerId)
         .actionType(new IntransitiveActionType())
         .actionLabel("not used")
         .action((notUsed1, notUsed2) -> {})
         .build();
-    ActionDefinition<Integer, Void> actionDefinition = ActionDefinition.<Integer, Void>builder()
+    ActionDefinition<TestActor, Void> actionDefinition = ActionDefinition.<TestActor, Void>builder()
         .action(actionTemplate.getAction())
         .actionPerformer(ACTION_PERFORMER)
         .actionReceiver(null)
@@ -74,8 +84,12 @@ class IntransitiveActionTemplateExecutorTest {
 
     when(actorStateExtractor.extract(ACTION_PERFORMER)).thenReturn(newActorState);
     when(actionTaker.take(actionDefinition)).thenReturn(ActionResult.success());
+    doAnswer(invocation -> invocation.getArgument(0))
+        .when(failureRecordingOverrider)
+        .override(any(TestActor.class), anyMap());
 
     IntransitiveActionTemplateExecutor executor = IntransitiveActionTemplateExecutor.builder()
+        .failureRecordingOverrider(failureRecordingOverrider)
         .config(ActorStateTransformerConfig.builder()
             .actorFactories(ImmutableMap.of(actionPerformerId, actorFactory))
             .actorStateExtractors(ImmutableMap.of(
@@ -95,9 +109,14 @@ class IntransitiveActionTemplateExecutorTest {
             .build());
 
     inOrder.verify(actorFactory).restoreFromActorState(actorState);
+    inOrder.verify(failureRecordingOverrider).override(eq(ACTION_PERFORMER), anyMap());
     inOrder.verify(actionTaker).take(actionDefinition);
     inOrder.verify(actorStateExtractor).extract(ACTION_PERFORMER);
 
     inOrder.verifyNoMoreInteractions();
+  }
+
+  @EqualsAndHashCode
+  private static class TestActor implements ActorBase {
   }
 }

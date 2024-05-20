@@ -3,9 +3,10 @@ package overcooked.core;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import overcooked.core.actor.ActorEnvState;
 import overcooked.core.actor.ActorId;
 import overcooked.core.actor.ActorState;
 import overcooked.core.actor.LocalState;
+import overcooked.core.actor.SimulatedFailure;
 
 class StateMergerTest {
   private static final ActorId ACTOR_ID_0 = new ActorId("0");
@@ -26,9 +28,7 @@ class StateMergerTest {
         .actorState(actor0State0)
         .actorEnvState(new ActorEnvState())
         .build();
-    Map<String, String> actor1State0internal = new HashMap<>();
-    actor1State0internal.put("actor1", "state0");
-    Actor1ActorState actor1State0 = new Actor1ActorState(actor1State0internal);
+    Actor1ActorState actor1State0 = new Actor1ActorState(ImmutableMap.of("actor1", "state0"));
     LocalState actor1LocalState = LocalState.builder()
         .actorState(actor1State0)
         .actorEnvState(new ActorEnvState())
@@ -38,15 +38,15 @@ class StateMergerTest {
         ACTOR_ID_1, actor1LocalState
     ));
 
-    Map<ActorId, RuntimeException> actor0Rejections = new HashMap<>();
-    actor0Rejections.put(ACTOR_ID_1, new RuntimeException());
-    ActorEnvState actorEnvState0 = new ActorEnvState(actor0Rejections);
+    Map<ActorId, Set<SimulatedFailure>> actor0Rejections = ImmutableMap.of(ACTOR_ID_1,
+        ImmutableSet.of(new SimulatedFailure("id", notUsed -> {
+        }, new RuntimeException())));
 
     GlobalState newGlobalState =
         new StateMerger().merge(oldGlobalState, ImmutableMap.of(ACTOR_ID_0,
             LocalState.builder()
                 .actorState(new Actor0ActorState(ImmutableMap.of("actor0", "state1")))
-                .actorEnvState(actorEnvState0)
+                .actorEnvState(new ActorEnvState(actor0Rejections))
                 .build()));
 
     GlobalState expected = new GlobalState(ImmutableMap.of(

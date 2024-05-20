@@ -2,6 +2,7 @@ package overcooked.sample.twophasecommit.modelverifier;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
+import overcooked.core.actor.ActorBase;
 import overcooked.sample.twophasecommit.model.ResourceManager;
 import overcooked.sample.twophasecommit.model.ResourceManagerClient;
 import overcooked.sample.twophasecommit.model.ResourceManagerState;
@@ -11,7 +12,8 @@ import overcooked.sample.twophasecommit.model.TransactionManagerClient;
  * The actor that represents both {@link ResourceManagerClient} and {@link ResourceManager}
  * for model checking.
  */
-public class ResourceManagerActor implements ResourceManagerClient, ResourceManager {
+public class ResourceManagerActor
+    implements ResourceManagerClient, ResourceManager, ActorBase {
   @Getter
   private final String id;
   private final ResourceManager resourceManager;

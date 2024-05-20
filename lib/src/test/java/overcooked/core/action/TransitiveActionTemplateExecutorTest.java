@@ -2,13 +2,18 @@ package overcooked.core.action;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import com.google.common.collect.ImmutableMap;
+import lombok.EqualsAndHashCode;
 import org.junit.jupiter.api.Test;
+import overcooked.core.actor.ActorBase;
 import overcooked.core.actor.ActorFactory;
 import overcooked.core.actor.ActorId;
 import overcooked.core.actor.ActorState;
@@ -18,18 +23,19 @@ import overcooked.core.actor.LocalState;
 import overcooked.util.TestActorState;
 
 class TransitiveActionTemplateExecutorTest {
-  private static final String ACTION_PERFORMER = "actionPerformerObject";
-  private static final String ACTION_RECEIVER = "actionReceiverObject";
+  private static final TestActionPerformer ACTION_PERFORMER = new TestActionPerformer();
+  private static final TestActionReceiver ACTION_RECEIVER = new TestActionReceiver();
   private final ActionTaker actionTaker = mock(ActionTaker.class);
+  private final FailureInjector failureInjector = mock(FailureInjector.class);
   @SuppressWarnings("unchecked")
-  private final ActorFactory<String> actionPerformerFactory = mock(ActorFactory.class);
+  private final ActorFactory<TestActionPerformer> actionPerformerFactory = mock(ActorFactory.class);
   @SuppressWarnings("unchecked")
-  private final ActorFactory<String> actionReceiverFactory = mock(ActorFactory.class);
+  private final ActorFactory<TestActionReceiver> actionReceiverFactory = mock(ActorFactory.class);
   @SuppressWarnings("unchecked")
-  private final ActorStateExtractor<String> actionPerformerStateExtractor =
+  private final ActorStateExtractor<TestActionPerformer> actionPerformerStateExtractor =
       mock(ActorStateExtractor.class);
   @SuppressWarnings("unchecked")
-  private final ActorStateExtractor<String> actionReceiverStateExtractor =
+  private final ActorStateExtractor<TestActionReceiver> actionReceiverStateExtractor =
       mock(ActorStateExtractor.class);
 
   @Test
@@ -65,18 +71,21 @@ class TransitiveActionTemplateExecutorTest {
     ActorState newActionReceiverState = new TestActorState(1, 1);
     ActorId actionReceiverId = new ActorId("actionReceiver");
 
-    ActionTemplate<String, String> actionTemplate = ActionTemplate.<String, String>builder()
-        .actionPerformerId(actionPerformerId)
-        .actionType(new TransitiveActionType(actionReceiverId))
-        .actionLabel("not used")
-        .action((notUsed1, notUsed2) -> {})
-        .build();
-    ActionDefinition<String, String> actionDefinition = ActionDefinition.<String, String>builder()
-        .action(actionTemplate.getAction())
-        .actionReceiver(ACTION_RECEIVER)
-        .actionPerformer(ACTION_PERFORMER)
-        .actionLabel("not used")
-        .build();
+    ActionTemplate<TestActionPerformer, TestActionReceiver> actionTemplate =
+        ActionTemplate.<TestActionPerformer, TestActionReceiver>builder()
+            .actionPerformerId(actionPerformerId)
+            .actionType(new TransitiveActionType(actionReceiverId))
+            .actionLabel("not used")
+            .action((notUsed1, notUsed2) -> {
+            })
+            .build();
+    ActionDefinition<TestActionPerformer, TestActionReceiver> actionDefinition =
+        ActionDefinition.<TestActionPerformer, TestActionReceiver>builder()
+            .action(actionTemplate.getAction())
+            .actionReceiver(ACTION_RECEIVER)
+            .actionPerformer(ACTION_PERFORMER)
+            .actionLabel("not used")
+            .build();
 
     when(actionPerformerFactory.restoreFromActorState(actionPerformerState))
         .thenReturn(ACTION_PERFORMER);
@@ -89,6 +98,9 @@ class TransitiveActionTemplateExecutorTest {
         .thenReturn(newActionReceiverState);
     when(actionTaker.take(actionDefinition))
         .thenReturn(ActionResult.success());
+    doAnswer(invocation -> invocation.getArgument(0))
+        .when(failureInjector)
+        .inject(eq(ACTION_RECEIVER), any());
 
     TransitiveActionTemplateExecutor executor = TransitiveActionTemplateExecutor.builder()
         .config(ActorStateTransformerConfig.builder()
@@ -102,6 +114,7 @@ class TransitiveActionTemplateExecutorTest {
             ))
             .build())
         .actionTaker(actionTaker)
+        .failureInjector(failureInjector)
         .build();
 
     assertThat(executor.execute(
@@ -121,15 +134,25 @@ class TransitiveActionTemplateExecutorTest {
 
     verify(actionPerformerFactory).restoreFromActorState(actionPerformerState);
     verify(actionReceiverFactory).restoreFromActorState(actionReceiverState);
+    verify(failureInjector).inject(eq(ACTION_RECEIVER), any());
     verify(actionTaker).take(actionDefinition);
     verify(actionPerformerStateExtractor).extract(ACTION_PERFORMER);
     verify(actionReceiverStateExtractor).extract(ACTION_RECEIVER);
 
     verifyNoMoreInteractions(
         actionTaker,
+        failureInjector,
         actionReceiverFactory,
         actionPerformerFactory,
         actionPerformerStateExtractor,
         actionReceiverStateExtractor);
+  }
+
+  @EqualsAndHashCode
+  private static class TestActionPerformer implements ActorBase {
+  }
+
+  @EqualsAndHashCode
+  private static class TestActionReceiver implements ActorBase {
   }
 }

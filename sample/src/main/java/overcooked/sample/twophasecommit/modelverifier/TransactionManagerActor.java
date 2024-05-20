@@ -3,6 +3,7 @@ package overcooked.sample.twophasecommit.modelverifier;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Map;
 import lombok.Getter;
+import overcooked.core.actor.ActorBase;
 import overcooked.sample.twophasecommit.model.ResourceManagerClient;
 import overcooked.sample.twophasecommit.model.ResourceManagerState;
 import overcooked.sample.twophasecommit.model.TransactionManager;
@@ -12,7 +13,8 @@ import overcooked.sample.twophasecommit.model.TransactionManagerClient;
  * The actor that represents both the {@link TransactionManagerClient} and
  * {@link TransactionManager} for model checking.
  */
-public class TransactionManagerActor implements TransactionManagerClient, TransactionManager {
+public class TransactionManagerActor
+    implements TransactionManagerClient, TransactionManager, ActorBase {
   @Getter
   @SuppressFBWarnings(value = { "EI_EXPOSE_REP" },
       justification = "this is just an example, making it immutable is over engineering")

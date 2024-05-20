@@ -8,19 +8,7 @@ package overcooked.core.actor;
  */
 public interface ActorBase {
 
-  /**
-   * How this works needs a bit more thought.
-   * Because when an actor dies, all communication to it should fail as well.
-   * But without explicitly specifying an exception, it is not clear what the
-   * behaviour will be.
-   */
-  default void suicide() {
-  }
-
-  default void resurrect() {
-  }
-
-  default void rejectActionFrom(ActorId other, RuntimeException runtimeException) {
+  default void rejectActionFrom(ActorId other, SimulatedFailure simulatedFailure) {
   }
 
   default void acceptActionFrom(ActorId other) {

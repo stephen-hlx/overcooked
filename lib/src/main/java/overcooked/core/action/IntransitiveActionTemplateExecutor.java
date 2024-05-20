@@ -17,6 +17,7 @@ import overcooked.core.actor.LocalState;
 @Builder
 public class IntransitiveActionTemplateExecutor {
   private final ActorStateTransformerConfig config;
+  private final FailureRecordingOverrider failureRecordingOverrider;
   private final ActionTaker actionTaker;
 
   /**
@@ -40,13 +41,15 @@ public class IntransitiveActionTemplateExecutor {
         (ActorFactory<PerformerT>) checkNotNull(
             config.getActorFactories().get(actionPerformerId),
             "No ActorFactory found for actor {}", actionPerformerId);
-    PerformerT actionPerformer = actorFactory
-        .restoreFromActorState(localState.getActorState());
+    PerformerT actionPerformer = actorFactory.restoreFromActorState(localState.getActorState());
+
+    PerformerT overriddenActionPerformer = failureRecordingOverrider.override(actionPerformer,
+        localState.getActorEnvState().getRejections());
 
     ActionResult actionResult = actionTaker.take(ActionDefinition.<PerformerT, ReceiverT>builder()
         .action(actionTemplate.getAction())
         .actionLabel(actionTemplate.getActionLabel())
-        .actionPerformer(actionPerformer)
+        .actionPerformer(overriddenActionPerformer)
         .actionReceiver(null)
         .build());
 
@@ -59,7 +62,7 @@ public class IntransitiveActionTemplateExecutor {
     return ExecutionResult.builder()
         .actionResult(actionResult)
         .localStates(ImmutableMap.of(actionPerformerId, LocalState.builder()
-            .actorState(actorStateExtractor.extract(actionPerformer))
+            .actorState(actorStateExtractor.extract(overriddenActionPerformer))
             .actorEnvState(localState.getActorEnvState())
             .build()))
         .build();

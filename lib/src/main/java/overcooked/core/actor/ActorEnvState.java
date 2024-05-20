@@ -3,6 +3,7 @@ package overcooked.core.actor;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -19,14 +20,14 @@ import lombok.Data;
     justification = "this is just for internal use, making it immutable is over engineering")
 public class ActorEnvState {
 
-  private final Map<ActorId, RuntimeException> rejections;
+  private final Map<ActorId, Set<SimulatedFailure>> rejections;
 
   public ActorEnvState() {
     this(new HashMap<>());
   }
 
   public ActorEnvState deepCopy() {
-    Map<ActorId, RuntimeException> copy = new HashMap<>(this.rejections);
+    Map<ActorId, Set<SimulatedFailure>> copy = new HashMap<>(this.rejections);
     return new ActorEnvState(copy);
   }
 }

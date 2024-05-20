@@ -20,6 +20,7 @@ public class ActionExecutorFactory {
   public static IntransitiveActionTemplateExecutor createIntransitiveActionTemplateExecutor(
       ActorStateTransformerConfig actorStateTransformerConfig) {
     return IntransitiveActionTemplateExecutor.builder()
+        .failureRecordingOverrider(new FailureRecordingOverrider())
         .actionTaker(ACTION_TAKER)
         .config(actorStateTransformerConfig)
         .build();
@@ -35,6 +36,7 @@ public class ActionExecutorFactory {
   public static TransitiveActionTemplateExecutor createTransitiveActionTemplateExecutor(
       ActorStateTransformerConfig actorStateTransformerConfig) {
     return TransitiveActionTemplateExecutor.builder()
+        .failureInjector(new FailureInjector())
         .actionTaker(ACTION_TAKER)
         .config(actorStateTransformerConfig)
         .build();
