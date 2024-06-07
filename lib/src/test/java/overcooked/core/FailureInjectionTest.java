@@ -20,29 +20,29 @@ import overcooked.core.actor.ActorStateTransformerConfig;
 import overcooked.core.actor.LocalState;
 import overcooked.core.actor.SimulatedFailure;
 import overcooked.io.DotGraphExporterFactory;
-import overcooked.sample.waterjar.model.Jar3;
-import overcooked.sample.waterjar.model.Jar5;
-import overcooked.sample.waterjar.modelverifier.FourLiterVerifier;
-import overcooked.sample.waterjar.modelverifier.Jar3ActorStateExtractor;
-import overcooked.sample.waterjar.modelverifier.Jar3Factory;
-import overcooked.sample.waterjar.modelverifier.Jar3State;
-import overcooked.sample.waterjar.modelverifier.Jar5ActorStateExtractor;
-import overcooked.sample.waterjar.modelverifier.Jar5Factory;
-import overcooked.sample.waterjar.modelverifier.Jar5State;
+import overcooked.sample.waterjug.model.Jug3;
+import overcooked.sample.waterjug.model.Jug5;
+import overcooked.sample.waterjug.modelverifier.FourLiterVerifier;
+import overcooked.sample.waterjug.modelverifier.Jug3ActorStateExtractor;
+import overcooked.sample.waterjug.modelverifier.Jug3Factory;
+import overcooked.sample.waterjug.modelverifier.Jug3State;
+import overcooked.sample.waterjug.modelverifier.Jug5ActorStateExtractor;
+import overcooked.sample.waterjug.modelverifier.Jug5Factory;
+import overcooked.sample.waterjug.modelverifier.Jug5State;
 
 @Slf4j
 class FailureInjectionTest {
-  private static final ActorId JAR3 = new ActorId("jar3");
-  private static final ActorId JAR5 = new ActorId("jar5");
+  private static final ActorId JUG3 = new ActorId("jug3");
+  private static final ActorId JUG5 = new ActorId("jug5");
 
   @Test
   void sample_verification_works() {
     GlobalState initialState = new GlobalState(ImmutableMap.of(
-        JAR3, LocalState.builder()
-            .actorState(new Jar3State(0))
+        JUG3, LocalState.builder()
+            .actorState(new Jug3State(0))
             .build(),
-        JAR5, LocalState.builder()
-            .actorState(new Jar5State(0))
+        JUG5, LocalState.builder()
+            .actorState(new Jug5State(0))
             .build()));
 
     ActorActionConfig actorActionConfig = createActorActionConfig();
@@ -73,44 +73,44 @@ class FailureInjectionTest {
   private static ActorStateTransformerConfig createActorStateTransformerConfig() {
     return ActorStateTransformerConfig.builder()
         .actorFactories(ImmutableMap.of(
-            JAR3, new Jar3Factory(),
-            JAR5, new Jar5Factory()
+            JUG3, new Jug3Factory(),
+            JUG5, new Jug5Factory()
         ))
         .actorStateExtractors(ImmutableMap.of(
-            JAR3, new Jar3ActorStateExtractor(),
-            JAR5, new Jar5ActorStateExtractor()
+            JUG3, new Jug3ActorStateExtractor(),
+            JUG5, new Jug5ActorStateExtractor()
         ))
         .build();
   }
 
   private static ActorActionConfig createActorActionConfig() {
     return new ActorActionConfig(ImmutableMap.of(
-        JAR3, createJar3ActionTemplates(),
-        JAR5, createJar5ActionTemplates()
+        JUG3, createJug3ActionTemplates(),
+        JUG5, createJug5ActionTemplates()
     ));
   }
 
-  private static Set<ActionTemplate<?, ?>> createJar3ActionTemplates() {
+  private static Set<ActionTemplate<?, ?>> createJug3ActionTemplates() {
     return ImmutableSet.of(
-        ActionTemplate.<Jar3, Void>builder()
-            .actionPerformerId(JAR3)
+        ActionTemplate.<Jug3, Void>builder()
+            .actionPerformerId(JUG3)
             .actionType(new IntransitiveActionType())
             .actionLabel("suicide")
-            .action(((jar3, unused) -> jar3.rejectActionFrom(JAR5,
+            .action(((jug3, unused) -> jug3.rejectActionFrom(JUG5,
                 new SimulatedFailure("id",
-                    obj -> ((Jar3) obj).setOccupancy(any(Integer.class)),
+                    obj -> ((Jug3) obj).setOccupancy(any(Integer.class)),
                     new RuntimeException()))))
             .build()
     );
   }
 
-  private static Set<ActionTemplate<?, ?>> createJar5ActionTemplates() {
+  private static Set<ActionTemplate<?, ?>> createJug5ActionTemplates() {
     return ImmutableSet.of(
-        ActionTemplate.<Jar5, Jar3>builder()
-            .actionPerformerId(JAR5)
-            .actionType(new TransitiveActionType(JAR3))
+        ActionTemplate.<Jug5, Jug3>builder()
+            .actionPerformerId(JUG5)
+            .actionType(new TransitiveActionType(JUG3))
             .actionLabel("addTo")
-            .action(Jar5::addTo)
+            .action(Jug5::addTo)
             .build()
     );
   }

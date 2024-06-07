@@ -1,0 +1,15 @@
+digraph G {
+  S_0 [ label="jug3(occupancy=0), jug5(occupancy=0)" ];
+  S_5 [ label="jug3(occupancy=0), jug5(occupancy=5)" ];
+  S_18 [ label="jug3(occupancy=3), jug5(occupancy=2)" ];
+  S_34 [ label="jug3(occupancy=0), jug5(occupancy=2)" ];
+  S_48 [ label="jug3(occupancy=2), jug5(occupancy=0)" ];
+  S_56 [ label="jug3(occupancy=2), jug5(occupancy=5)" ];
+  S_72 [ label="jug3(occupancy=3), jug5(occupancy=4)" ];
+  S_0 -> S_5 [ label="jug5.fill()" ];
+  S_5 -> S_18 [ label="jug5.addTo(jug3)" ];
+  S_18 -> S_34 [ label="jug3.empty()" ];
+  S_34 -> S_48 [ label="jug5.addTo(jug3)" ];
+  S_48 -> S_56 [ label="jug5.fill()" ];
+  S_56 -> S_72 [ label="jug5.addTo(jug3)" ];
+}

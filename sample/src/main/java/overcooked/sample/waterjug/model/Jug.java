@@ -1,4 +1,4 @@
-package overcooked.sample.waterjar.model;
+package overcooked.sample.waterjug.model;
 
 import com.google.common.base.Preconditions;
 import lombok.AccessLevel;
@@ -13,11 +13,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode
-class Jar {
+class Jug {
   private final int capacity;
   private int occupancy;
 
-  public void addTo(Jar other) {
+  public void addTo(Jug other) {
     Preconditions.checkArgument(this != other, "Cannot add to self");
 
     int volumeToMove = Math.min(this.occupancy, other.availableSpace());

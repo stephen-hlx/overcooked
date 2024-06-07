@@ -201,11 +201,11 @@ class TwoPhaseCommitModelVerifier {
 }
 ```
 Following is part of the output of the
-[waterjar](sample/src/main/java/overcooked/sample/waterjar) sample, which has
+[waterjug](sample/src/main/java/overcooked/sample/waterjug) sample, which has
 2 states violating the invariant. And the shortest path from the initial state
 to one of the violating states is \
-![waterjar_shortest_path](doc/waterjar_failure_0.svg) \
-(compared to "Two Phase Commit", the "waterjar" sample has invariant violating
+![waterjug_shortest_path](doc/waterjug_failure_0.svg) \
+(compared to "Two Phase Commit", the "waterjug" sample has invariant violating
 states and a relatively smaller state space, making it easier to display here)
 
 

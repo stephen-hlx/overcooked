@@ -1,4 +1,4 @@
-package overcooked.sample.waterjar.model;
+package overcooked.sample.waterjug.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -7,28 +7,28 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-class JarTest {
+class JugTest {
   @Test
-  void empty_empties_jar() {
-    Jar jar = new Jar(5);
-    assertThat(jar.getOccupancy()).isEqualTo(0);
-    jar.fill();
-    assertThat(jar.getOccupancy()).isEqualTo(5);
-    jar.empty();
-    assertThat(jar.getOccupancy()).isEqualTo(0);
+  void empty_empties_jug() {
+    Jug jug = new Jug(5);
+    assertThat(jug.getOccupancy()).isEqualTo(0);
+    jug.fill();
+    assertThat(jug.getOccupancy()).isEqualTo(5);
+    jug.empty();
+    assertThat(jug.getOccupancy()).isEqualTo(0);
   }
 
   @Test
-  void fill_fills_up_jar() {
-    Jar jar = new Jar(5);
-    assertThat(jar.getOccupancy()).isEqualTo(0);
-    jar.fill();
-    assertThat(jar.getOccupancy()).isEqualTo(5);
+  void fill_fills_up_jug() {
+    Jug jug = new Jug(5);
+    assertThat(jug.getOccupancy()).isEqualTo(0);
+    jug.fill();
+    assertThat(jug.getOccupancy()).isEqualTo(5);
   }
 
   static Object[][] add_to_test_cases() {
     return new Object[][] {
-        // fromJar   toJar     beforeFromJar beforeToJar afterFromJar afterToJar
+        // fromJug   toJug     beforeFromJug beforeToJug afterFromJug afterToJug
         // capacity, capacity, occupancy,    occupancy,  occupancy,   occupancy
         {  3,        5,        0,            0,          0,           0         },
         {  3,        5,        0,            1,          0,           1         },
@@ -42,25 +42,25 @@ class JarTest {
 
   @ParameterizedTest
   @MethodSource("add_to_test_cases")
-  void add_to_fills_target_jar_as_much_as_possible(
-      int fromJarCapacity,
-      int toJarCapacity,
-      int beforeFromJarOccupancy,
-      int beforeToJarOccupancy,
-      int afterFromJarOccupancy,
-      int afterToJarOccupancy) {
-    Jar fromJar = new Jar(fromJarCapacity, beforeFromJarOccupancy);
-    Jar toJar = new Jar(toJarCapacity, beforeToJarOccupancy);
+  void add_to_fills_target_jug_as_much_as_possible(
+      int fromJugCapacity,
+      int toJugCapacity,
+      int beforeFromJugOccupancy,
+      int beforeToJugOccupancy,
+      int afterFromJugOccupancy,
+      int afterToJugOccupancy) {
+    Jug fromJug = new Jug(fromJugCapacity, beforeFromJugOccupancy);
+    Jug toJug = new Jug(toJugCapacity, beforeToJugOccupancy);
 
-    fromJar.addTo(toJar);
-    assertThat(fromJar.getOccupancy()).isEqualTo(afterFromJarOccupancy);
-    assertThat(toJar.getOccupancy()).isEqualTo(afterToJarOccupancy);
+    fromJug.addTo(toJug);
+    assertThat(fromJug.getOccupancy()).isEqualTo(afterFromJugOccupancy);
+    assertThat(toJug.getOccupancy()).isEqualTo(afterToJugOccupancy);
   }
 
   @Test
   void add_to_self_throws_IllegalArgumentException() {
-    Jar jar = new Jar(0);
-    assertThatThrownBy(() -> jar.addTo(jar))
+    Jug jug = new Jug(0);
+    assertThatThrownBy(() -> jug.addTo(jug))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessageContaining("Cannot add to self");
   }
