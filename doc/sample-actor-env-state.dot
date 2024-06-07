@@ -1,0 +1,29 @@
+digraph G {
+  S_1 [ label="
+    RM0(
+      LocalState(
+        actorState=state=WORKING,
+        actorEnvState=ActorEnvState(
+          rejections={
+              TM=[
+                SimulatedFailure(
+                  id=rejectCommit,
+                  runtimeException=java.lang.RuntimeException)]}))),
+    TM(
+      LocalState(
+        actorState=state={RM0=WORKING},
+        actorEnvState=ActorEnvState(rejections={})))"
+  ];
+  S_0 [ label="
+    RM0(
+      LocalState(
+        actorState=state=WORKING,
+        actorEnvState=ActorEnvState(rejections={}))),
+    TM(
+      LocalState(
+        actorState=state={RM0=WORKING},
+        actorEnvState=ActorEnvState(rejections={})))"
+  ];
+  S_0 -> S_1 [ label="RM0.rejectCommitFromTM()" ];
+  S_1 -> S_0 [ label="RM0.acceptCommitFromTM()" ];
+}

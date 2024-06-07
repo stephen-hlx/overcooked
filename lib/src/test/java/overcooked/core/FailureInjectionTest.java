@@ -95,7 +95,7 @@ class FailureInjectionTest {
         ActionTemplate.<Jug3, Void>builder()
             .actionPerformerId(JUG3)
             .actionType(new IntransitiveActionType())
-            .actionLabel("suicide")
+            .actionLabel("rejectSetOccupancy")
             .action(((jug3, unused) -> jug3.rejectActionFrom(JUG5,
                 new SimulatedFailure("id",
                     obj -> ((Jug3) obj).setOccupancy(any(Integer.class)),

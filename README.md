@@ -1,6 +1,4 @@
-# Overcooked
-
-## Overview
+# Overview
 
 Overcooked is a tool that provides a way to run formal verification against 
 a distributed system, in the CI/CD pipeline, using the real code. 
@@ -27,7 +25,7 @@ The remaining of this document comprises 2 main parts:
 - [How to use it?](#how-to-use-it)
 - [Next Steps](#next-steps)
 
-## How does it work?
+# How does it work?
 
 - A distributed system is said to be in a correct state if all its invariants
 are honoured
@@ -38,11 +36,37 @@ of conditions
 action taken by one of its actors
 
 Starting from an initial state of the distributed system, Overcooked triggers
-all actions of each actors to exhaust the sequences of all possible
-interleaving and verify that all of them leave the system in a state that with
-all its invariants honoured.
+all actions of each actor, one action per step, to exhaust the sequences of
+all possible interleaving and verify that all of them leave the system in a
+state that with all its invariants honoured.
 
-This library has following key components:
+### Quick Example
+The [water pouring puzzle](https://en.wikipedia.org/wiki/Water_pouring_puzzle)
+can be considered as 2 actors in a distributed system, one is a jug with a
+capacity of 3 litres, and the other with 5 litres. Let's call them Jug3 and
+Jug5. They both are able to perform following actions:
+- empty itself
+- fill itself (to the full capacity)
+- add water to a different jug (till it empties itself or the other is full)
+
+For a distributed system with these 2 actors, Jug3 and Jug5, the state machine
+looks like this: \
+<img src="doc/water-jug-state-machine-no-failure-injection.svg" width="800" height="400"/>
+
+Among the states, there are 2 of them with the Jug5 holding 4 litres of water.
+If the puzzle's goal is to find the way to get 4 litres of water, the path from
+the initial state to these 2 states are the solution. With Overcooked, an
+invariant can be defined as Jug5 not holding 4 litres of water. Then, when
+Overcooked builds the state machine, for every new state the invariant is
+checked and the paths leading to the states with Jug5 holding 4 litres of water
+will be identified. Following is one of the 2 paths: \
+![waterjug_shortest_path](doc/waterjug_failure_0.svg)
+
+This example is included in the
+[waterjug](sample/src/main/java/overcooked/sample/waterjug) package.
+
+
+## Key Components
 
 - [Actor and Action](#actor-and-action)
 - [Local State](#local-state)
@@ -62,8 +86,9 @@ two types of actors in the system, `ResourceManager` and `TransactionManager`.
 The actions between these two actors are: \
 ![RmTmInteraction](doc/resource_manager_transaction_manager_interactions.svg)
 
-### Local State
-The local state of an actor represents the state of an individual actor.
+### Actor State
+The state of an actor represents the state of an individual actor at the
+application level.
 
 An actor has its behaviour. It can perform an action against itself, and it can
 also perform an action against a different actor. Each of these actions may or
@@ -73,6 +98,22 @@ which can be described via a finite state machine.
 The `ResourceManager` for example, has its own finite state machine: \
 (RM: ResourceManager, TM: TransactionManager) \
 ![ResourceManagerFSM](doc/resource_manager_fsm.svg)
+
+### Actor Environment State
+The state of the environment an actor lives in. It is used to keep the state
+that indicates whether the actor accepts actions performed by a different
+actor. It is a deny list based state, so by default, the list is empty and the
+actor accepts actions performed by other actors in the system.
+
+Following is an example:
+![ActorEnvState](doc/sample-actor-env-state.svg) \
+(For simplicity, most of the diagram in this document omits the Actor
+Environment State because it makes the diagram big and hard to read)
+
+### Local State
+Local state consists of both the [Actor State](#actor-state) and the
+[Actor Environment State](#actor-environment-state) of an actor, it looks like
+the example in the Actor Environment State.
 
 ### Global State
 A distributed system is made up of a number of actors. The system's state is
@@ -89,7 +130,7 @@ invariants. Its invariants are defined by its global states satisfying a set of
 conditions. For instance, one of the Two Phase Commit protocol's invariants
 requires that if any of the ResourceManagers is `ABORTED`, no ResourceManager
 can be in a state of `COMMITTED`. Therefore, the following global state would
-be violating such an invariant:
+be violating such an invariant: \
 ![GlobalStateExample2](doc/global_state_example_2.svg)
 
 Another invariant example is that, TransactionManager should always have a
@@ -156,11 +197,23 @@ transactionManagerActor.commit(resourceManagerActor);
 or more specifically, as per the model verification's requirement:
 ```
 ActionTemplate.<ResourceManagerActor, TransactionManagerActor>builder()
-    .actionPerformerId(actionPerformerId)
-    .actionType(new TransitiveActionType(TM))
-    .actionLabel("prepare")
-    .action(ResourceManagerActor::prepare)
-    .build()
+  .actionPerformerId(actionPerformerId)
+  .actionType(new TransitiveActionType(TM))
+  .actionLabel("prepare")
+  .action(ResourceManagerActor::prepare)
+  .build()
+```
+and a failure injection is:
+```
+ActionTemplate.<ResourceManagerActor, Void>builder()
+  .actionPerformerId(actionPerformerId)
+  .actionType(new IntransitiveActionType())
+  .actionLabel("rejectCommitFromTM")
+  .action(((rm, unused) -> rm.rejectActionFrom(TM,
+    new SimulatedFailure("rejectCommit",
+      obj -> ((ResourceManagerActor) obj).commit(),
+      new RuntimeException()))))
+  .build()
 ```
 
 ### Model Verifier
@@ -200,16 +253,9 @@ class TwoPhaseCommitModelVerifier {
   }
 }
 ```
-Following is part of the output of the
-[waterjug](sample/src/main/java/overcooked/sample/waterjug) sample, which has
-2 states violating the invariant. And the shortest path from the initial state
-to one of the violating states is \
-![waterjug_shortest_path](doc/waterjug_failure_0.svg) \
-(compared to "Two Phase Commit", the "waterjug" sample has invariant violating
-states and a relatively smaller state space, making it easier to display here)
 
 
-## How to use it?
+# How to use it?
 Overcooked requires the system to be verified be implemented in a certain way
 in order for it to work effectively. You will need:
 - an in-memory implementation of each of the actors in the system
@@ -236,7 +282,7 @@ please see its
 - [Make it an option to define a sequence of actions for an actor](https://github.com/stephen-hlx/overcooked/issues/26)
 
 
-## Origin of this project
+# Origin of this project
 This library was inspired by the thesis
 "[Stefanescu, 2006] Stefanescu, A. (2006). Automatic Synthesis of Distributed
 Transition Systems. PhD thesis, Universitat Stuttgart." and by a former project
@@ -249,11 +295,11 @@ conception of this library.
 The samples included in this library were inspired by the
 [examples of TLA+](https://lamport.azurewebsites.net/video/videos.html).
 
-## License
+# License
 
 This project is licensed under the [MIT license](LICENSE).
 
-## Why is the name "Overcooked"?
+# Why is the name "Overcooked"?
 When I finally got around doing this, I needed a name for it. I asked my 
 wife for a name after describing what it does, "a tool that verifies that 
 when a couple of actors can simultaneously perform their actions, are there 
