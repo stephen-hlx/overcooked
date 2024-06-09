@@ -10,10 +10,10 @@ these sequences grows rapidly as the number of actors and actions increase. It
 may not be easy to reach a conclusion that all these sequences are allowed, or
 in other words, the system does not break after each of all these sequences.
 
-By exhausting all possible sequences, Overcooked verifies whether or not the
-distributed system's invariants are honoured during and after these sequences
-of actions, in which case we can be confident that the system's correctness
-is guaranteed.
+By exhausting all possible sequences, including simulating failures like
+network partition, Overcooked verifies whether or not the distributed system's
+invariants are honoured during and after these sequences of actions, in which
+case we can be confident that the system's correctness is guaranteed.
 
 Overcooked currently supports
 [only JAVA](https://github.com/stephen-hlx/overcooked-rust), and it requires
@@ -38,7 +38,9 @@ action taken by one of its actors
 Starting from an initial state of the distributed system, Overcooked triggers
 all actions of each actor, one action per step, to exhaust the sequences of
 all possible interleaving and verify that all of them leave the system in a
-state that with all its invariants honoured.
+state that with all its invariants honoured. Overcooked also allows the
+injection of failures by having an actor reject actions performed by one or
+more specific actors, simulating situations like network partitioning.
 
 ### Quick Example
 The [water pouring puzzle](https://en.wikipedia.org/wiki/Water_pouring_puzzle)
@@ -53,13 +55,15 @@ For a distributed system with these 2 actors, Jug3 and Jug5, the state machine
 looks like this: \
 <img src="doc/water-jug-state-machine-no-failure-injection.svg" width="800" height="400"/>
 
-Among the states, there are 2 of them with the Jug5 holding 4 litres of water.
-If the puzzle's goal is to find the way to get 4 litres of water, the path from
-the initial state to these 2 states are the solution. With Overcooked, an
-invariant can be defined as Jug5 not holding 4 litres of water. Then, when
-Overcooked builds the state machine, for every new state the invariant is
-checked and the paths leading to the states with Jug5 holding 4 litres of water
-will be identified. Following is one of the 2 paths: \
+Among these states, there are 2 of them with Jug5 holding 4 litres of water.
+If the system has an invariant that neither of these 2 jugs can be holding 4
+litres of water (Jug3 intrinsically cannot hold 4 litres of water), that means
+the system has a bug in there allowing some paths leading to the states with
+the invariants violated. With Overcooked, an invariant can be defined as Jug5
+not holding 4 litres of water. Then, when Overcooked builds the state machine,
+for every new state the invariant is checked and the paths leading to the
+states with Jug5 holding 4 litres of water will be identified. Following is
+one of the 2 paths: \
 ![waterjug_shortest_path](doc/waterjug_failure_0.svg)
 
 This example is included in the
@@ -73,17 +77,22 @@ This example is included in the
 - [Global State](#global-state)
 - [Invariant](#invariant)
 - [In-Memory Implementation](#in-memory-implementation)
+- [Failure Injection](#failure-injection)
 - [Model Verifier](#model-verifier)
+
+In the rest of this section, the
+[Two Phase Commit](https://en.wikipedia.org/wiki/Two-phase_commit_protocol)
+example ([code](sample/src/main/java/overcooked/sample/twophasecommit)) will be
+frequently used to demonstrate how `TransactionManager` works multiple
+`ResourceManagers` to commit a transaction together.
 
 ### Actor and Action
 A distributed system consists of more than one actor.
 The system works by these actors interacting with each other.
 
-The
-[Two Phase Commit](https://en.wikipedia.org/wiki/Two-phase_commit_protocol)
-example ([code](sample/src/main/java/overcooked/sample/twophasecommit)) has
-two types of actors in the system, `ResourceManager` and `TransactionManager`.
-The actions between these two actors are: \
+The Two Phase Commit example has two types of actors in the system,
+`ResourceManager` and `TransactionManager`. The actions between these two
+actors are: \
 ![RmTmInteraction](doc/resource_manager_transaction_manager_interactions.svg)
 
 ### Actor State
@@ -194,7 +203,8 @@ The interaction then can be represented as:
 resourceManagerActor.prepare(transactionManagerActor);
 transactionManagerActor.commit(resourceManagerActor);
 ```
-or more specifically, as per the model verification's requirement:
+More specifically, following is what the real definition of an action looks
+like:
 ```
 ActionTemplate.<ResourceManagerActor, TransactionManagerActor>builder()
   .actionPerformerId(actionPerformerId)
@@ -203,10 +213,21 @@ ActionTemplate.<ResourceManagerActor, TransactionManagerActor>builder()
   .action(ResourceManagerActor::prepare)
   .build()
 ```
-and a failure injection is:
+
+### Failure Injection
+Failures in a distributed system have the symptom of the service being
+unreachable, either due to network issue (e.g. partition) or the node is
+actually down. The observable symptom by the dependent systems would be an
+exception thrown when accessing the service using the client. To simulate
+such failures, Overcooked provides a way to specify that an actor (e.g.
+`ResourceManager`) throws an exception when a specific actor (e.g.
+`TransactionManager`) invokes a specific action (e.g. `commit`) of the actor.
+In the following example, once this "rejectActionFrom" action is performed,
+subsequent calls to `RM0.commit()` by `TM`will result in a `RuntimeException`
+being thrown:
 ```
 ActionTemplate.<ResourceManagerActor, Void>builder()
-  .actionPerformerId(actionPerformerId)
+  .actionPerformerId(RM0)
   .actionType(new IntransitiveActionType())
   .actionLabel("rejectCommitFromTM")
   .action(((rm, unused) -> rm.rejectActionFrom(TM,
@@ -215,6 +236,22 @@ ActionTemplate.<ResourceManagerActor, Void>builder()
       new RuntimeException()))))
   .build()
 ```
+This "rejectActionFrom" action simulates the transition from `RM0`, the
+`ResourceManagerActor`, being reachable by `TM` to being unreachable.
+
+Similarly, there is a corresponding reverse action named "acceptActionFrom" for
+restoring connection to an actor. For example, the following "acceptActionFrom"
+action
+```
+ActionTemplate.<ResourceManagerActor, Void>builder()
+  .actionPerformerId(RM0)
+  .actionType(new IntransitiveActionType())
+  .actionLabel("acceptCommitFromTM")
+  .action((rm, unused) -> rm.acceptActionFrom(TM))
+  .build()
+```
+restores access to `RM0`, the `ResourceManagerActor` from `TM`, the
+`TransactionManagerActor`.
 
 ### Model Verifier
 The `ModelVerifier` encapsulates the necessities of running the model
