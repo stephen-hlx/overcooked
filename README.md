@@ -10,20 +10,22 @@ these sequences grows rapidly as the number of actors and actions increase. It
 may not be easy to reach a conclusion that all these sequences are allowed, or
 in other words, the system does not break after each of all these sequences.
 
-By exhausting all possible sequences, including simulating failures like
-network partition, Overcooked verifies whether or not the distributed system's
+By exhausting all (\*) possible sequences, including simulating failures like
+network partition, Overcooked verifies whether the distributed system's
 invariants are honoured during and after these sequences of actions, in which
-case we can be confident that the system's correctness is guaranteed.
+case we can be confident that the system's correctness is guaranteed. \
+(\*) see [Limits](#limits)
 
 Overcooked currently supports
 [only JAVA](https://github.com/stephen-hlx/overcooked-rust), and it requires
 the service and the client of the system's applications to have an in-memory
 version of its implementations.
 
-The remaining of this document comprises 2 main parts:
+The remaining of this document comprises 4 main parts:
 - [How does it work?](#how-does-it-work)
 - [How to use it?](#how-to-use-it)
-- [Next Steps](#next-steps)
+- [What Overcooked is not about?](#what-overcooked-is-not-about)
+- [Limits](#limits)
 
 # How does it work?
 
@@ -87,8 +89,14 @@ frequently used to demonstrate how `TransactionManager` works multiple
 `ResourceManagers` to commit a transaction together.
 
 ### Actor and Action
-A distributed system consists of more than one actor.
-The system works by these actors interacting with each other.
+A distributed system consists of more than one actor. The system works by these
+actors interacting with each other.
+
+An action can be transitive or intransitive:
+- A transitive action involves 2 actors: the action performer and the action
+  receiver, e.g. Jug3 add water to Jug5 
+- An intransitive action involves only the action performer, e.g. Jug3 empties
+  itself
 
 The Two Phase Commit example has two types of actors in the system,
 `ResourceManager` and `TransactionManager`. The actions between these two
@@ -96,8 +104,10 @@ actors are: \
 ![RmTmInteraction](doc/resource_manager_transaction_manager_interactions.svg)
 
 ### Actor State
-The state of an actor represents the state of an individual actor at the
-application level.
+When talking about the correctness of a distributed system, ll that matters is
+the state. A state change does not happen spontaneously. A state change is
+always a result of an action. The state of an actor represents the state of an
+individual actor at the application level.
 
 An actor has its behaviour. It can perform an action against itself, and it can
 also perform an action against a different actor. Each of these actions may or
@@ -296,7 +306,7 @@ class TwoPhaseCommitModelVerifier {
 Overcooked requires the system to be verified be implemented in a certain way
 in order for it to work effectively. You will need:
 - an in-memory implementation of each of the actors in the system
-- an implementation to extract the local state of each actors
+- an implementation to extract the local state of each actor
 - an implementation to reconstruct the actors using their local states
 - specifications of the actions that are going to take place between these
 actors
@@ -315,8 +325,79 @@ For action specifications and invariants of the Two Phase Commit sample,
 please see its
 [modelverifier package](sample/src/main/java/overcooked/sample/twophasecommit/modelverifier).
 
-## Next Steps
-- [Make it an option to define a sequence of actions for an actor](https://github.com/stephen-hlx/overcooked/issues/26)
+# What Overcooked is not about?
+- Neither atomicity nor idempotency at component level is of this library's
+  concern. These are supposed to be verified at the design of the individual
+  component.
+- Nesting calls. For a system like:
+  ```
+   actor  actor  actor
+     A      B      C
+     │      │      │
+    ┌┴┐     │      │
+    │ │    ┌┴┐     │
+    │ ├───►│ │    ┌┴┐
+    │ │    │ ├───►│ │
+    │ │    │ │◄───┤ │
+    │ │◄───┤ │    └┬┘
+    │ │    └┬┘     │
+    └┬┘     │      │
+     │      │      │
+  ```
+  Overcooked would only care the action between actorA and actorB. The reason
+  is that when it comes to abstraction, actorB in this case, should be
+  considered as a black box as actorC is just implementation details of actorB:
+  - if actorB is stateless, then it effectively is just actorA communicating
+    with actorC directly
+  - if actorB is stateful:
+    - if actorC is stateless, then it is just actorB that we care
+    - if actorC is stateful, then the state change of actorB and actorC are in
+      fact two distinct state changes and they should be
+      - modelled separately (the state change of actorB and actorC can be
+        observed as two distinct states)
+      - or the state of actorC being part of the state of actorB (actorB and
+        actorC are one actor)
+
+
+# Limits
+## Multiple state transitions combined
+It is a common implementation for a service that, within one API call, there
+are updates to the states of more than one actor. For example, Jug3 adds water
+to Jug5:
+- Jug3 reduces the amount of water it is holding
+- Jug5 increases the amount of water it is holding
+
+Regardless the order of the above 2 steps, each of them triggers a **global**
+state change. And a partial change is observable, by a third actor: when Jug3
+has reduced its holding and before Jug5 has increased its, or the other way
+around. However, Overcooked currently can only model it as an atomic step. That
+means when the state machine is exploring the state space, the states
+representing the partial change will be missing.
+
+### Is this really a problem?
+In distributed systems, or as general as an environment with parallelism,
+we should always assume that shared information becomes stale once it is
+obtained. The partial change described above being observable although would
+result in an inconsistent view of the data, it does not change the fact that
+any side effect made upon the information, potentially stale, should be
+validated at the time of the side effect is made. Or in other words,
+versioning or fencing should be used to ensure the correctness of the side
+effect. This type of correctness guarantee could easily be tested at
+component level and may not necessarily be a concern of this library.
+
+### Potential Workaround
+A workaround requires the service changing its implementation to having the
+action that updates states of multiple actors split into multiple ones that
+update state of only one actor. However, this might require a design change
+that may not always work.
+
+## Ergonomics
+As demonstrated in the samples in section
+[How does it work?](#how-does-it-work), the set-up of the model verification is
+rather tedious. It involves:
+- creating an actor, the persona that combines both the server and the service
+  client
+- describing the interactions between the actors as well as the failures
 
 
 # Origin of this project
@@ -326,7 +407,7 @@ Transition Systems. PhD thesis, Universitat Stuttgart." and by a former project
 at work. The former project was about a data pipeline that consists of multiple
 data sources funnelling into a single component. Back then we were not able to
 verify whether the design and implementation had a flaw due to the large number
-of possible interleaving of events happening between the components. Hence the
+of possible interleaving of events happening between the components. Hence, the
 conception of this library.
 
 The samples included in this library were inspired by the
