@@ -1,4 +1,4 @@
-package overcooked.sample.twophasecommit.modelverifier;
+package overcooked.sample.twophasecommit.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -16,10 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import overcooked.sample.twophasecommit.model.ResourceManagerClient;
-import overcooked.sample.twophasecommit.model.ResourceManagerState;
 
-class InMemoryTransactionManagerTest {
+class SimpleTransactionManagerTest {
 
   private static final String RESOURCE_MANAGER_0 = "0";
   private static final String RESOURCE_MANAGER_1 = "1";
@@ -78,8 +76,8 @@ class InMemoryTransactionManagerTest {
     Map<String, ResourceManagerState> resourceManagerStates = new HashMap<>();
     resourceManagerStates.put(RESOURCE_MANAGER_0, rm0State);
     resourceManagerStates.put(RESOURCE_MANAGER_1, rm1State);
-    InMemoryTransactionManager inMemoryTransactionManagerServer =
-        new InMemoryTransactionManager(resourceManagerStates);
+    SimpleTransactionManager simpleTransactionManager =
+        new SimpleTransactionManager(resourceManagerStates);
 
     ResourceManagerClient rm1 = mock(ResourceManagerClient.class);
     when(rm1.getId()).thenReturn(RESOURCE_MANAGER_1);
@@ -87,11 +85,11 @@ class InMemoryTransactionManagerTest {
     if (success) {
       switch (action) {
         case COMMIT -> {
-          inMemoryTransactionManagerServer.commit(rm1);
+          simpleTransactionManager.commit(rm1);
           verify(rm1).commit();
         }
         case ABORT -> {
-          inMemoryTransactionManagerServer.abort(rm1);
+          simpleTransactionManager.abort(rm1);
           verify(rm1).abort();
         }
         default -> throw new RuntimeException("Unexpected action: {}" + action);
@@ -99,8 +97,8 @@ class InMemoryTransactionManagerTest {
     } else {
       assertThatThrownBy(() -> {
         switch (action) {
-          case COMMIT -> inMemoryTransactionManagerServer.commit(rm1);
-          case ABORT -> inMemoryTransactionManagerServer.abort(rm1);
+          case COMMIT -> simpleTransactionManager.commit(rm1);
+          case ABORT -> simpleTransactionManager.abort(rm1);
           default -> throw new RuntimeException("Unexpected action: {}" + action);
         }
       }).isInstanceOf(IllegalStateException.class);

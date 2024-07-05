@@ -7,6 +7,6 @@ class ResourceManagerActorStateExtractor implements ActorStateExtractor<Resource
   @Override
   public ActorState extract(ResourceManagerActor resourceManagerActor) {
     return new ResourceManagerActorState(resourceManagerActor.getId(),
-        resourceManagerActor.getState().getData());
+        resourceManagerActor.getStateDao().get());
   }
 }

@@ -1,11 +1,11 @@
 package overcooked.sample.twophasecommit.modelverifier;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
 import overcooked.core.actor.ActorBase;
 import overcooked.sample.twophasecommit.model.ResourceManager;
 import overcooked.sample.twophasecommit.model.ResourceManagerClient;
-import overcooked.sample.twophasecommit.model.ResourceManagerState;
+import overcooked.sample.twophasecommit.model.ResourceManagerStateDao;
+import overcooked.sample.twophasecommit.model.SimpleResourceManager;
 import overcooked.sample.twophasecommit.model.TransactionManagerClient;
 
 /**
@@ -19,21 +19,19 @@ public class ResourceManagerActor
   private final ResourceManager resourceManager;
   private final ResourceManagerClient resourceManagerClient;
   @Getter
-  @SuppressFBWarnings(value = { "EI_EXPOSE_REP" },
-      justification = "this is for model verification only")
-  private final RefCell<ResourceManagerState> state;
+  private final ResourceManagerStateDao stateDao;
 
   /**
    * Constructor.
    *
    * @param id the ID of the {@link ResourceManagerActor}
-   * @param state the state of the {@link ResourceManagerActor}
+   * @param stateDao the {@link ResourceManagerStateDao}
    */
-  public ResourceManagerActor(String id, RefCell<ResourceManagerState> state) {
+  public ResourceManagerActor(String id, ResourceManagerStateDao stateDao) {
     this.id = id;
-    this.state = state;
-    this.resourceManagerClient = new InMemoryResourceManagerClient(id, state);
-    this.resourceManager = new InMemoryResourceManager(id, state);
+    this.stateDao = stateDao;
+    this.resourceManagerClient = new InMemoryResourceManagerClient(id, stateDao);
+    this.resourceManager = new SimpleResourceManager(id, stateDao);
   }
 
   @Override

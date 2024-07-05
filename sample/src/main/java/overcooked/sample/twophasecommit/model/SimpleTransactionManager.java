@@ -1,4 +1,4 @@
-package overcooked.sample.twophasecommit.modelverifier;
+package overcooked.sample.twophasecommit.model;
 
 import static overcooked.sample.twophasecommit.model.ResourceManagerState.ABORTED;
 import static overcooked.sample.twophasecommit.model.ResourceManagerState.COMMITTED;
@@ -8,18 +8,14 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Map;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
-import overcooked.sample.twophasecommit.model.ResourceManagerClient;
-import overcooked.sample.twophasecommit.model.ResourceManagerState;
-import overcooked.sample.twophasecommit.model.TransactionManager;
 
 /**
  * An implementation of {@link TransactionManager} that is purely for model tracking.
- * TODO: could this be an actual implementation, and if not, how close can it be?
  */
 @RequiredArgsConstructor
 @SuppressFBWarnings(value = { "EI_EXPOSE_REP" },
     justification = "this is just an example, making it immutable is over engineering")
-public class InMemoryTransactionManager implements TransactionManager {
+public class SimpleTransactionManager implements TransactionManager {
   private final Map<String, ResourceManagerState> resourceManagerStates;
 
   @Override

@@ -315,11 +315,11 @@ actors
 The Two Phase Commit sample has an in-memory implementation for both the
 client and service of the `ResourceManager`
 - [InMemoryResourceManagerClient](sample/src/main/java/overcooked/sample/twophasecommit/modelverifier/InMemoryResourceManagerClient.java)
-- [InMemoryResourceManager](sample/src/main/java/overcooked/sample/twophasecommit/modelverifier/InMemoryResourceManager.java)
+- [SimpleResourceManager](sample/src/main/java/overcooked/sample/twophasecommit/model/SimpleResourceManager.java)
 
 as well as the `TransactionManager`:
 - [InMemoryTransactionManagerClient](sample/src/main/java/overcooked/sample/twophasecommit/modelverifier/InMemoryTransactionManagerClient.java)
-- [InMemoryTransactionManager](sample/src/main/java/overcooked/sample/twophasecommit/modelverifier/InMemoryTransactionManager.java)
+- [TransactionManager](sample/src/main/java/overcooked/sample/twophasecommit/model/SimpleTransactionManager.java)
 
 For action specifications and invariants of the Two Phase Commit sample,
 please see its

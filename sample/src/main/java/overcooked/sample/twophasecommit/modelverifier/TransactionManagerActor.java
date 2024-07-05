@@ -6,6 +6,7 @@ import lombok.Getter;
 import overcooked.core.actor.ActorBase;
 import overcooked.sample.twophasecommit.model.ResourceManagerClient;
 import overcooked.sample.twophasecommit.model.ResourceManagerState;
+import overcooked.sample.twophasecommit.model.SimpleTransactionManager;
 import overcooked.sample.twophasecommit.model.TransactionManager;
 import overcooked.sample.twophasecommit.model.TransactionManagerClient;
 
@@ -30,7 +31,7 @@ public class TransactionManagerActor
   public TransactionManagerActor(Map<String, ResourceManagerState> resourceManagerStates) {
     this.resourceManagerStates = resourceManagerStates;
     this.transactionManagerClient = new InMemoryTransactionManagerClient(resourceManagerStates);
-    this.transactionManager = new InMemoryTransactionManager(resourceManagerStates);
+    this.transactionManager = new SimpleTransactionManager(resourceManagerStates);
   }
 
   @Override

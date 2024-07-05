@@ -1,8 +1,10 @@
-package overcooked.sample.twophasecommit.modelverifier;
+package overcooked.sample.twophasecommit.model;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 import static overcooked.sample.twophasecommit.model.ResourceManagerState.ABORTED;
 import static overcooked.sample.twophasecommit.model.ResourceManagerState.COMMITTED;
 import static overcooked.sample.twophasecommit.model.ResourceManagerState.PREPARED;
@@ -12,13 +14,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
-import overcooked.sample.twophasecommit.model.ResourceManager;
-import overcooked.sample.twophasecommit.model.ResourceManagerState;
-import overcooked.sample.twophasecommit.model.TransactionManagerClient;
 
-class InMemoryResourceManagerTest {
+class SimpleResourceManagerTest {
 
   private static final String RESOURCE_MANAGER_ID = "0";
+  private final ResourceManagerStateDao stateDao = mock(ResourceManagerStateDao.class);
 
   static Object[][] test_cases() {
     return new Object[][] {
@@ -40,19 +40,21 @@ class InMemoryResourceManagerTest {
              Action action,
              boolean success,
              ResourceManagerState expectedState) {
-    RefCell<ResourceManagerState> stateRefCell = new RefCell<>(currentState);
-    InMemoryResourceManager resourceManager =
-        new InMemoryResourceManager(RESOURCE_MANAGER_ID, stateRefCell);
+    when(stateDao.get()).thenReturn(currentState);
+    SimpleResourceManager resourceManager =
+        new SimpleResourceManager(RESOURCE_MANAGER_ID, stateDao);
 
     TransactionManagerClient transactionManagerClient = mock(TransactionManagerClient.class);
 
     if (success) {
       doAction(resourceManager, action, transactionManagerClient);
+      verify(stateDao).save(expectedState);
     } else {
       assertThatThrownBy(() -> doAction(resourceManager, action, transactionManagerClient))
           .isInstanceOf(IllegalStateException.class);
     }
-    assertThat(stateRefCell.getData()).isEqualTo(expectedState);
+    verify(stateDao).get();
+    verifyNoMoreInteractions(stateDao);
   }
 
   private void doAction(ResourceManager resourceManager,
