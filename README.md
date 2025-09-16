@@ -16,10 +16,10 @@ invariants are honoured during and after these sequences of actions, in which
 case we can be confident that the system's correctness is guaranteed. \
 (\*) see [Limits](#limits)
 
-Overcooked currently supports
-[only JAVA](https://github.com/stephen-hlx/overcooked-rust), and it requires
-the service and the client of the system's applications to have an in-memory
-version of its implementations.
+Overcooked currently supports only JAVA (a
+[rust version](https://github.com/stephen-hlx/overcooked-rust) is WIP), and it
+requires the service and the client of the system's applications to have an
+in-memory version of its implementations.
 
 The remaining of this document comprises 4 main parts:
 - [How does it work?](#how-does-it-work)
