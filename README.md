@@ -200,8 +200,14 @@ To express interactions in this way, it requires two pairs of actors:
     ```
     transactionManager.commit(resourceManagerClient);
     ```
+And these pair of actors basically share the same state:
+- in real world (production environment), the client is used to interact with
+  the state stored in the server - basically there is one single copy of the
+  state
+- in the model verification, both the in-memory implementation of the server
+  and the client share the same state
 
-To simplify this, Overcooked personifies the service and client as a single
+To simplify this, we can personify the service and client as a single
 actor and requires that both of the in-memory implementations of the service
 and client share the same state:
 ```java
